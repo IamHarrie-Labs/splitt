@@ -1,15 +1,15 @@
 {
-  "evaluatedAt": "2026-10-14T22:21:47.841Z",
+  "evaluatedAt": "2026-10-14T22:38:57.675Z",
   "source": "synthetic_fixture",
   "mode": "live_model",
-  "modelRequested": "nvidia/nemotron-3.5-lightning-free",
+  "modelRequested": "poolside/laguna-s-2.1-free",
   "provider": "vercel-gateway",
   "pricing": {
     "input": "0",
     "output": "0"
   },
   "caseCount": 10,
-  "providerAcceptedCount": 3,
+  "providerAcceptedCount": 0,
   "validCount": 10,
   "limitation": "Safety and allocation comparison only. Different allocations are not automatically better. No pilot adoption or extraction evaluation.",
   "results": [
@@ -19,16 +19,18 @@
       "inputHash": "0x5d595a883d197ddb554509815c81f26794a552dd8df889029cd69219afe649f9",
       "baselineHash": "0x7030111aa2096e614d3081364b2ce829defa31c6d5ae2017196091449d85b14d",
       "outputHash": "0x7030111aa2096e614d3081364b2ce829defa31c6d5ae2017196091449d85b14d",
-      "model": "nvidia/nemotron-3.5-lightning-free",
+      "model": "Deterministic baseline (provider fallback)",
       "attempts": 1,
       "correctionCount": 0,
-      "fallbackUsed": false,
-      "failureCodes": [],
-      "durationMs": 6647,
+      "fallbackUsed": true,
+      "failureCodes": [
+        "PROVIDER_HTTP_503"
+      ],
+      "durationMs": 1529,
       "validatorPassed": true,
       "errors": [],
       "sameAllocationAsBaseline": true,
-      "comparison": "same_allocation",
+      "comparison": "baseline_only",
       "output": {
         "items": [
           {
@@ -81,16 +83,18 @@
       "inputHash": "0x935ff0f977f49f3bd7643c02fb9b5f5fefdd6f61c908d418dd6206909582f6cf",
       "baselineHash": "0xf4020191648b77394b41ab5baed397f6328b437389ebf08e582c0380026b854d",
       "outputHash": "0xf4020191648b77394b41ab5baed397f6328b437389ebf08e582c0380026b854d",
-      "model": "nvidia/nemotron-3.5-lightning-free",
-      "attempts": 2,
-      "correctionCount": 1,
-      "fallbackUsed": false,
-      "failureCodes": [],
-      "durationMs": 13695,
+      "model": "Deterministic baseline (provider fallback)",
+      "attempts": 1,
+      "correctionCount": 0,
+      "fallbackUsed": true,
+      "failureCodes": [
+        "PROVIDER_HTTP_UNKNOWN"
+      ],
+      "durationMs": 20039,
       "validatorPassed": true,
       "errors": [],
       "sameAllocationAsBaseline": true,
-      "comparison": "same_allocation",
+      "comparison": "baseline_only",
       "output": {
         "items": [
           {
@@ -133,16 +137,18 @@
       "inputHash": "0xcd5e2b807560cc2c35ffbc4537629ccc8b9ee3de36fac380c097f655f0956915",
       "baselineHash": "0x981a2f35095f9435ae029d990ee267a6e305143e16ea86ad108783da5988e765",
       "outputHash": "0x981a2f35095f9435ae029d990ee267a6e305143e16ea86ad108783da5988e765",
-      "model": "nvidia/nemotron-3.5-lightning-free",
+      "model": "Deterministic baseline (provider fallback)",
       "attempts": 1,
       "correctionCount": 0,
-      "fallbackUsed": false,
-      "failureCodes": [],
-      "durationMs": 3971,
+      "fallbackUsed": true,
+      "failureCodes": [
+        "PROVIDER_HTTP_UNKNOWN"
+      ],
+      "durationMs": 20011,
       "validatorPassed": true,
       "errors": [],
       "sameAllocationAsBaseline": true,
-      "comparison": "same_allocation",
+      "comparison": "baseline_only",
       "output": {
         "items": [
           {
@@ -195,14 +201,13 @@
       "baselineHash": "0x6ccac3724153771ad682f31eaeb468d4e2b03e8b707ec2dcdf99f82a448ecdb7",
       "outputHash": "0x6ccac3724153771ad682f31eaeb468d4e2b03e8b707ec2dcdf99f82a448ecdb7",
       "model": "Deterministic baseline (provider fallback)",
-      "attempts": 2,
-      "correctionCount": 1,
+      "attempts": 1,
+      "correctionCount": 0,
       "fallbackUsed": true,
       "failureCodes": [
-        "TOOL_MISSING",
-        "PROVIDER_HTTP_429"
+        "PROVIDER_HTTP_UNKNOWN"
       ],
-      "durationMs": 9903,
+      "durationMs": 20009,
       "validatorPassed": true,
       "errors": [],
       "sameAllocationAsBaseline": true,
@@ -249,13 +254,14 @@
       "baselineHash": "0x186f1d3297f542e9d00a8bba5bfa19ece8e56f41c181f89af7152cbae6104268",
       "outputHash": "0x186f1d3297f542e9d00a8bba5bfa19ece8e56f41c181f89af7152cbae6104268",
       "model": "Deterministic baseline (provider fallback)",
-      "attempts": 1,
-      "correctionCount": 0,
+      "attempts": 2,
+      "correctionCount": 1,
       "fallbackUsed": true,
       "failureCodes": [
-        "PROVIDER_HTTP_429"
+        "TOOL_MISSING_end_turn",
+        "PROVIDER_HTTP_503"
       ],
-      "durationMs": 500,
+      "durationMs": 6734,
       "validatorPassed": true,
       "errors": [],
       "sameAllocationAsBaseline": true,
@@ -297,9 +303,9 @@
       "correctionCount": 0,
       "fallbackUsed": true,
       "failureCodes": [
-        "PROVIDER_HTTP_429"
+        "PROVIDER_HTTP_UNKNOWN"
       ],
-      "durationMs": 467,
+      "durationMs": 20013,
       "validatorPassed": true,
       "errors": [],
       "sameAllocationAsBaseline": true,
@@ -351,9 +357,9 @@
       "correctionCount": 0,
       "fallbackUsed": true,
       "failureCodes": [
-        "PROVIDER_HTTP_429"
+        "PROVIDER_HTTP_503"
       ],
-      "durationMs": 483,
+      "durationMs": 1166,
       "validatorPassed": true,
       "errors": [],
       "sameAllocationAsBaseline": true,
@@ -415,9 +421,9 @@
       "correctionCount": 0,
       "fallbackUsed": true,
       "failureCodes": [
-        "PROVIDER_HTTP_429"
+        "PROVIDER_HTTP_UNKNOWN"
       ],
-      "durationMs": 426,
+      "durationMs": 20009,
       "validatorPassed": true,
       "errors": [],
       "sameAllocationAsBaseline": true,
@@ -440,9 +446,9 @@
       "correctionCount": 0,
       "fallbackUsed": true,
       "failureCodes": [
-        "PROVIDER_HTTP_429"
+        "PROVIDER_HTTP_UNKNOWN"
       ],
-      "durationMs": 456,
+      "durationMs": 20012,
       "validatorPassed": true,
       "errors": [],
       "sameAllocationAsBaseline": true,
@@ -493,9 +499,9 @@
       "correctionCount": 0,
       "fallbackUsed": true,
       "failureCodes": [
-        "PROVIDER_HTTP_429"
+        "PROVIDER_HTTP_UNKNOWN"
       ],
-      "durationMs": 414,
+      "durationMs": 20007,
       "validatorPassed": true,
       "errors": [],
       "sameAllocationAsBaseline": true,

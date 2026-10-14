@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-10-14T22:31:29.424Z",
+  "checkedAt": "2026-10-14T22:39:56.811Z",
   "secretScanPassed": true,
-  "fileCount": 166,
+  "fileCount": 168,
   "files": [
     ".dockerignore",
     ".env.example",
@@ -29,10 +29,12 @@
     "docs/gateway-readiness.json",
     "docs/hosted-demo-proof.jpg",
     "docs/integration-readiness.json",
+    "docs/model-evaluation.md",
     "docs/owner-auth-and-signing.md",
     "docs/owner-wallet.json",
     "docs/pilot-plan.md",
     "docs/planner-evaluation-live.json",
+    "docs/planner-evaluation-nemotron.json",
     "docs/planner-evaluation-offline.json",
     "docs/postgres-verification.json",
     "docs/product-quality-review.md",

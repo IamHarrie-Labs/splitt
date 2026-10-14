@@ -8,7 +8,7 @@ A project payment workspace for agencies. When a client pays part of an invoice,
 
 ## Current build
 
-The public `/demo` runs the deterministic allocation engine in the browser with synthetic data. The authenticated `/testnet` workspace connects to Arc balances, a PostgreSQL queue and Circle execution. The vault is deployed at `0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6`; [Sourcify confirms exact creation/runtime bytecode matches](https://repo.sourcify.dev/5042002/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6). A real Circle contract query is confirmed, with zero transferred value. **Contractor payouts remain gated until 15 October 2026, 16:18:53 Lagos.** Live model evaluation has exercised a zero-priced gateway model; rejected/rate-limited responses safely fall back, and model reliability remains under evaluation. Real pilot adoption remains pending. Fixture amounts do not count as adoption.
+The public `/demo` runs the deterministic allocation engine in the browser with synthetic data. The authenticated `/testnet` workspace connects to Arc balances, a PostgreSQL queue and Circle execution. The vault is deployed at `0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6`; [Sourcify confirms exact creation/runtime bytecode matches](https://repo.sourcify.dev/5042002/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6). A real Circle contract query is confirmed, with zero transferred value. **Contractor payouts remain gated until 15 October 2026, 16:18:53 Lagos.** Live evaluation accepted 5/10 Nemotron outputs and 0/10 Poolside outputs; fallback kept all final plans valid. [Model reliability remains a release gap](docs/model-evaluation.md). Real pilot adoption remains pending. Fixture amounts do not count as adoption.
 
 Implemented:
 

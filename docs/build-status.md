@@ -3,8 +3,8 @@
 ## Current release checks on 14 October 2026
 
 - Arc explorer now returns verified source code; updated arc-verification.json. Sourcify retains exact creation/runtime matches.
-- GitHub CI run 38646240952 passed the complete tests, strict typing, offline evaluation, web build, API Docker build and missing-configuration startup refusal.
-- Added optional Vercel Gateway model access and synthetic live evaluation with a zero-price catalog guard. Initial run accepted 3/10 responses; remaining cases safely fell back due to rejected output or HTTP 429. A spaced follow-up run is in progress; no superiority over the baseline is claimed.
+- GitHub CI run 38648292428 passed all 72 tests, strict typing, offline evaluation, web build, API Docker build, VPS configuration validation and missing-configuration startup refusal.
+- Added optional Vercel Gateway model access and synthetic live evaluation with a zero-price catalog guard. Initial run accepted 3/10 responses; remaining cases safely fell back due to rejected output or HTTP 429. A spaced Nemotron follow-up accepted 5/10 responses; the five accepted allocations match the baseline. Rejected/missing tool responses used the validated baseline. No superiority over the baseline is established. The alternative Poolside run accepted 0/10 outputs due to availability/tool failures. Both live evaluator runs correctly fail their all-model-output gate; all final fallback plans validate. See model-evaluation.md.
 - Four isolated model-adapter safety tests and strict typing pass. VPS Compose configuration validates with public placeholders; no VPS deployment has occurred.
 - Owner will fill the submission form and seek a real pilot. Submission copy and VPS runbook are prepared; SSH/domain details remain required.
 
