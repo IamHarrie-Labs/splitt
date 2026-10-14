@@ -1,0 +1,144 @@
+1
+00:00:00,000 --> 00:00:04,330
+A client pays part of an
+invoice. Your contractors are waiting, and
+
+2
+00:00:04,330 --> 00:00:08,660
+your project still needs a reserve.
+Splitt turns that shortfall into a
+
+3
+00:00:08,660 --> 00:00:11,907
+reviewed payment plan, with a reason
+behind every amount.
+
+4
+00:00:20,000 --> 00:00:25,362
+This is our synthetic Northstar project.
+The invoice is two thousand USDC,
+
+5
+00:00:25,362 --> 00:00:30,723
+but only twelve hundred arrived. Three
+hundred stays protected. That leaves nine
+
+6
+00:00:30,723 --> 00:00:36,085
+hundred available for eligible contractor obligations.
+These demo amounts do not move
+
+7
+00:00:36,085 --> 00:00:36,978
+real funds.
+
+
+8
+00:00:40,000 --> 00:00:44,867
+The allocation engine pays Amara's full
+seven hundred because her accepted work
+
+9
+00:00:44,867 --> 00:00:49,733
+unlocks delivery. Tobi receives two hundred
+because his agreed terms allow a
+
+10
+00:00:49,733 --> 00:00:54,600
+partial payment. The validator checks eligibility,
+reserve, caps, shortfall and supporting facts
+
+11
+00:00:54,600 --> 00:00:55,816
+before owner review.
+
+
+12
+00:01:00,000 --> 00:01:04,807
+In the live workspace, the owner
+reviews and signs the exact batch.
+
+13
+00:01:04,807 --> 00:01:09,613
+The signature binds the project version,
+plan, ordered payments and expiry. Circle's
+
+14
+00:01:09,613 --> 00:01:14,420
+operator executes it. A durable queue
+retains the original intent, and chain
+
+15
+00:01:14,420 --> 00:01:18,025
+replay flags establish the outcome after
+a missing response.
+
+16
+00:01:20,000 --> 00:01:25,308
+Now the eight hundred USDC remainder
+arrives in our browser simulation. Splitt
+
+17
+00:01:25,308 --> 00:01:30,616
+replans from the remaining obligations. Amara
+is already paid. Tobi receives only
+
+18
+00:01:30,616 --> 00:01:35,482
+his outstanding three hundred. The earlier
+batch cannot be counted twice.
+
+19
+00:01:40,000 --> 00:01:45,656
+Northstar finishes with both contractor obligations
+fully paid and eight hundred USDC
+
+20
+00:01:45,656 --> 00:01:51,311
+remaining. Fieldwork's separate one thousand USDC
+balance stays untouched. Allocation never borrows
+
+21
+00:01:51,311 --> 00:01:55,082
+one project's cash to satisfy another
+project's commitments.
+
+22
+00:02:00,000 --> 00:02:04,966
+The real vault is deployed on
+Arc Testnet. Sourcify confirms exact matches
+
+23
+00:02:04,966 --> 00:02:09,932
+for creation and runtime bytecode. Circle's
+operator has completed a verified contract
+
+24
+00:02:09,932 --> 00:02:14,898
+query. That query transferred zero value
+and is not a contractor payout.
+
+25
+00:02:14,898 --> 00:02:17,381
+The scaled payout proof is prepared.
+
+
+26
+00:02:20,000 --> 00:02:24,898
+Contractors activate on October fifteenth at
+four eighteen PM Lagos. Real payouts,
+
+27
+00:02:24,898 --> 00:02:29,797
+live model comparison and a consenting
+business pilot remain pending. The browser
+
+28
+00:02:29,797 --> 00:02:34,695
+demo uses the deterministic engine. This
+draft shows the current build honestly;
+
+29
+00:02:34,695 --> 00:02:37,961
+the final submission must include the
+completed evidence.

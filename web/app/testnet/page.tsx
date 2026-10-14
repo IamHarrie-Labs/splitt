@@ -1,0 +1,369 @@
+'use client';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import SiteFooter from '../site-footer';
+import { createWalletClient, custom, type EIP1193Provider, type Address, type Hex } from 'viem';
+import { authorizationTypes, formatUSDC } from '@splitt/core';
+import type { LiveState } from '../../../server/src/live/repository';
+import type { BatchApproval } from '../../../server/src/store';
+type Workspace = LiveState & { vault: Address; owner: Address; operator: Address };
+const demoOnly = process.env.NEXT_PUBLIC_DEMO_ONLY === 'true';
+export default function TestnetWorkspace() {
+  const [mode, setMode] = useState(demoOnly ? 'public-preview' : 'checking'),
+    [workspace, setWorkspace] = useState<Workspace>(),
+    [csrf, setCsrf] = useState(''),
+    [error, setError] = useState(''),
+    [busy, setBusy] = useState(false),
+    [review, setReview] = useState<{ id: string; approval: BatchApproval }>();
+  async function api<T>(path: string, body?: unknown, token = csrf): Promise<T> {
+    const response = await fetch(`/api${path}`, {
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json', 'x-splitt-csrf': token },
+      ...(body === undefined ? {} : { method: 'POST', body: JSON.stringify(body) }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message ?? 'Request failed.');
+    return data;
+  }
+  async function run(fn: () => Promise<void>) {
+    setBusy(true);
+    setError('');
+    try {
+      await fn();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Operation failed.');
+    } finally {
+      setBusy(false);
+    }
+  }
+  useEffect(() => {
+    if (demoOnly) return;
+    void api<{ mode: string }>('/health')
+      .then((data) => setMode(data.mode))
+      .catch(() => setMode('unavailable'));
+  }, []);
+  async function refresh() {
+    setWorkspace(await api<Workspace>('/testnet/workspace'));
+  }
+  async function connect() {
+    const provider = (window as Window & { ethereum?: EIP1193Provider }).ethereum;
+    if (!provider) throw new Error('Open this page in a browser with your owner wallet installed.');
+    const client = createWalletClient({ transport: custom(provider) });
+    const [account] = await client.requestAddresses();
+    if (!account) throw new Error('No account selected.');
+    const challenge = await api<{ nonce: string; message: string }>('/auth/challenge', {
+      address: account,
+    });
+    const signature = await client.signMessage({ account, message: challenge.message });
+    const session = await api<{ csrf: string }>('/auth/verify', {
+      nonce: challenge.nonce,
+      signature,
+    });
+    setCsrf(session.csrf);
+    setWorkspace(await api<Workspace>('/testnet/workspace', undefined, session.csrf));
+  }
+  async function approve() {
+    if (!review || !workspace) throw new Error('Review a proposed batch first.');
+    const provider = (window as Window & { ethereum?: EIP1193Provider }).ethereum;
+    if (!provider) throw new Error('Owner wallet required.');
+    const client = createWalletClient({ transport: custom(provider) });
+    const accounts = await client.getAddresses();
+    if (accounts[0]?.toLowerCase() !== workspace.owner.toLowerCase())
+      throw new Error('Select the configured owner wallet.');
+    if ((await client.getChainId()) !== 5042002)
+      throw new Error('Switch your wallet to Arc Testnet.');
+    const a = review.approval;
+    const signature = await client.signTypedData({
+      account: accounts[0],
+      domain: a.domain,
+      types: authorizationTypes,
+      primaryType: 'PlanAuthorization',
+      message: {
+        ...a.message,
+        projectVersion: BigInt(a.message.projectVersion),
+        deadline: BigInt(a.message.deadline),
+      },
+    });
+    await api(`/testnet/plans/${review.id}/submit`, { signature });
+    setReview(undefined);
+    await refresh();
+  }
+  return (
+    <>
+      <main style={{ maxWidth: 1100, margin: '0 auto', padding: '36px 24px' }}>
+        <header className="art-band">
+          <Link href="/">← Splitt home</Link>
+          <h1>Arc Testnet workspace</h1>
+          <p>Review each allocation before your Circle operator submits it. Testnet USDC only.</p>
+        </header>
+        {error && (
+          <p role="alert" style={{ color: 'var(--danger)' }}>
+            {error}
+          </p>
+        )}
+        {mode !== 'arc-testnet' ? (
+          <section className="panel" style={{ padding: 24, marginTop: 24 }}>
+            <h2>
+              {mode === 'checking'
+                ? 'Checking the connection…'
+                : demoOnly ? 'Live owner access is not hosted yet' : 'Testnet connection is not enabled yet'}
+            </h2>
+            <p>
+              {demoOnly ? 'The vault is deployed and verified on Arc Testnet. Its authenticated API and continuous worker currently run locally. You can try the complete synthetic allocation flow in the public demo.' : 'This workspace needs the configured Circle operator, PostgreSQL and a reachable authenticated API.'}
+            </p>
+            <Link href="/demo">Open the public demo →</Link>
+          </section>
+        ) : (
+          <>
+            <button className="button primary" disabled={busy} onClick={() => void run(connect)}>
+              Sign in with owner wallet
+            </button>
+            {workspace && (
+              <>
+                <p>
+                  Vault:{' '}
+                  <a
+                    href={`https://explorer.testnet.arc.io/address/${workspace.vault}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {workspace.vault}
+                  </a>
+                </p>
+                <button
+                  className="button secondary"
+                  disabled={busy}
+                  onClick={() => void run(refresh)}
+                >
+                  Refresh receipts and settlement
+                </button>
+                <section className="panel" style={{ padding: 24, marginTop: 24 }}>
+                  <h2>Projects</h2>
+                  {workspace.projects.length === 0 && (
+                    <p>
+                      Create the project and commitments in the vault, then register their invoice
+                      and agreed work details below.
+                    </p>
+                  )}
+                  {workspace.projects.map((p) => (
+                    <article
+                      key={p.id}
+                      style={{ borderBottom: '1px solid var(--line)', padding: '16px 0' }}
+                    >
+                      <h3>{p.name}</h3>
+                      <button
+                        className="button secondary"
+                        disabled={busy}
+                        onClick={() =>
+                          void run(async () => {
+                            const snapshot = await api<{
+                              project: { balance: string; reserve: string; spentToday: string };
+                            }>(`/testnet/projects/${p.id}`);
+                            setWorkspace((w) =>
+                              w
+                                ? {
+                                    ...w,
+                                    projects: w.projects.map((item) =>
+                                      item.id === p.id ? { ...item, ...snapshot.project } : item,
+                                    ),
+                                  }
+                                : w,
+                            );
+                          })
+                        }
+                      >
+                        Read current balance
+                      </button>
+                      <p>
+                        {formatUSDC(p.balance)} USDC available · {formatUSDC(p.reserve)} USDC
+                        reserve
+                      </p>
+                      <button
+                        className="button primary"
+                        disabled={busy}
+                        onClick={() =>
+                          void run(async () => {
+                            await api(`/testnet/projects/${p.id}/replan`, {});
+                            await refresh();
+                          })
+                        }
+                      >
+                        Propose allocation
+                      </button>
+                    </article>
+                  ))}
+                </section>
+                <section className="panel" style={{ padding: 24, marginTop: 24 }}>
+                  <h2>Register project details</h2>
+                  <p>
+                    Use the metadata file generated by the testnet setup command. Addresses and
+                    obligations must match the vault.
+                  </p>
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      const form = e.currentTarget;
+                      const data = new FormData(form);
+                      void run(async () => {
+                        await api('/testnet/projects', JSON.parse(String(data.get('metadata'))));
+                        await refresh();
+                        form.reset();
+                      });
+                    }}
+                  >
+                    <label htmlFor="metadata">Project metadata JSON</label>
+                    <textarea
+                      id="metadata"
+                      name="metadata"
+                      required
+                      rows={8}
+                      style={{ display: 'block', width: '100%', margin: '12px 0' }}
+                    />
+                    <button className="button secondary" disabled={busy}>
+                      Register existing on-chain project
+                    </button>
+                  </form>
+                </section>
+                <section className="panel" style={{ padding: 24, marginTop: 24 }}>
+                  <h2>Allocation proposals</h2>
+                  {workspace.plans.map((p) => (
+                    <article
+                      key={p.id}
+                      style={{ padding: '16px 0', borderBottom: '1px solid var(--line)' }}
+                    >
+                      <h3>
+                        {workspace.projects.find((project) => project.id === p.projectId)?.name}
+                      </h3>
+                      <p>
+                        {p.model} · {p.status}
+                      </p>
+                      {p.output.items.map((item) => (
+                        <p key={item.commitment_id}>
+                          {workspace.projects
+                            .flatMap((project) => project.commitments)
+                            .find((c) => c.id === item.commitment_id)?.name ?? item.commitment_id}
+                          : {formatUSDC(item.amount_micro)} USDC · {item.explanation}
+                        </p>
+                      ))}
+                      <p>
+                        Unfunded obligations: {formatUSDC(p.output.unfunded_shortfall_micro)} USDC
+                      </p>
+                      <button
+                        className="button secondary"
+                        disabled={busy || p.status !== 'awaiting_owner'}
+                        onClick={() =>
+                          void run(async () => {
+                            const result = await api<{ approval: BatchApproval }>(
+                              `/testnet/plans/${p.id}/prepare`,
+                              {},
+                            );
+                            setReview({ id: p.id, approval: result.approval });
+                          })
+                        }
+                      >
+                        Review exact batch
+                      </button>
+                    </article>
+                  ))}
+                </section>
+                {review && (
+                  <section
+                    className="panel"
+                    aria-label="Exact batch review"
+                    style={{ padding: 24, marginTop: 24, border: '2px solid var(--green)' }}
+                  >
+                    <h2>Approve this testnet payment batch</h2>
+                    <p>
+                      This signature authorizes real testnet USDC payouts on Arc Testnet through
+                      your Circle operator.
+                    </p>
+                    <p>
+                      Vault: {review.approval.domain.verifyingContract}
+                      <br />
+                      Expires:{' '}
+                      {new Date(Number(review.approval.message.deadline) * 1000).toLocaleString()}
+                    </p>
+                    {review.approval.items.map((i) => {
+                      const c = workspace.projects
+                        .flatMap((p) => p.commitments)
+                        .find((c) => c.onchainId === i.commitmentId);
+                      return (
+                        <p key={i.executionId}>
+                          {c?.name}: {formatUSDC(i.amount)} USDC
+                          <br />
+                          Recipient: {c?.payee}
+                          <br />
+                          Execution: {i.executionId}
+                        </p>
+                      );
+                    })}
+                    <p>
+                      Total:{' '}
+                      {formatUSDC(
+                        String(
+                          review.approval.items.reduce((sum, i) => sum + BigInt(i.amount), 0n),
+                        ),
+                      )}{' '}
+                      USDC
+                    </p>
+                    <button
+                      className="button primary"
+                      disabled={busy}
+                      onClick={() => void run(approve)}
+                    >
+                      Sign and queue reviewed batch
+                    </button>
+                    <button className="button secondary" onClick={() => setReview(undefined)}>
+                      Cancel
+                    </button>
+                  </section>
+                )}
+                <section className="panel" style={{ padding: 24, marginTop: 24 }}>
+                  <h2>Settlement</h2>
+                  {workspace.jobs.map((j) => (
+                    <p key={j.id}>
+                      {j.state} · {j.attempts} worker attempts{' '}
+                      {j.txHash && (
+                        <a
+                          href={`https://explorer.testnet.arc.io/tx/${j.txHash}`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          View transaction
+                        </a>
+                      )}
+                      {j.lastError && <span> · {j.lastError}</span>}
+                    </p>
+                  ))}
+                </section>
+                <section className="panel" style={{ padding: 24, marginTop: 24 }}>
+                  <h2>Indexed chain events</h2>
+                  <p>
+                    Next block: {workspace.nextBlock}. Direct transfers are receipts, not automatic
+                    invoice matches.
+                  </p>
+                  {workspace.events
+                    .slice(-20)
+                    .reverse()
+                    .map((event) => (
+                      <p key={event.id}>
+                        {event.name} · Block {event.block} ·{' '}
+                        <a
+                          href={`https://explorer.testnet.arc.io/tx/${event.txHash}`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          View receipt
+                        </a>
+                      </p>
+                    ))}
+                </section>
+              </>
+            )}
+          </>
+        )}
+      </main>
+      <SiteFooter fit="app" />
+    </>
+  );
+}

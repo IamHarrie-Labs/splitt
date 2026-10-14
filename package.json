@@ -1,0 +1,58 @@
+{
+  "name": "splitt",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "web",
+    "server",
+    "packages/core"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n api,web \"npm run dev -w @splitt/server\" \"npm run dev -w @splitt/web\"",
+    "build": "npm run build -w @splitt/web",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "contracts:compile": "node scripts/compile-contracts.mjs",
+    "db:migrate": "tsx --env-file-if-exists=.env server/src/db/migrate.ts",
+    "arc:check": "tsx scripts/check-arc.ts",
+    "wallet:create": "tsx scripts/create-owner-wallet.ts",
+    "circle:wallet": "tsx --env-file-if-exists=.env scripts/create-circle-wallet.ts",
+    "vault:deploy": "tsx --env-file-if-exists=.env scripts/deploy-vault.ts",
+    "testnet:prepare": "tsx --env-file-if-exists=.env scripts/prepare-testnet.ts",
+    "integration:check": "tsx --env-file-if-exists=.env scripts/integration-check.ts",
+    "testnet:payees": "tsx scripts/create-test-payees.ts",
+    "db:start": "node scripts/local-db.mjs start",
+    "db:stop": "node scripts/local-db.mjs stop",
+    "db:verify": "tsx --env-file=.env scripts/verify-local-db.ts",
+    "testnet:start": "tsx --env-file=.env --env-file=.env.testnet.local server/src/index.ts",
+    "circle:register": "tsx --env-file=.env scripts/register-circle.ts",
+    "testnet:bootstrap": "tsx --env-file=.env scripts/bootstrap-testnet.ts",
+    "vault:verify": "tsx --env-file=.env scripts/verify-vault.ts",
+    "circle:smoke": "tsx --env-file=.env scripts/circle-smoke.ts",
+    "testnet:smoke": "tsx --env-file=.env scripts/smoke-testnet-api.ts",
+    "testnet:prove": "tsx --env-file=.env scripts/prove-testnet.ts",
+    "vault:verify:sourcify": "node scripts/verify-sourcify.mjs",
+    "planner:eval": "tsx --env-file-if-exists=.env scripts/evaluate-planner.ts",
+    "release:check": "node scripts/check-publication.mjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "concurrently": "^9.0.0",
+    "ganache": "^7.9.2",
+    "prettier": "^3.9.9",
+    "solc": "0.8.28",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "5.2.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

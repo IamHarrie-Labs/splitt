@@ -1,0 +1,12 @@
+{
+  "checkedAt": "2026-10-13T13:44:39.234Z",
+  "engine": "PostgreSQL 17.10 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+  "database": "splitt",
+  "port": 55432,
+  "phase": "read",
+  "transactionLocks": true,
+  "rollback": true,
+  "persistentCursor": "102",
+  "restartVerified": true,
+  "realPaymentActivity": false
+}

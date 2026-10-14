@@ -1,0 +1,72 @@
+{
+  "checkedAt": "2026-10-14T15:33:45.615Z",
+  "vault": "0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6",
+  "operator": "0xd0c362f85bd5452246999a53639c6c9ac0437063",
+  "scale": 1000,
+  "projects": [
+    {
+      "id": "northstar",
+      "balance": "1200000",
+      "reserve": "300000",
+      "commitments": [
+        {
+          "id": "amara",
+          "payee": "0xF2Ec17937263c4f999d344749dB7f962b868787a",
+          "activeAfter": 1792077532,
+          "eligibleAt": "2026-10-15T15:18:52.000Z"
+        },
+        {
+          "id": "tobi",
+          "payee": "0x0D997325A206fae68EB4e92AdF00eac85d8864bf",
+          "activeAfter": 1792077533,
+          "eligibleAt": "2026-10-15T15:18:53.000Z"
+        }
+      ]
+    },
+    {
+      "id": "fieldwork",
+      "balance": "1000000",
+      "reserve": "250000",
+      "commitments": []
+    }
+  ],
+  "transactions": [
+    {
+      "step": "operator_gas",
+      "txHash": "0x29006b7d5347101da8f5c31524627740565398691748c32a0b8523b3a772c161"
+    },
+    {
+      "step": "setup_0",
+      "txHash": "0xb1bca1a72dbe67560ad2d4659cdd052abeeb5ae1ee410c60af3b42cd36b757fe"
+    },
+    {
+      "step": "setup_1",
+      "txHash": "0x765557dfec7d965b9d7abf0f1856bee8629784c28b2245a15ebc90f81c7d3819"
+    },
+    {
+      "step": "setup_2",
+      "txHash": "0xb864d22b54b45f472de28a30cb553b86d4bc074f830f027dfe6492d99fde384b"
+    },
+    {
+      "step": "setup_3",
+      "txHash": "0x66b500516e7929045fdde83b5756093a603dbabfc64f7a67d7424e4c2cf82c41"
+    },
+    {
+      "step": "setup_4",
+      "txHash": "0x0a0fa0adbe769d909a4629fa9aee1df17a37bf1a128a77b483d80c8c17754fbe"
+    },
+    {
+      "step": "setup_5",
+      "txHash": "0xb2ceb2cb0f7b7d1cc6940d863fc39f199a1a26ebe817070722dbd2b35bb7177c"
+    },
+    {
+      "step": "fieldwork_allowance",
+      "txHash": "0x9408532eb080f9c410859328c5f80c34f4f6af604bf182776e3d8b8dbf33d9d7"
+    },
+    {
+      "step": "fieldwork_deposit",
+      "txHash": "0x7c90847d6e9c267df48a6adcfa025232c1dfa989accb2590f7477e3221992269"
+    }
+  ],
+  "status": "Setup complete. Contractor activation delay remains enforced. Testnet demonstration only; no pilot adoption."
+}

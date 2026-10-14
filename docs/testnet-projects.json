@@ -1,0 +1,53 @@
+[
+  {
+    "id": "northstar",
+    "onchainId": "0xc484eace6f3b96cb31273e6f1d8eb792b1dca6ee210b6015208d249d997c531f",
+    "name": "Northstar brand launch",
+    "client": "Northstar Studio",
+    "clientWallet": "0x8bE0633d4fd1E8828338d4BC779dDb7dd2121fD1",
+    "invoiceRef": "NS-2026-041",
+    "invoiceTotal": "2000000",
+    "commitments": [
+      {
+        "id": "amara",
+        "onchainId": "0x434b65cb342fb78156205c1c6c97018c90f60f841108dcc0ed17aea09f84fcf8",
+        "name": "Amara Okafor",
+        "role": "Brand strategy & direction",
+        "payee": "0xF2Ec17937263c4f999d344749dB7f962b868787a",
+        "maximum": "700000",
+        "dueDate": "2026-10-03",
+        "deferUntil": null,
+        "accepted": true,
+        "acceptedAt": "2026-09-25",
+        "blocksDelivery": true,
+        "partialAllowed": false,
+        "dependsOn": null
+      },
+      {
+        "id": "tobi",
+        "onchainId": "0x3fdf1cdb0ad7fccd028a997d05ea0eb7f536f1a9f5d5b38fd1bb76e5d7385205",
+        "name": "Tobi Adebayo",
+        "role": "Website development",
+        "payee": "0x0D997325A206fae68EB4e92AdF00eac85d8864bf",
+        "maximum": "500000",
+        "dueDate": "2026-10-13",
+        "deferUntil": "2026-10-17",
+        "accepted": true,
+        "acceptedAt": "2026-09-25",
+        "blocksDelivery": false,
+        "partialAllowed": true,
+        "dependsOn": null
+      }
+    ]
+  },
+  {
+    "id": "fieldwork",
+    "onchainId": "0x84133c8606ddaeed72b620abff7071ef5e615a033a1e121c41d7bb2c3c0d4546",
+    "name": "Fieldwork website",
+    "client": "Fieldwork Collective",
+    "clientWallet": "0x8bE0633d4fd1E8828338d4BC779dDb7dd2121fD1",
+    "invoiceRef": "FW-2026-019",
+    "invoiceTotal": "1800000",
+    "commitments": []
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "vault": "0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6",
+  "deploymentBlock": "67179133",
+  "txHash": "0x2f52fabc72d188d682e85150dea23722bb69ee654ecaed459606d6c482a1c024",
+  "chainId": 5042002,
+  "owner": "0x8bE0633d4fd1E8828338d4BC779dDb7dd2121fD1",
+  "operator": "0xd0c362f85bd5452246999a53639c6c9ac0437063",
+  "source": "arc_testnet"
+}

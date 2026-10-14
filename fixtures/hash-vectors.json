@@ -1,0 +1,23 @@
+{
+  "canonicalJson": [
+    {
+      "input": {
+        "b": "2",
+        "a": "1"
+      },
+      "hash": "0x5553a1af15de86fb253088d77c75feff3695573ec7c2f47597218cdbf111a9fd"
+    }
+  ],
+  "executionItems": [
+    {
+      "items": [
+        {
+          "executionId": "0x8c7df9e4542406039e6f14435308142291fddda02e46c0b0c8b3d85ac3c61d91",
+          "commitmentId": "0x9e568cc5749097bf3fc6956e123170f271345d9ea598e6ebbdb4895ca9cf34c0",
+          "amount": "700000000"
+        }
+      ],
+      "itemsHash": "0x610159da5a7218d8ea95d6f16eb1d08090cf3de80248f5307f1163fa364c371e"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "splitt-demo-video",
+  "private": true,
+  "scripts": { "render": "remotion render src/index.tsx SplittDemo out/splitt-walkthrough-draft.mp4 --codec=h264 --crf=18 --concurrency=2 --color-space=bt709", "preview": "remotion studio src/index.tsx" },
+  "dependencies": { "@remotion/cli": "4.0.535", "remotion": "4.0.535", "react": "19.2.0", "react-dom": "19.2.0" }
+}

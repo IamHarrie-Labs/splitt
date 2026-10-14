@@ -1,0 +1,133 @@
+import Fastify from 'fastify';
+import cors from '@fastify/cors';
+import rateLimit from '@fastify/rate-limit';
+import { ZodError } from 'zod';
+import { addressSchema } from '@splitt/core';
+import type { Address } from 'viem';
+import { connectDatabase } from '../db/driver.js';
+import { PostgresAuthRepository } from '../auth/repository.js';
+import { registerAuth } from '../auth/routes.js';
+import { LivePostgresRepository } from './repository.js';
+import { arcGateway } from './chain.js';
+import { TestnetService } from './service.js';
+import { circleOperator } from '../circle/operator.js';
+import { workerTick, indexReceipts } from './worker.js';
+export async function startTestnet() {
+  const owner = addressSchema.parse(process.env.OWNER_ADDRESS) as Address,
+    vault = addressSchema.parse(process.env.VAULT_ADDRESS) as Address,
+    operator = addressSchema.parse(process.env.OPERATOR_ADDRESS) as Address;
+  if (!process.env.DATABASE_URL || !/^\d+$/.test(process.env.VAULT_DEPLOYMENT_BLOCK ?? ''))
+    throw new Error('Testnet requires DATABASE_URL and VAULT_DEPLOYMENT_BLOCK.');
+  if (process.env.SPLITT_TESTNET_CONFIRM !== 'arc-testnet')
+    throw new Error('Set SPLITT_TESTNET_CONFIRM=arc-testnet after reviewing the deployment.');
+  const chain = arcGateway(vault, owner, operator);
+  await chain.verify();
+  const provider = circleOperator();
+  await provider.verify(operator);
+  const db = connectDatabase(process.env.DATABASE_URL);
+  const repo = await new LivePostgresRepository(db, `5042002:${vault.toLowerCase()}`).init(
+    process.env.VAULT_DEPLOYMENT_BLOCK!,
+  );
+  const service = new TestnetService(repo, chain, owner, vault);
+  const app = Fastify({ logger: true, bodyLimit: 100000 });
+  const origin = process.env.WEB_ORIGIN ?? 'http://localhost:3000';
+  await app.register(cors, { origin, credentials: true });
+  await app.register(rateLimit, { max: 120, timeWindow: '1 minute' });
+  app.addHook('onRequest', async (req, reply) => {
+    if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method) && req.headers.origin !== origin)
+      return reply.code(403).send({ message: 'Origin not allowed.' });
+  });
+  app.setErrorHandler((error, _req, reply) => {
+    const e = error as Error & { statusCode?: number };
+    return reply.code(error instanceof ZodError ? 400 : (e.statusCode ?? 500)).send({
+      message:
+        error instanceof ZodError
+          ? 'Invalid request fields.'
+          : e.statusCode
+            ? e.message
+            : 'Testnet operation failed; inspect batch status before retrying.',
+    });
+  });
+  await registerAuth(
+    app,
+    origin,
+    { owner, currentOwner: chain.owner, repository: new PostgresAuthRepository(db) },
+    { storage: 'postgres', approvalEnabled: true },
+  );
+  app.get('/health', async () => ({
+    status: 'ok',
+    mode: 'arc-testnet',
+    network: 'Arc Testnet',
+    livePayments: true,
+  }));
+  app.get('/testnet/workspace', async () => {
+    const state = await repo.snapshot();
+    state.projects = await Promise.all(
+      state.projects.map(async (metadata) => {
+        const { project } = await chain.project(metadata);
+        project.received = String(
+          state.events
+            .filter(
+              (e) =>
+                ['PaymentReceived', 'PaymentAttributed'].includes(e.name) &&
+                e.args.projectId?.toLowerCase() === metadata.onchainId.toLowerCase(),
+            )
+            .reduce((sum, e) => sum + BigInt(e.args.amount), 0n),
+        );
+        project.unresolved = state.jobs.some(
+          (j) =>
+            j.projectId === project.id && !['confirmed', 'failed', 'expired'].includes(j.state),
+        );
+        return project;
+      }),
+    );
+    return {
+      ...state,
+      mode: 'arc-testnet',
+      vault,
+      owner,
+      operator,
+      chainId: 5042002,
+    };
+  });
+  app.post('/testnet/projects', async (req) => service.register(req.body));
+  app.get<{ Params: { id: string } }>('/testnet/projects/:id', async (req) =>
+    service.fresh(req.params.id),
+  );
+  app.post<{ Params: { id: string } }>('/testnet/projects/:id/replan', async (req) =>
+    service.plan(req.params.id),
+  );
+  app.post<{ Params: { id: string } }>('/testnet/plans/:id/prepare', async (req) =>
+    service.prepare(req.params.id),
+  );
+  app.post<{ Params: { id: string } }>('/testnet/plans/:id/submit', async (req) =>
+    service.enqueue(req.params.id, req.body),
+  );
+  let busy = false;
+  let stopped = false;
+  const tick = async () => {
+    if (busy || stopped) return;
+    busy = true;
+    try {
+      await indexReceipts(repo, chain);
+      await workerTick(repo, chain, provider);
+    } catch {
+      app.log.warn('Testnet worker retry pending; no new batch created.');
+    } finally {
+      busy = false;
+    }
+  };
+  const timer = setInterval(() => void tick(), 5000);
+  app.addHook('onClose', async () => {
+    stopped = true;
+    clearInterval(timer);
+    while (busy) await new Promise((r) => setTimeout(r, 25));
+    await db.close();
+  });
+  const host = process.env.HOST ?? '127.0.0.1';
+  if (!['127.0.0.1', '0.0.0.0'].includes(host)) throw new Error('Unsupported API bind address.');
+  await app.listen({ port: Number(process.env.PORT ?? 4000), host });
+  for (const signal of ['SIGINT', 'SIGTERM'] as const) process.on(signal, () => void app.close());
+  void tick();
+  return app;
+}

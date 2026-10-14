@@ -1,0 +1,17 @@
+{
+  "vault": "0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6",
+  "chainId": 5042002,
+  "verified": true,
+  "checkedAt": "2026-10-14T15:56:49.096Z",
+  "alreadyVerified": true,
+  "contract": {
+    "matchId": "56109485",
+    "creationMatch": "exact_match",
+    "runtimeMatch": "exact_match",
+    "verifiedAt": "2026-10-14T15:22:13Z",
+    "match": "exact_match",
+    "chainId": "5042002",
+    "address": "0x724C12Bea7fAb30E27A9B3F4D5581351EBc2c6c6"
+  },
+  "url": "https://repo.sourcify.dev/5042002/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6"
+}

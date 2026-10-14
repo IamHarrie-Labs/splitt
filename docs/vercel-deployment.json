@@ -1,0 +1,13 @@
+{
+  "project": "splitt",
+  "productionUrl": "https://splitt-dun.vercel.app",
+  "demoUrl": "https://splitt-dun.vercel.app/demo",
+  "publicHttpVerified": true,
+  "authenticationRequiredForDemo": false,
+  "mode": "synthetic_browser_demo",
+  "apiHosted": false,
+  "workerHosted": false,
+  "ownerCredentialsUploaded": false,
+  "modelCredentialsUploaded": false,
+  "verifiedOn": "2026-10-14"
+}

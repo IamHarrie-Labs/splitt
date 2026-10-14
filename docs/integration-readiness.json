@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-10-14T15:37:12.334Z",
+  "owner": "0x8bE0633d4fd1E8828338d4BC779dDb7dd2121fD1",
+  "chainId": 5042002,
+  "ready": true,
+  "blockers": [],
+  "nativeBalance": "16729892225000000000",
+  "erc20Balance": "16729892",
+  "payoutActivationAt": "2026-10-15T15:18:53.000Z",
+  "payoutReady": false
+}

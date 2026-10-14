@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  /><title>Splitt · Tameion submission draft</title
+  ><style>
+    body {
+      max-width: 900px;
+      margin: 60px auto;
+      padding: 0 24px;
+      background: #fafbf8;
+      color: #222b25;
+      font: 16px/1.7 system-ui;
+    }
+    h1,
+    h2 {
+      line-height: 1.2;
+    }
+    h1 {
+      font-size: 48px;
+    }
+    section {
+      border-top: 1px solid #dce3d6;
+      padding: 24px 0;
+    }
+    aside {
+      padding: 20px;
+      background: #edf2e7;
+    }
+    a {
+      color: #356348;
+    }
+    li {
+      margin: 8px 0;
+    }
+  </style>
+  <h1>Splitt</h1>
+  <p>
+    Turn a partial client payment into an approved contractor payment plan, with the project reserve
+    protected.
+  </p>
+  <aside>
+    <strong>Submission draft — external evidence incomplete.</strong><br />Public repository,
+    recorded video, deployment evidence and pilot results must be added before submission. Local
+    fixture activity is not traction.
+  </aside>
+  <section>
+    <h2>Project description</h2>
+    <p>
+      A small agency sends a 2,000-USDC invoice and receives 1,200. Contractors still need to be
+      paid, but spending the whole receipt would leave the project without working cash. Splitt
+      helps the owner decide what can be paid today, what can wait under agreed terms, and what must
+      stay reserved.
+    </p>
+    <p>
+      The owner records approved contractor commitments, payment terms and project limits. Splitt
+      proposes an allocation with reasons linked to structured facts. A deterministic validator
+      checks eligibility, cumulative obligations, partial-payment rules, reserves, daily limits and
+      stale state. Optional model planning is labelled separately from the deterministic baseline.
+      The owner reviews the exact recipients and amounts before authorizing a batch.
+    </p>
+    <p>
+      The ProjectVault contract enforces project isolation, single-use execution IDs, atomic payouts
+      and an EIP-712 signature bound to the chain, vault, project version, deadline and ordered
+      payment items. Arc Testnet is the target settlement network. Circle developer-controlled
+      wallet execution, receipt indexing and a PostgreSQL-backed queue are implemented, with
+      recovery tests. A missing provider response keeps the batch unresolved until replay flags can
+      establish its outcome.
+    </p>
+    <p>
+      The local demo demonstrates a 700-USDC full obligation, a permitted 200-USDC partial payment
+      and a protected 300-USDC reserve. When the 800 remainder arrives, the new plan pays only the
+      outstanding 300. These figures are a fixture scenario, not customer activity. A scaled 2-USDC
+      scenario is funded on the deployed Arc vault. Circle contract execution and its receipt are
+      verified; contractor payouts remain gated until 15 October at 4:18 PM Lagos time. No pilot
+      business is currently onboarded.
+    </p>
+    <p>
+      Source verification is independently confirmed by Sourcify with exact creation and runtime
+      bytecode matches. Our next evidence gates are the complete Circle
+      payout-and-remainder flow, a recovery proof and a consenting agency using the workflow. We are
+      not claiming CCTP, yield management or production customer payments.
+    </p>
+  </section>
+  <section>
+    <h2>Links and submission fields</h2>
+    <ul>
+      <li>
+        Public website: <a href="https://splitt-dun.vercel.app/">splitt-dun.vercel.app</a>;
+        <a href="https://splitt-dun.vercel.app/demo">interactive synthetic demo</a> (no wallet or funds moved)
+      </li>
+      <li>
+        Testnet workspace:
+        <a href="http://localhost:3000/testnet">localhost:3000/testnet</a> (configured; owner wallet
+        required)
+      </li>
+      <li>Public repository: not yet published</li>
+      <li>Video: a local 2:40 narrated captured-UI walkthrough draft is rendered; final live demonstration and upload remain pending.</li>
+      <li>
+        Deployed vault:
+        <a href="https://explorer.testnet.arc.io/address/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6"
+          >Arc Testnet vault</a
+        >. <a href="https://repo.sourcify.dev/5042002/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6">Sourcify exact-match source verification</a> confirmed; Arc explorer status separately unconfirmed.
+      </li>
+      <li>
+        Verified Circle execution:
+        <a
+          href="https://explorer.testnet.arc.io/tx/0x39d42d99caea9eeb2e7ab39db2464139bb7e8a42639caf5902a19c0356bbba4f"
+          >operator contract-query receipt</a
+        >
+        (zero transferred value; not a payout).
+      </li>
+      <li>
+        Team name: Splitt. Builder name, GitHub handle and Discord handle require owner-provided
+        details.
+      </li>
+      <li>Businesses onboarded: 0. Real customer payment volume: 0.</li>
+    </ul>
+    <p>
+      <a href="https://tameion.thecanteenapp.com/">Tameion requirements</a>: public repository and
+      recorded video under three minutes; hosted demo encouraged. Deadline: 17 October, 11:59 PM ET
+      (18 October, 4:59 AM Lagos). RFBs are prompts, not separate prize tracks.
+    </p>
+  </section>
+  <section>
+    <h2>Judge setup</h2>
+    <pre>
+npm ci
+npm run dev
+# Open http://localhost:3000/
+npm test
+npm run typecheck
+npm run build</pre>
+    <p>
+      No key is needed for fixture mode. Testnet setup:
+      <a href="testnet-runbook.md">testnet-runbook.md</a>. Pilot plan:
+      <a href="pilot-plan.md">pilot-plan.md</a>.
+    </p>
+  </section>
+  <section>
+    <h2>Demo script · 2 minutes 45 seconds</h2>
+    <ol>
+      <li>
+        <strong>0:00–0:20:</strong> Show invoice 2,000, receipt 1,200 and protected reserve 300.
+        “The invoice is not fully paid, but the work still needs to move.”
+      </li>
+      <li>
+        <strong>0:20–0:45:</strong> Generate the allocation. Explain Amara's full 700, Tobi's
+        permitted partial 200 and the evidence behind both. Show the shortfall explicitly.
+      </li>
+      <li>
+        <strong>0:45–1:10:</strong> Review exact recipients, amounts, chain and deadline. If live
+        evidence is ready, show the real owner authorization and Circle transaction. Otherwise label
+        this scene a local simulation.
+      </li>
+      <li>
+        <strong>1:10–1:40:</strong> Show an interrupted result and recovery of the same batch.
+        Explain why a second payout is blocked.
+      </li>
+      <li>
+        <strong>1:40–2:05:</strong> Add the 800 remainder, then show only Tobi's outstanding 300 in
+        the new plan. Compare the untouched second project.
+      </li>
+      <li>
+        <strong>2:05–2:30:</strong> Show the validator and contract replay guard. Include genuine
+        explorer receipts only after a testnet run.
+      </li>
+      <li>
+        <strong>2:30–2:45:</strong> Show source-separated metrics and the actual pilot status. End
+        with the public demo and repository once published.
+      </li>
+    </ol>
+  </section>
+  <section>
+    <h2>Submission gate</h2>
+    <p>
+      Do not submit this draft as a completed live implementation. Add the public source URL and
+      recorded video, verify the deployed contract and actual transactions, and replace pending
+      fields with evidence. Submit using the organizer's current form after reviewing the final
+      entry.
+    </p>
+  </section>
+</html>

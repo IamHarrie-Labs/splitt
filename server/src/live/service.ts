@@ -1,0 +1,255 @@
+import { randomUUID } from 'node:crypto';
+import { z } from 'zod';
+import { verifyTypedData, type Address, type Hex } from 'viem';
+import {
+  addressSchema,
+  moneySchema,
+  baselinePlan,
+  buildFacts,
+  hashJson,
+  idHash,
+  executionItems,
+  itemsHash,
+  authorizationTypes,
+  validatePlan,
+  type Project,
+} from '@splitt/core';
+import type { LiveRepository } from './repository.js';
+import { batchCalldata, type ArcGateway } from './chain.js';
+import { propose } from '../agent/planner.js';
+import { approvalTypedData } from '../approvals.js';
+import { signatureSchema } from '../auth/routes.js';
+import type { StoredPlan } from '../store.js';
+const hex32 = z.string().regex(/^0x[0-9a-fA-F]{64}$/);
+const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+export const metadataSchema = z
+  .object({
+    id: z.string().min(1).max(100),
+    onchainId: hex32,
+    name: z.string().min(1).max(100),
+    client: z.string().min(1).max(100),
+    clientWallet: addressSchema,
+    invoiceRef: z.string().min(1).max(100),
+    invoiceTotal: moneySchema,
+    commitments: z
+      .array(
+        z
+          .object({
+            id: z.string().min(1),
+            onchainId: hex32,
+            name: z.string().min(1),
+            role: z.string(),
+            payee: addressSchema,
+            maximum: moneySchema,
+            dueDate: date,
+            deferUntil: date.nullable(),
+            accepted: z.boolean(),
+            acceptedAt: date,
+            blocksDelivery: z.boolean(),
+            partialAllowed: z.boolean(),
+            dependsOn: z.string().nullable(),
+          })
+          .strict(),
+      )
+      .max(32),
+  })
+  .strict()
+  .superRefine((p, ctx) => {
+    if (
+      new Set(p.commitments.map((c) => c.id)).size !== p.commitments.length ||
+      new Set(p.commitments.map((c) => c.onchainId.toLowerCase())).size !== p.commitments.length
+    )
+      ctx.addIssue({ code: 'custom', message: 'Commitments must have unique IDs.' });
+  });
+function fail(message: string, statusCode = 409): never {
+  throw Object.assign(new Error(message), { statusCode });
+}
+export class TestnetService {
+  constructor(
+    public repo: LiveRepository,
+    public chain: ArcGateway,
+    public owner: Address,
+    public vault: Address,
+  ) {}
+  async register(input: unknown) {
+    const data = metadataSchema.parse(input);
+    const metadata = {
+      ...data,
+      received: '0',
+      balance: '0',
+      reserve: '0',
+      perPayment: '0',
+      perDay: '0',
+      spentToday: '0',
+      version: 0,
+      paused: false,
+      source: 'fixture',
+      unresolved: false,
+      commitments: data.commitments.map((c) => ({
+        ...c,
+        projectId: data.id,
+        paid: '0',
+        activeAfter: 0,
+        cancelled: false,
+      })),
+    } as Project;
+    await this.chain.verify();
+    const { project } = await this.chain.project(metadata);
+    return this.repo.transaction((s) => {
+      if (
+        s.projects.some(
+          (p) =>
+            p.id === project.id || p.onchainId.toLowerCase() === project.onchainId.toLowerCase(),
+        )
+      )
+        fail('Project already registered.');
+      s.projects.push(project);
+      return project;
+    });
+  }
+  async fresh(id: string) {
+    await this.chain.verify();
+    const state = await this.repo.snapshot();
+    const metadata = state.projects.find((p) => p.id === id) ?? fail('Project not found.', 404);
+    if (
+      state.jobs.some(
+        (j) => j.projectId === id && !['confirmed', 'failed', 'expired'].includes(j.state),
+      )
+    )
+      fail('Resolve the existing batch before preparing another.');
+    const snapshot = await this.chain.project(metadata);
+    return { ...snapshot, facts: buildFacts(snapshot.project, snapshot.now) };
+  }
+  async plan(id: string) {
+    const snapshot = await this.fresh(id);
+    const result = await propose(snapshot.facts);
+    const latest = await this.fresh(id);
+    const validation = validatePlan(
+      result.output,
+      snapshot.facts,
+      latest.facts,
+      baselinePlan(snapshot.facts),
+    );
+    if (!validation.ok || BigInt(validation.total) === 0n)
+      fail('No valid payable allocation. Refresh project facts.');
+    const plan: StoredPlan = {
+      id: randomUUID(),
+      projectId: id,
+      facts: snapshot.facts,
+      factsHash: hashJson(snapshot.facts),
+      planHash: hashJson(result.output),
+      output: result.output,
+      baseline: baselinePlan(snapshot.facts),
+      validation,
+      model: result.model,
+      fallbackUsed: result.fallbackUsed,
+      status: 'awaiting_owner',
+      createdAt: new Date().toISOString(),
+    };
+    await this.repo.transaction((s) => {
+      s.plans
+        .filter((p) => p.projectId === id && p.status === 'awaiting_owner')
+        .forEach((p) => {
+          p.status = 'stale';
+        });
+      s.plans.push(plan);
+    });
+    return plan;
+  }
+  async prepare(id: string) {
+    const plan =
+      (await this.repo.snapshot()).plans.find((p) => p.id === id) ?? fail('Plan not found.', 404);
+    const snapshot = await this.fresh(plan.projectId);
+    if (
+      plan.status !== 'awaiting_owner' ||
+      !validatePlan(plan.output, plan.facts, snapshot.facts, plan.baseline).ok
+    )
+      fail('Plan changed; generate a new proposal.');
+    const items = executionItems(snapshot.project, idHash(plan.id), plan.output);
+    return this.repo.transaction((s) => {
+      const current = s.plans.find((p) => p.id === id)!;
+      if (current.status !== 'awaiting_owner') fail('Plan no longer awaiting review.');
+      if (
+        !current.approval ||
+        BigInt(current.approval.message.deadline) <= BigInt(Math.floor(Date.now() / 1000))
+      )
+        current.approval = {
+          domain: { name: 'Splitt', version: '1', chainId: 5042002, verifyingContract: this.vault },
+          message: {
+            planId: idHash(id),
+            planHash: plan.planHash as Hex,
+            projectId: snapshot.project.onchainId,
+            projectVersion: String(snapshot.project.version),
+            deadline: String(Math.floor(Date.now() / 1000) + 900),
+            itemsHash: itemsHash(items),
+          },
+          items: items.map((i) => ({ ...i, amount: String(i.amount) })),
+        };
+      return {
+        approval: current.approval,
+        types: authorizationTypes,
+        primaryType: 'PlanAuthorization',
+        fixtureOnly: false,
+      };
+    });
+  }
+  async enqueue(id: string, input: unknown) {
+    const signature = signatureSchema.parse(
+      z.object({ signature: signatureSchema }).strict().parse(input).signature,
+    ) as Hex;
+    const plan =
+      (await this.repo.snapshot()).plans.find((p) => p.id === id) ?? fail('Plan not found.', 404);
+    const approval = plan.approval ?? fail('Review the batch first.');
+    if (
+      approval.domain.name !== 'Splitt' ||
+      approval.domain.chainId !== 5042002 ||
+      approval.domain.verifyingContract.toLowerCase() !== this.vault.toLowerCase()
+    )
+      fail('Wrong signing domain.');
+    const snapshot = await this.fresh(plan.projectId);
+    if (
+      !validatePlan(plan.output, plan.facts, snapshot.facts, plan.baseline).ok ||
+      hashJson(plan.output) !== plan.planHash ||
+      hashJson(plan.facts) !== plan.factsHash
+    )
+      fail('Project facts changed. Generate a new proposal.');
+    if (
+      plan.status !== 'awaiting_owner' ||
+      BigInt(approval.message.deadline) <= BigInt(Math.floor(Date.now() / 1000))
+    )
+      fail('Expired or stale plan.');
+    if (
+      !(await verifyTypedData({ ...approvalTypedData(approval), address: this.owner, signature }))
+    )
+      fail('Owner signature invalid.', 403);
+    const signed = { ...approval, signature };
+    await this.chain.simulate(signed);
+    return this.repo.transaction((s) => {
+      if (s.jobs.some((j) => j.id === id)) return s.jobs.find((j) => j.id === id)!;
+      if (
+        s.jobs.some(
+          (j) =>
+            j.projectId === plan.projectId && !['confirmed', 'failed', 'expired'].includes(j.state),
+        )
+      )
+        fail('Project already has a pending batch.');
+      const current = s.plans.find((p) => p.id === id)!;
+      if (current.status !== 'awaiting_owner' || hashJson(current.approval) !== hashJson(approval))
+        fail('Review changed; sign again.');
+      current.approval = signed;
+      current.status = 'unresolved';
+      const job = {
+        id,
+        projectId: plan.projectId,
+        approval: signed,
+        callData: batchCalldata(signed),
+        state: 'queued' as const,
+        attempted: false,
+        leaseUntil: 0,
+        attempts: 0,
+      };
+      s.jobs.push(job);
+      return job;
+    });
+  }
+}

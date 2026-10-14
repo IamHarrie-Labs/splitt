@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: splitt
+      POSTGRES_PASSWORD: splitt
+      POSTGRES_DB: splitt
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: ["splitt-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U splitt"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+volumes:
+  splitt-data:

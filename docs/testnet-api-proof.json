@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-10-14T15:26:15.793Z",
+  "mode": "arc-testnet",
+  "authenticated": true,
+  "vault": "0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6",
+  "northstarBalance": "1200000",
+  "fieldworkBalance": "1000000",
+  "eventsIndexed": 4,
+  "nextBlock": "67180268",
+  "payoutActivationAt": "2026-10-15T15:18:53.000Z"
+}

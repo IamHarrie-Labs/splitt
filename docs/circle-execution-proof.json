@@ -1,0 +1,9 @@
+{
+  "vault": "0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6",
+  "providerId": "e69e2e2b-fc72-5276-9205-cc9d3e609ed5",
+  "receiptVerified": true,
+  "payout": false,
+  "checkedAt": "2026-10-14T15:26:03.271Z",
+  "state": "COMPLETE",
+  "txHash": "0x39d42d99caea9eeb2e7ab39db2464139bb7e8a42639caf5902a19c0356bbba4f"
+}
