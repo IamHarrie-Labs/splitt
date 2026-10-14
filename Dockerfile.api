@@ -11,6 +11,7 @@ COPY contracts/src contracts/src
 COPY tsconfig.json ./
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
+ENV SPLITT_MODE=arc-testnet
 EXPOSE 4000
 USER node
 CMD ["./node_modules/.bin/tsx", "server/src/index.ts"]

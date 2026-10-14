@@ -13,6 +13,8 @@ import { TestnetService } from './service.js';
 import { circleOperator } from '../circle/operator.js';
 import { workerTick, indexReceipts } from './worker.js';
 export async function startTestnet() {
+  if (['OWNER_ADDRESS', 'VAULT_ADDRESS', 'OPERATOR_ADDRESS', 'DATABASE_URL', 'VAULT_DEPLOYMENT_BLOCK'].some(name => !process.env[name]))
+    throw new Error('Missing testnet configuration. Set owner, vault, operator, database and deployment block.');
   const owner = addressSchema.parse(process.env.OWNER_ADDRESS) as Address,
     vault = addressSchema.parse(process.env.VAULT_ADDRESS) as Address,
     operator = addressSchema.parse(process.env.OPERATOR_ADDRESS) as Address;

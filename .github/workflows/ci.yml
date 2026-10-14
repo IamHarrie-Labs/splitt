@@ -1,0 +1,38 @@
+name: Verify Splitt
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  app:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run planner:eval
+      - run: npm run build
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - run: docker build -f Dockerfile.api -t splitt-api:ci .
+      - name: Confirm missing credentials prevent startup
+        run: |
+          if docker run --rm splitt-api:ci > /tmp/splitt-startup.log 2>&1; then
+            echo "Unexpected startup without required testnet configuration"
+            exit 1
+          fi
+          grep -q "Missing testnet configuration" /tmp/splitt-startup.log

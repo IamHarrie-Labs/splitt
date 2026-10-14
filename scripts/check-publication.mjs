@@ -2,7 +2,7 @@ import { readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('..', import.meta.url));
-const entries = ['.dockerignore','.env.example','.gitignore','.vercelignore','.prettierrc.json','LICENSE','README.md','brand.md','compose.yaml','Dockerfile.api','package.json','package-lock.json','tsconfig.json','vitest.config.ts','contracts','docs','fixtures','packages','scripts','server','tests','video','web'];
+const entries = ['.github','.dockerignore','.env.example','.gitignore','.vercelignore','.prettierrc.json','LICENSE','README.md','brand.md','compose.yaml','Dockerfile.api','package.json','package-lock.json','tsconfig.json','vitest.config.ts','contracts','docs','fixtures','packages','scripts','server','tests','video','web'];
 const skip = new Set(['node_modules','.next','.secrets','.data','out','cache','coverage']);
 const files = [];
 async function visit(relative) {
