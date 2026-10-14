@@ -2,7 +2,7 @@
 
 A project payment workspace for agencies. When a client pays part of an invoice, Splitt proposes which approved contractors can be paid, protects the project reserve, and explains what remains unpaid.
 
-[Public website](https://splitt-dun.vercel.app) · [Interactive synthetic demo](https://splitt-dun.vercel.app/demo). The authenticated testnet API/worker currently runs locally; the hosted demo cannot move funds.
+[Public website](https://splitt-dun.vercel.app) · [Interactive synthetic demo](https://splitt-dun.vercel.app/demo) · [Source repository](https://github.com/IamHarrie-Labs/splitt). The authenticated testnet API/worker currently runs locally; the hosted demo cannot move funds.
 
 ## Current build
 

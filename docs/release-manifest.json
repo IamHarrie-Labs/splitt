@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-10-14T16:42:47.601Z",
+  "checkedAt": "2026-10-14T16:46:57.648Z",
   "secretScanPassed": true,
-  "fileCount": 155,
+  "fileCount": 156,
   "files": [
     ".dockerignore",
     ".env.example",
@@ -53,6 +53,7 @@
     "docs/testnet-transactions.json",
     "docs/vercel-deployment.json",
     "docs/vercel-project-settings.json",
+    "docs/video-release-notes.md",
     "fixtures/demo-scenario.json",
     "fixtures/hash-vectors.json",
     "package-lock.json",

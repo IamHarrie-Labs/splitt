@@ -8,7 +8,8 @@
 - Ten offline evaluation cases pass. Live evaluator records input/output hashes, request/correction counts, fallback and allocation comparison; no real model outputs claimed. `planner-evaluation-offline.json` is the current result.
 - Web app published on Vercel at https://splitt-dun.vercel.app with a public /demo. Unauthenticated access and hosted allocation/remainder flow verified. Persistent API container definition and publication runbook prepared; API/worker still local. Production Next.js build, strict typing and 35 planner/worker/service regression tests pass. Docker container remains unverified locally.
 - Narrated video draft rendered at `video/out/splitt-walkthrough-draft.mp4`: 2:40, 1080p H.264/AAC. Captured UI states and proof frames inspected. This is a motion-graphics/captured-UI draft, not the final continuous live demonstration. Final video needs tomorrow's payout proof, public URLs and pilot/model results.
-- Still required: contractor activation on 15 October at 16:18:53 Lagos, full chain payout/remainder and recovery proof, live model evaluation, consenting business pilot, GitHub publication, hosted live API/worker, final recorded video and submission. GitHub CLI is installed; device sign-in is pending.
+- Source published at https://github.com/IamHarrie-Labs/splitt after a local credential scan. GitHub CLI authenticated through the user's device authorization; commits use the account's public noreply email.
+- Still required: contractor activation on 15 October at 16:18:53 Lagos, full chain payout/remainder and recovery proof, live model evaluation, consenting business pilot, hosted live API/worker, final demo evidence and submission.
 
 ## Arc connection verified on 14 October 2026
 
