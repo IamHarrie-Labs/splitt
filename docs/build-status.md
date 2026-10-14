@@ -9,6 +9,7 @@
 - Web app published on Vercel at https://splitt-dun.vercel.app with a public /demo. Unauthenticated access and hosted allocation/remainder flow verified. Persistent API container definition and publication runbook prepared; API/worker still local. Production Next.js build, strict typing and 35 planner/worker/service regression tests pass. Docker container remains unverified locally.
 - Narrated video draft rendered at `video/out/splitt-walkthrough-draft.mp4`: 2:40, 1080p H.264/AAC. Captured UI states and proof frames inspected. This is a motion-graphics/captured-UI draft, not the final continuous live demonstration. Final video needs tomorrow's payout proof, public URLs and pilot/model results.
 - Source published at https://github.com/IamHarrie-Labs/splitt after a local credential scan. GitHub CLI authenticated through the user's device authorization; commits use the account's public noreply email.
+- Walkthrough and captions uploaded as an explicitly labelled prerelease: https://github.com/IamHarrie-Labs/splitt/releases/tag/v0.1.0-preview. Its closing publication status reflects the earlier capture; public site/repository links now supersede it.
 - Still required: contractor activation on 15 October at 16:18:53 Lagos, full chain payout/remainder and recovery proof, live model evaluation, consenting business pilot, hosted live API/worker, final demo evidence and submission.
 
 ## Arc connection verified on 14 October 2026

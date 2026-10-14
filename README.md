@@ -4,6 +4,8 @@ A project payment workspace for agencies. When a client pays part of an invoice,
 
 [Public website](https://splitt-dun.vercel.app) · [Interactive synthetic demo](https://splitt-dun.vercel.app/demo) · [Source repository](https://github.com/IamHarrie-Labs/splitt). The authenticated testnet API/worker currently runs locally; the hosted demo cannot move funds.
 
+[2:40 walkthrough preview and captions](https://github.com/IamHarrie-Labs/splitt/releases/tag/v0.1.0-preview). This captured-UI preview predates publication; its closing localhost URL is superseded by the public demo above. Final payout/model/pilot evidence remains pending.
+
 ## Current build
 
 The public `/demo` runs the deterministic allocation engine in the browser with synthetic data. The authenticated `/testnet` workspace connects to Arc balances, a PostgreSQL queue and Circle execution. The vault is deployed at `0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6`; [Sourcify confirms exact creation/runtime bytecode matches](https://repo.sourcify.dev/5042002/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6). A real Circle contract query is confirmed, with zero transferred value. **Contractor payouts remain gated until 15 October 2026, 16:18:53 Lagos.** Live model evaluation and real pilot adoption remain pending. Fixture amounts do not count as adoption.
