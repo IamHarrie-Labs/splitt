@@ -1,0 +1,71 @@
+name: splitt
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: splitt
+      POSTGRES_DB: splitt
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set a random database password}
+    volumes: [splitt-postgres:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U splitt -d splitt]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    logging:
+      driver: json-file
+      options: { max-size: 10m, max-file: '3' }
+  migrate:
+    build: { context: ., dockerfile: Dockerfile.api }
+    environment:
+      DATABASE_URL: postgres://splitt:${POSTGRES_PASSWORD:?Set a random database password}@postgres:5432/splitt
+    command: [./node_modules/.bin/tsx, server/src/db/migrate.ts]
+    depends_on:
+      postgres: { condition: service_healthy }
+  api:
+    build: { context: ., dockerfile: Dockerfile.api }
+    restart: unless-stopped
+    env_file: ${SPLITT_VPS_ENV_FILE:-server/.secrets/vps.env}
+    environment:
+      DATABASE_URL: postgres://splitt:${POSTGRES_PASSWORD:?Set a random database password}@postgres:5432/splitt
+      HOST: 0.0.0.0
+      PORT: '4000'
+      SPLITT_MODE: arc-testnet
+      SPLITT_TESTNET_CONFIRM: arc-testnet
+    ports: [127.0.0.1:4400:4000]
+    depends_on:
+      postgres: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
+    healthcheck:
+      test:
+        [
+          CMD,
+          node,
+          -e,
+          "fetch('http://127.0.0.1:4000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+    logging:
+      driver: json-file
+      options: { max-size: 10m, max-file: '3' }
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    profiles: [tls]
+    environment:
+      SPLITT_API_DOMAIN: ${SPLITT_API_DOMAIN:?Set the API domain}
+    ports: [80:80, 443:443, 443:443/udp]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - splitt-caddy-data:/data
+      - splitt-caddy-config:/config
+    depends_on:
+      api: { condition: service_healthy }
+volumes:
+  splitt-postgres:
+  splitt-caddy-data:
+  splitt-caddy-config:

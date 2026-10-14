@@ -2,7 +2,7 @@
 
 Version 3, 3 October 2026. Replaces version 2 of this file.
 Status: **approved for implementation.** Core architecture and safety decisions are closed. External integrations remain behind the explicit gates in section 14. No pilot is confirmed.
-Implementation progress is tracked in `build-status.md`. The loopback workflow supports file fixtures or authenticated Postgres fixtures, owner sessions and exact fixture signatures. A separate Arc Testnet runtime now implements receipt indexing, chain-derived balances, Circle execution queueing and recovery. External testnet proof remains gated on credentials, database configuration, funding and deployment; see `testnet-runbook.md`. Fixture signatures use `Splitt Fixture`; the contract domain remains `Splitt`.
+Implementation progress is tracked in `build-status.md`. The loopback workflow supports file fixtures or authenticated Postgres fixtures, owner sessions and exact fixture signatures. A separate Arc Testnet runtime implements receipt indexing, chain-derived balances, Circle execution queueing and recovery. Credentials, PostgreSQL, funding, deployment, source verification and a Circle contract query are verified as of 14 October. Full payout/remainder proof remains gated until contractor activation on 15 October at 16:18:53 Lagos; cloud API hosting and a real pilot remain pending. See `testnet-runbook.md`. Fixture signatures use `Splitt Fixture`; the contract domain remains `Splitt`.
 Name: **Splitt.** Brand, domain, trademark, and social-handle availability have not been verified. The product can be renamed without changing the architecture.
 
 How to read this file:

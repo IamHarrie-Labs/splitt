@@ -1,6 +1,14 @@
 # Splitt build status
 
-## Release preparation on 14 October 2026
+## Current release checks on 14 October 2026
+
+- Arc explorer now returns verified source code; updated arc-verification.json. Sourcify retains exact creation/runtime matches.
+- GitHub CI run 38646240952 passed the complete tests, strict typing, offline evaluation, web build, API Docker build and missing-configuration startup refusal.
+- Added optional Vercel Gateway model access and synthetic live evaluation with a zero-price catalog guard. Initial run accepted 3/10 responses; remaining cases safely fell back due to rejected output or HTTP 429. A spaced follow-up run is in progress; no superiority over the baseline is claimed.
+- Four isolated model-adapter safety tests and strict typing pass. VPS Compose configuration validates with public placeholders; no VPS deployment has occurred.
+- Owner will fill the submission form and seek a real pilot. Submission copy and VPS runbook are prepared; SSH/domain details remain required.
+
+## Earlier release preparation on 14 October 2026
 
 - Sourcify independently confirms exact creation/runtime bytecode matches for the deployed vault. Evidence: `sourcify-verification.json`; Arc explorer status remains separately unconfirmed.
 - Public `/demo` runs the allocation engine entirely in the browser, with synthetic fixtures and explicitly simulated settlement. Landing CTAs now open this accessible demo; owner testnet operations retain authentication.

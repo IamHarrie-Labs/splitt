@@ -70,5 +70,7 @@ for (let attempt = 0; !verified && state.guid && attempt < 2; attempt++) {
   await new Promise((resolve) => setTimeout(resolve, 6000));
 }
 state.verified = verified;
-await writeFile(file, JSON.stringify({ ...state, checkedAt: new Date().toISOString() }, null, 2));
-console.log(JSON.stringify(state, null, 2));
+if (verified) state.response = 'Verified source code returned by the Arc explorer.';
+const result = { ...state, checkedAt: new Date().toISOString() };
+await writeFile(file, JSON.stringify(result, null, 2));
+console.log(JSON.stringify(result, null, 2));

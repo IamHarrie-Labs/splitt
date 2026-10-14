@@ -29,6 +29,10 @@ jobs:
         with:
           persist-credentials: false
       - run: docker build -f Dockerfile.api -t splitt-api:ci .
+      - name: Validate VPS configuration with public placeholders
+        env:
+          SPLITT_VPS_ENV_FILE: docs/vps.env.example
+        run: docker compose --env-file docs/vps.env.example -f compose.vps.yaml --profile tls config --quiet
       - name: Confirm missing credentials prevent startup
         run: |
           if docker run --rm splitt-api:ci > /tmp/splitt-startup.log 2>&1; then

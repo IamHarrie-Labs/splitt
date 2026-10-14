@@ -8,7 +8,7 @@ A project payment workspace for agencies. When a client pays part of an invoice,
 
 ## Current build
 
-The public `/demo` runs the deterministic allocation engine in the browser with synthetic data. The authenticated `/testnet` workspace connects to Arc balances, a PostgreSQL queue and Circle execution. The vault is deployed at `0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6`; [Sourcify confirms exact creation/runtime bytecode matches](https://repo.sourcify.dev/5042002/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6). A real Circle contract query is confirmed, with zero transferred value. **Contractor payouts remain gated until 15 October 2026, 16:18:53 Lagos.** Live model evaluation and real pilot adoption remain pending. Fixture amounts do not count as adoption.
+The public `/demo` runs the deterministic allocation engine in the browser with synthetic data. The authenticated `/testnet` workspace connects to Arc balances, a PostgreSQL queue and Circle execution. The vault is deployed at `0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6`; [Sourcify confirms exact creation/runtime bytecode matches](https://repo.sourcify.dev/5042002/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6). A real Circle contract query is confirmed, with zero transferred value. **Contractor payouts remain gated until 15 October 2026, 16:18:53 Lagos.** Live model evaluation has exercised a zero-priced gateway model; rejected/rate-limited responses safely fall back, and model reliability remains under evaluation. Real pilot adoption remains pending. Fixture amounts do not count as adoption.
 
 Implemented:
 
@@ -39,7 +39,7 @@ Open [localhost:3000](http://localhost:3000). The API binds to `127.0.0.1:4000`.
 
 The browser and API expect the same origin, `http://localhost:3000`. Use that URL instead of `http://127.0.0.1:3000` when submitting forms. To change it, copy `.env.example` to `.env` and edit `WEB_ORIGIN`. Keys belong only in the root `.env` or a host secret store, never a browser form.
 
-Optional AI: set `ANTHROPIC_API_KEY` and an account-available `PLANNER_MODEL` in `.env`, then restart the server. Without both, plans are clearly labelled **Deterministic baseline**. There are no automatic external messages.
+Optional AI: set `ANTHROPIC_API_KEY` and an account-available `PLANNER_MODEL`, or `PLANNER_PROVIDER=vercel-gateway`, `AI_GATEWAY_API_KEY` and `PLANNER_MODEL`, in server-only configuration, then restart the server. Without the selected credential and model, plans are clearly labelled **Deterministic baseline**. There are no automatic external messages.
 
 ## Walk through the demo
 
@@ -104,15 +104,15 @@ flowchart LR
   Reconciler -.-> DB[Postgres]
 ```
 
-## Next implementation gates
+## Remaining release gates
 
-1. Fund owner/operator testnet wallets; deploy and verify the vault; record its deployment block.
-2. Verify standalone Postgres persistence and concurrent processes; add a chain event indexer with idempotent cursors.
-3. Check the authenticated owner against the deployed vault and prepare live authorizations from fresh Arc state.
-4. Queue live signed batches through the Circle SDK adapter; reconcile against receipts, events and replay flags.
-5. Run real Arc fault injections. Then attempt CCTP receipt/intent matching and a real pilot.
+1. Execute the prepared Circle payout, remainder and recovery proof after 15 October at 16:18:53 Lagos.
+2. Deploy the API and PostgreSQL on the owner's VPS; verify HTTPS, signed owner access and worker restart recovery. See [VPS deployment](docs/vps-deployment.md).
+3. Establish reliable real-model behavior and report validation/fallback rates honestly.
+4. Onboard one consenting business with real invoice and contractor facts; synthetic scenarios stay excluded from adoption.
+5. Refresh the video with final evidence, upload to Loom/YouTube/Vimeo and complete the organizer's form. [Submission copy](docs/submission-copy.md) is ready for the owner.
 
-CCTP, USYC, document extraction, contractor share links and public deployment have not been implemented. Optional integrations remain gated by `docs/project-spec.md`. No pilot or mainnet readiness is claimed.
+CCTP, USYC, document extraction and contractor share links remain optional/unimplemented. Integrations stay gated by `docs/project-spec.md`. No pilot or mainnet readiness is claimed.
 
 ## Security boundaries
 

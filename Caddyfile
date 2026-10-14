@@ -1,0 +1,3 @@
+{$SPLITT_API_DOMAIN} {
+  reverse_proxy api:4000
+}

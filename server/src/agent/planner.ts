@@ -2,24 +2,44 @@ import Anthropic from '@anthropic-ai/sdk';
 import {
   baselinePlan,
   planOutputSchema,
+  reasonCodes,
   validatePlan,
   type Facts,
   type PlanOutput,
 } from '@splitt/core';
 export async function propose(
   facts: Facts,
-): Promise<{ output: PlanOutput; model: string; fallbackUsed: boolean; attempts: number; correctionCount: number }> {
+): Promise<{
+  output: PlanOutput;
+  model: string;
+  fallbackUsed: boolean;
+  attempts: number;
+  correctionCount: number;
+  failureCodes?: string[];
+}> {
   const baseline = baselinePlan(facts);
-  if (!process.env.ANTHROPIC_API_KEY || !process.env.PLANNER_MODEL)
-    return { output: baseline, model: 'Deterministic baseline', fallbackUsed: true, attempts: 0, correctionCount: 0 };
+  const gateway = process.env.PLANNER_PROVIDER === 'vercel-gateway';
+  const apiKey = gateway
+    ? process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN
+    : process.env.ANTHROPIC_API_KEY;
+  if (!apiKey || !process.env.PLANNER_MODEL)
+    return {
+      output: baseline,
+      model: 'Deterministic baseline',
+      fallbackUsed: true,
+      attempts: 0,
+      correctionCount: 0,
+    };
   const client = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY,
+    apiKey,
+    ...(gateway ? { baseURL: 'https://ai-gateway.vercel.sh' } : {}),
     timeout: 20000,
     maxRetries: 0,
   });
   let correction = '';
   let attempts = 0;
   let correctionCount = 0;
+  const failureCodes: string[] = [];
   try {
     for (let attempt = 0; attempt < 2; attempt++) {
       attempts++;
@@ -57,9 +77,13 @@ export async function propose(
                       commitment_id: { type: 'string' },
                       action: { type: 'string', enum: ['pay', 'defer'] },
                       amount_micro: { type: 'string', pattern: '^(0|[1-9][0-9]*)$' },
-                      reason_codes: { type: 'array', items: { type: 'string' } },
-                      fact_refs: { type: 'array', items: { type: 'string' } },
-                      explanation: { type: 'string', maxLength: 400 },
+                      reason_codes: {
+                        type: 'array',
+                        minItems: 1,
+                        items: { type: 'string', enum: [...reasonCodes] },
+                      },
+                      fact_refs: { type: 'array', minItems: 1, items: { type: 'string' } },
+                      explanation: { type: 'string', minLength: 1, maxLength: 400 },
                     },
                   },
                 },
@@ -85,12 +109,29 @@ export async function propose(
       if (parsed.success) {
         const validation = validatePlan(parsed.data, facts, facts, baseline);
         if (validation.ok)
-          return { output: parsed.data, model: process.env.PLANNER_MODEL, fallbackUsed: false, attempts, correctionCount };
+          return {
+            output: parsed.data,
+            model: process.env.PLANNER_MODEL,
+            fallbackUsed: false,
+            attempts,
+            correctionCount,
+          };
         correction = JSON.stringify(validation.errors);
-      } else correction = 'Return only fields matching the tool schema.';
+        failureCodes.push('VALIDATION_REJECTED');
+      } else {
+        correction = 'Return only fields matching the tool schema.';
+        failureCodes.push(
+          tool ? 'SCHEMA_REJECTED' : `TOOL_MISSING_${response.stop_reason ?? 'UNKNOWN'}`,
+        );
+      }
       correctionCount++;
     }
-  } catch {
+  } catch (error) {
+    failureCodes.push(
+      error instanceof Anthropic.APIError
+        ? `PROVIDER_HTTP_${error.status ?? 'UNKNOWN'}`
+        : 'PROVIDER_UNAVAILABLE',
+    );
     /* A provider outage cannot bypass validation or owner review. */
   }
   return {
@@ -99,5 +140,6 @@ export async function propose(
     fallbackUsed: true,
     attempts,
     correctionCount,
+    failureCodes,
   };
 }
