@@ -2,7 +2,7 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import { ZodError } from 'zod';
-import { addressSchema } from '@splitt/core';
+import { addressSchema, hashJson } from '@splitt/core';
 import type { Address } from 'viem';
 import { connectDatabase } from '../db/driver.js';
 import { PostgresAuthRepository } from '../auth/repository.js';
@@ -12,9 +12,21 @@ import { arcGateway } from './chain.js';
 import { TestnetService } from './service.js';
 import { circleOperator } from '../circle/operator.js';
 import { workerTick, indexReceipts } from './worker.js';
+import { draftReceipts } from '../agent/receipt-drafts.js';
+import { analyzePaymentNote, paymentNoteInput } from '../agent/payment-notes.js';
 export async function startTestnet() {
-  if (['OWNER_ADDRESS', 'VAULT_ADDRESS', 'OPERATOR_ADDRESS', 'DATABASE_URL', 'VAULT_DEPLOYMENT_BLOCK'].some(name => !process.env[name]))
-    throw new Error('Missing testnet configuration. Set owner, vault, operator, database and deployment block.');
+  if (
+    [
+      'OWNER_ADDRESS',
+      'VAULT_ADDRESS',
+      'OPERATOR_ADDRESS',
+      'DATABASE_URL',
+      'VAULT_DEPLOYMENT_BLOCK',
+    ].some((name) => !process.env[name])
+  )
+    throw new Error(
+      'Missing testnet configuration. Set owner, vault, operator, database and deployment block.',
+    );
   const owner = addressSchema.parse(process.env.OWNER_ADDRESS) as Address,
     vault = addressSchema.parse(process.env.VAULT_ADDRESS) as Address,
     operator = addressSchema.parse(process.env.OPERATOR_ADDRESS) as Address;
@@ -93,6 +105,40 @@ export async function startTestnet() {
     };
   });
   app.post('/testnet/projects', async (req) => service.register(req.body));
+  app.post<{ Params: { id: string } }>('/testnet/notifications/:id/read', async (req) =>
+    repo.transaction((state) => {
+      const notification = state.notifications?.find((n) => n.id === req.params.id);
+      if (!notification)
+        throw Object.assign(new Error('Notification not found.'), { statusCode: 404 });
+      notification.readAt ??= new Date().toISOString();
+      return notification;
+    }),
+  );
+  app.post(
+    '/testnet/payment-notes',
+    { config: { rateLimit: { max: 10, timeWindow: '1 minute' } } },
+    async (req) => {
+      const input = paymentNoteInput.parse(req.body);
+      const state = await repo.snapshot();
+      const existing = state.paymentNotes?.find(
+        (n) => n.eventId === input.eventId && n.noteHash === hashJson(input.note),
+      );
+      if (existing) return existing;
+      const event = state.events.find((e) => e.id === input.eventId);
+      if (!event || !['PaymentReceived', 'PaymentAttributed', 'Transfer'].includes(event.name))
+        throw Object.assign(new Error('Choose an indexed receipt first.'), { statusCode: 400 });
+      const result = await analyzePaymentNote(input.note, event, state.projects);
+      return repo.transaction((s) => {
+        const notes = (s.paymentNotes ??= []);
+        const duplicate = notes.find(
+          (n) => n.eventId === result.eventId && n.noteHash === result.noteHash,
+        );
+        if (duplicate) return duplicate;
+        notes.push(result);
+        return result;
+      });
+    },
+  );
   app.get<{ Params: { id: string } }>('/testnet/projects/:id', async (req) =>
     service.fresh(req.params.id),
   );
@@ -113,6 +159,7 @@ export async function startTestnet() {
     try {
       await indexReceipts(repo, chain);
       await workerTick(repo, chain, provider);
+      await draftReceipts(service);
     } catch {
       app.log.warn('Testnet worker retry pending; no new batch created.');
     } finally {

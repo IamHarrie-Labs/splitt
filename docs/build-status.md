@@ -1,5 +1,10 @@
 # Splitt build status
 
+## Latest update — 16 October 2026
+
+Receipt-triggered allocation drafts, durable leases/retries, in-app notifications, payment-note evidence checks and a participant-owned `/pilot` workflow are implemented. All 94 automated tests passed across 11 suites: 80 application tests plus 14 contract tests rerun with normal temporary-file permissions after a sandbox-only Ganache database rename denial. Strict type checking and the production build including `/pilot` passed. A ten-case synthetic note-reader evaluation scored 9/10 with model plus fallback versus 7/10 literal matching, with four model responses used. GitHub is connected to Vercel for automatic deployment. Public owner API hosting, a verified business participant and a current recorded submission video remain pending. Browser/mobile visual QA remains unavailable. See `agent-upgrade-release.md`; historical entries below retain their original dates and are superseded by this update.
+
+
 ## Payout proof on 15 October 2026
 
 - Ran `testnet:prove --recovery` after contractor activation. All three vault transactions succeeded on Arc Testnet: first batch 0.7 + 0.2 USDC (0x938ea7d6370c06d25daf6c73493e5c43f304abf9938563b7bd934325edaebdc5, block 67349681), 0.8 remainder deposit (0xde2ce4f47108ab118ef30b7dd835b7da7dae60ed7b83504ead5011acddd35c6d, block 67349716), final 0.3 payout (0x098fa70efda77e5f22396521bce7d5ccdeb3bbbaab8997e9ae8551a0ceb32881, block 67349747).

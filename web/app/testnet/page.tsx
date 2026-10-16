@@ -44,6 +44,24 @@ export default function TestnetWorkspace() {
       .then((data) => setMode(data.mode))
       .catch(() => setMode('unavailable'));
   }, []);
+  useEffect(() => {
+    if (!csrf || busy || mode !== 'arc-testnet') return;
+    let active = true;
+    const timer = setInterval(() => {
+      void api<Workspace>('/testnet/workspace')
+        .then((data) => {
+          if (active) setWorkspace(data);
+        })
+        .catch(() => {
+          if (active)
+            setError('Could not refresh receipt status. Refresh before reviewing a payment.');
+        });
+    }, 10000);
+    return () => {
+      active = false;
+      clearInterval(timer);
+    };
+  }, [csrf, busy, mode]);
   async function refresh() {
     setWorkspace(await api<Workspace>('/testnet/workspace'));
   }
@@ -146,6 +164,113 @@ export default function TestnetWorkspace() {
                   Refresh receipts and settlement
                 </button>
                 <section className="panel" style={{ padding: 24, marginTop: 24 }}>
+                  <h2>Receipt activity</h2>
+                  <p>
+                    Attributed receipts automatically trigger a draft. Payments still require your
+                    signature.
+                  </p>
+                  {(workspace.notifications ?? [])
+                    .filter((n) => !n.readAt)
+                    .map((n) => (
+                      <article key={n.id} className="receipt-notification">
+                        <p>{n.message}</p>
+                        {n.planId && <a href="#allocation-proposals">Review allocation</a>}
+                        <button
+                          className="button secondary"
+                          disabled={busy}
+                          onClick={() =>
+                            void run(async () => {
+                              await api(
+                                `/testnet/notifications/${encodeURIComponent(n.id)}/read`,
+                                {},
+                              );
+                              await refresh();
+                            })
+                          }
+                        >
+                          Mark as read
+                        </button>
+                      </article>
+                    ))}
+                  {(workspace.receiptDrafts ?? []).map((task) => (
+                    <p key={task.id}>
+                      {workspace.projects.find((p) => p.id === task.projectId)?.name}:{' '}
+                      {task.state === 'done'
+                        ? 'Draft prepared'
+                        : task.state === 'needs_review'
+                          ? 'Owner review needed'
+                          : 'Draft pending'}
+                    </p>
+                  ))}
+                  <h3>Read a client payment note</h3>
+                  <p>
+                    Choose an indexed receipt. The suggested invoice match does not change balances
+                    or authorize payment.
+                  </p>
+                  <form
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      const data = new FormData(event.currentTarget);
+                      void run(async () => {
+                        await api('/testnet/payment-notes', {
+                          eventId: data.get('eventId'),
+                          note: data.get('note'),
+                        });
+                        await refresh();
+                      });
+                    }}
+                  >
+                    <label htmlFor="note-receipt">Receipt</label>
+                    <select id="note-receipt" name="eventId" required defaultValue="">
+                      <option value="" disabled>
+                        Select a receipt
+                      </option>
+                      {workspace.events
+                        .filter((e) =>
+                          ['PaymentReceived', 'PaymentAttributed', 'Transfer'].includes(e.name),
+                        )
+                        .map((e) => (
+                          <option key={e.id} value={e.id}>
+                            {e.name} · {formatUSDC(e.args.amount ?? e.args.value ?? '0')} USDC ·{' '}
+                            {e.txHash.slice(0, 10)}
+                          </option>
+                        ))}
+                    </select>
+                    <label htmlFor="payment-note">Client’s note</label>
+                    <textarea
+                      id="payment-note"
+                      name="note"
+                      required
+                      minLength={3}
+                      maxLength={2000}
+                      rows={3}
+                    />
+                    <button className="button secondary" disabled={busy}>
+                      Suggest invoice match
+                    </button>
+                  </form>
+                  {(workspace.paymentNotes ?? [])
+                    .slice(-5)
+                    .reverse()
+                    .map((note) => (
+                      <article key={note.id} className="receipt-notification">
+                        <h3>
+                          {note.status === 'suggested_match'
+                            ? `Suggested: ${note.invoiceRef}`
+                            : 'Match needs review'}
+                        </h3>
+                        <p>
+                          {note.model}
+                          {note.fallbackUsed ? ' · model not used' : ''}
+                        </p>
+                        {note.remainderQuote && (
+                          <p>Client statement, unverified: “{note.remainderQuote}”</p>
+                        )}
+                        {!!note.issues.length && <p>{note.issues.join(', ')}</p>}
+                      </article>
+                    ))}
+                </section>
+                <section className="panel" style={{ padding: 24, marginTop: 24 }}>
                   <h2>Projects</h2>
                   {workspace.projects.length === 0 && (
                     <p>
@@ -233,7 +358,7 @@ export default function TestnetWorkspace() {
                   </form>
                 </section>
                 <section className="panel" style={{ padding: 24, marginTop: 24 }}>
-                  <h2>Allocation proposals</h2>
+                  <h2 id="allocation-proposals">Allocation proposals</h2>
                   {workspace.plans.map((p) => (
                     <article
                       key={p.id}

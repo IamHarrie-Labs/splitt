@@ -70,6 +70,7 @@ export class TestnetService {
     public chain: ArcGateway,
     public owner: Address,
     public vault: Address,
+    private planner: typeof propose = propose,
   ) {}
   async register(input: unknown) {
     const data = metadataSchema.parse(input);
@@ -120,9 +121,19 @@ export class TestnetService {
     const snapshot = await this.chain.project(metadata);
     return { ...snapshot, facts: buildFacts(snapshot.project, snapshot.now) };
   }
-  async plan(id: string) {
+  async plan(id: string, trigger?: { receiptId: string; leaseToken: string }) {
     const snapshot = await this.fresh(id);
-    const result = await propose(snapshot.facts);
+    const reusable =
+      trigger &&
+      (await this.repo.snapshot()).plans.find(
+        (p) =>
+          p.projectId === id &&
+          p.status === 'awaiting_owner' &&
+          p.factsHash === hashJson(snapshot.facts),
+      );
+    const result = reusable
+      ? { output: reusable.output, model: reusable.model, fallbackUsed: reusable.fallbackUsed }
+      : await this.planner(snapshot.facts);
     const latest = await this.fresh(id);
     const validation = validatePlan(
       result.output,
@@ -147,12 +158,46 @@ export class TestnetService {
       createdAt: new Date().toISOString(),
     };
     await this.repo.transaction((s) => {
-      s.plans
-        .filter((p) => p.projectId === id && p.status === 'awaiting_owner')
-        .forEach((p) => {
-          p.status = 'stale';
-        });
-      s.plans.push(plan);
+      if (
+        s.jobs.some(
+          (j) => j.projectId === id && !['confirmed', 'failed', 'expired'].includes(j.state),
+        )
+      )
+        fail('Resolve the existing batch before preparing another.');
+      const task = trigger && s.receiptDrafts?.find((t) => t.id === trigger.receiptId);
+      if (trigger && (!task || task.leaseToken !== trigger.leaseToken || task.state !== 'working'))
+        fail('Receipt planning lease changed.');
+      const existing =
+        trigger &&
+        s.plans.find(
+          (p) =>
+            p.projectId === id && p.status === 'awaiting_owner' && p.factsHash === plan.factsHash,
+        );
+      if (existing) Object.assign(plan, existing);
+      else {
+        s.plans
+          .filter((p) => p.projectId === id && p.status === 'awaiting_owner')
+          .forEach((p) => {
+            p.status = 'stale';
+          });
+        s.plans.push(plan);
+      }
+      if (task) {
+        task.state = 'done';
+        task.planId = plan.id;
+        task.leaseUntil = 0;
+        delete task.lastError;
+        const notifications = (s.notifications ??= []);
+        if (!notifications.some((n) => n.id === `draft:${plan.id}`))
+          notifications.push({
+            id: `draft:${plan.id}`,
+            projectId: id,
+            planId: plan.id,
+            kind: 'draft_ready',
+            message: 'A client receipt was detected. Your allocation is ready for review.',
+            createdAt: new Date().toISOString(),
+          });
+      }
     });
     return plan;
   }

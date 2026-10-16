@@ -39,11 +39,13 @@ const CHAIN_PROOF = [
 // The shell and controls appear immediately; only the secondary review panel enters.
 export default function PublicDemo() {
   const [project, setProject] = useState(() => fixtureProjects()[0]);
-  const [plan, setPlan] = useState<PlanOutput | null>(null);
+  const [plan, setPlan] = useState<PlanOutput | null>(() =>
+    baselinePlan(buildFacts(fixtureProjects()[0], new Date('2026-10-03T12:00:00Z'))),
+  );
   const [settled, setSettled] = useState<string[]>([]);
   const applied = useRef(new Set<string>());
   const [remainder, setRemainder] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState('Receipt detected. Allocation drafted for your review.');
   const reduced = useReducedMotion();
   const facts = useMemo(() => buildFacts(project, new Date('2026-10-03T12:00:00Z')), [project]);
   const validation = plan ? validatePlan(plan, facts, facts, baselinePlan(facts)) : null;
@@ -74,20 +76,22 @@ export default function PublicDemo() {
   }
   function addRemainder() {
     if (remainder || settled.length !== 1) return;
-    setProject((p) => ({
-      ...p,
+    const next = {
+      ...project,
       received: '2000000000',
-      balance: String(BigInt(p.balance) + 800000000n),
-      version: p.version + 1,
-    }));
+      balance: String(BigInt(project.balance) + 800000000n),
+      version: project.version + 1,
+    };
+    setProject(next);
     setRemainder(true);
-    setPlan(null);
-    setMessage('Client balance received. Generate a new allocation.');
+    setPlan(baselinePlan(buildFacts(next, new Date('2026-10-03T12:00:00Z'))));
+    setMessage('Receipt detected. A new allocation is ready for review.');
   }
   function reset() {
     applied.current.clear();
-    setProject(fixtureProjects()[0]);
-    setPlan(null);
+    const initial = fixtureProjects()[0];
+    setProject(initial);
+    setPlan(baselinePlan(buildFacts(initial, new Date('2026-10-03T12:00:00Z'))));
     setSettled([]);
     setRemainder(false);
     setMessage('Demo reset.');
@@ -100,8 +104,11 @@ export default function PublicDemo() {
           <p className={styles.eyebrow}>Demo · Sample data</p>
           <h1>Payment allocation</h1>
           <p>
-            Review a sample project, generate an allocation and simulate payment. No funds move
+            A receipt triggers a draft. Review the allocation and simulate payment. No funds move
             here; the real testnet transactions for this flow are listed below.
+          </p>
+          <p>
+            <Link href="/pilot">Review your own project</Link>
           </p>
         </div>
         <div className={styles.grid}>
@@ -156,7 +163,7 @@ export default function PublicDemo() {
                   setMessage('Allocation ready for review.');
                 }}
               >
-                Generate allocation
+                Refresh allocation
               </button>
               <button disabled={remainder || settled.length !== 1} onClick={addRemainder}>
                 Receive remaining 800 USDC

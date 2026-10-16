@@ -73,3 +73,22 @@
     font-size: 23px;
   }
 }
+.testnet-main select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 12px 0 24px;
+  padding: 12px;
+  border: 1px solid var(--muted);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+}
+.testnet-main label {
+  display: block;
+  margin-top: 16px;
+}
+.receipt-notification {
+  padding-block: 20px;
+  border-top: 1px solid var(--line);
+}

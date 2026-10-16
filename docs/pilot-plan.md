@@ -31,3 +31,9 @@ Invitation draft (not sent):
 Track consenting business identity, onboarding date, number of real invoices reviewed, accepted versus edited plans, reserve breaches (target zero), failed/duplicate payments (target zero), time to first useful plan and repeat use. Separate real, mirrored/anonymized and fixture sources. Testnet token movement alone is not real business payment volume.
 
 Exit criteria: one consenting business completes a useful workflow and returns for a second review. Without that evidence, submission traction stays zero. Live customer payments require a separate production readiness review; this build supports testnet only.
+
+## Product-assisted session
+
+Open `/pilot`. Enter business and contractor aliases, the actual invoice, receipt, reserve and approved obligations. The participant confirms permission and that this is a real case. The page computes a local baseline proposal; it does not upload data or request a wallet. Have the participant give feedback and choose whether it may be quoted, then export the session. Keep that file private until the participant agrees to sharing. The export is explicitly unverified and has zero customer-payment volume. Verify the case with the participant before counting it, and book a second session only if they want to continue.
+
+Use the authenticated `/testnet` workspace separately for the live testnet workflow. Select an indexed receipt, optionally review a payment-note suggestion, wait for the automatic draft and review it before signing. Test wallets and testnet tokens remain distinct from real customer revenue.

@@ -121,3 +121,9 @@ The model cannot sign, select addresses or modify policy. The vault accepts oper
 The owner can withdraw below the reserve, by design; the reserve limits delegated operator spending. Contract source is unaudited and intended for testnet only. Direct `deposit()` credits the named project; unknown payer invoice matching is a separate app-level review and must not double-credit the deposit during live indexing.
 
 MIT license. Product spec: [docs/project-spec.md](docs/project-spec.md). Progress: [docs/build-status.md](docs/build-status.md).
+
+## Receipt automation and participant review (16 October)
+
+The Arc worker now queues validated allocation drafts from attributed receipts, with durable receipt IDs, expiring leases, bounded retry and in-app owner notifications. It cannot sign or create payout jobs. Payment-note analysis quotes evidence and compares it against indexed payer, invoice and amount data; it never attributes or spends funds. `/pilot` accepts a business's own anonymized case and exports unverified participant feedback without claiming adoption or payment volume. See [the upgrade release](docs/agent-upgrade-release.md) and [new note-reader evaluation](docs/payment-note-evaluation-live.json).
+
+Run `npm run notes:eval` for the offline synthetic comparison. `--live` requires an explicitly configured gateway credential and `PAYMENT_NOTE_MODEL`; the evaluation refuses a model whose currently published input/output pricing is nonzero. These ten development cases do not establish production accuracy. Public API hosting and a verified real-business pilot remain pending.

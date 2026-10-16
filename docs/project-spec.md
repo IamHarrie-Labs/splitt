@@ -2,7 +2,7 @@
 
 Version 3, 3 October 2026. Replaces version 2 of this file.
 Status: **approved for implementation.** Core architecture and safety decisions are closed. External integrations remain behind the explicit gates in section 14. No pilot is confirmed.
-Implementation progress is tracked in `build-status.md`. The loopback workflow supports file fixtures or authenticated Postgres fixtures, owner sessions and exact fixture signatures. A separate Arc Testnet runtime implements receipt indexing, chain-derived balances, Circle execution queueing and recovery. Credentials, PostgreSQL, funding, deployment, source verification and a Circle contract query are verified as of 14 October. Full payout/remainder proof remains gated until contractor activation on 15 October at 16:18:53 Lagos; cloud API hosting and a real pilot remain pending. See `testnet-runbook.md`. Fixture signatures use `Splitt Fixture`; the contract domain remains `Splitt`.
+Implementation progress is tracked in `build-status.md`. The Arc runtime indexes receipts, creates receipt-triggered allocation drafts, supports evidence-checked payment-note suggestions, and queues owner-signed Circle execution. Payout and remainder proof completed on 15 October; those earlier transactions do not prove the newly added draft worker has run live. `/pilot` supports participant-owned case review without claiming adoption. Public API hosting and a verified real-business pilot remain pending. See `agent-upgrade-release.md` and `testnet-runbook.md`. Fixture signatures use `Splitt Fixture`; the contract domain remains `Splitt`.
 Name: **Splitt.** Brand, domain, trademark, and social-handle availability have not been verified. The product can be renamed without changing the architecture.
 
 How to read this file:
@@ -30,7 +30,7 @@ Underpayment allocation within a project, with per-project cash isolation. Incom
 |---|---|---|
 | Agentic sophistication (30%) | Model ranks and justifies payouts from structured facts; validator can reject it; counterfactual evidence changes the ranking | Shortfall decision, then the changed-deadline replay |
 | Traction (30%) | Real agency, real client invoice, real contractors; metrics page separating pilot from fixtures | Metrics page |
-| Circle tool usage (20%) | Developer-Controlled Wallets sign payouts; CCTP/Bridge brings the remainder from Base Sepolia; contracts deployed on Arc; USYC only if actually live | Remainder arrival, payout |
+| Circle tool usage (20%) | Proven: Circle Developer-Controlled Wallet execution, USDC and verified contracts on Arc. CCTP/Bridge and USYC remain gated planned integrations, not shipped claims | Remainder arrival, payout |
 | Innovation (20%) | Project ledger inside one vault; evidence-linked decisions; unresolved-settlement handling | Cross-project isolation, replay rejection |
 
 ---

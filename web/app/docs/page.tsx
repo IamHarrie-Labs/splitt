@@ -21,6 +21,9 @@ export default function Documentation() {
             <a href="#limits">Balances and limits</a>
             <a href="#approval">Owner approval</a>
             <a href="#demo">Using the demo</a>
+            <a href="#automation">Receipt automation</a>
+            <a href="#payment-notes">Payment notes</a>
+            <a href="#pilot">Business pilot</a>
             <a href="#testnet">Testnet and status</a>
           </nav>
           <div className="documentation-content">
@@ -78,15 +81,79 @@ export default function Documentation() {
                 The <Link href="/demo">public demo</Link> needs no wallet and does not move funds.
               </p>
               <ol>
-                <li>Generate an allocation for the 1,200 USDC received.</li>
+                <li>The 1,200 USDC receipt already has a draft ready for review.</li>
                 <li>Review 700 for Amara and 200 for Tobi, leaving the 300 reserve.</li>
                 <li>Run the approved batch in the demo.</li>
-                <li>Add the 800 USDC still owed by the client, then generate a new allocation.</li>
+                <li>
+                  Add the 800 USDC still owed by the client. A new draft appears automatically.
+                </li>
                 <li>Review Tobi’s remaining 300 and run the final demo batch.</li>
               </ol>
               <p>
                 The project ends with 800 USDC. Fieldwork’s separate 1,000 balance is unchanged.
                 Reset demo restores the starting state.
+              </p>
+            </section>
+            <section id="automation">
+              <h2>Receipt automation</h2>
+              <p>
+                The testnet worker watches indexed project receipts and queues allocation drafts
+                automatically. It reads current chain state, validates the proposal and adds an
+                in-app review notification. The owner workspace refreshes receipt activity every ten
+                seconds while signed in.
+              </p>
+              <p>
+                Durable receipt IDs and worker leases prevent duplicate work. Interrupted drafts can
+                resume after a restart. Pending settlement blocks new plans; repeated drafting
+                failures are escalated for review. Unattributed token transfers do not trigger an
+                allocation.
+              </p>
+              <p>
+                Automation stops at the draft. It cannot sign or submit a payment. The new draft
+                worker has automated concurrency, restart and stale-state tests; its hosted
+                end-to-end run remains pending the API deployment.
+              </p>
+            </section>
+            <section id="payment-notes">
+              <h2>Read a payment note</h2>
+              <p>
+                In the authenticated testnet workspace, select an indexed receipt and enter the
+                client’s payment note. A configured model extracts the invoice reference, paid
+                amount and any statement about a remainder. Extracted values must quote the original
+                note and agree with the recorded invoice, payer and receipt amount. Ambiguous or
+                conflicting matches stay for owner review.
+              </p>
+              <p>
+                A note cannot create a receipt, change a reserve, select a replacement wallet or
+                attribute funds. Remainder statements are unverified client statements, not
+                confirmed income or promised payment dates. The model receives the note and invoice
+                references; omit personal or confidential material.
+              </p>
+              <p>
+                The note reader has a separate model setting and a literal evidence fallback. In ten
+                synthetic evaluation cases, the tested model-plus-fallback path was fully correct in
+                nine, compared with seven for the literal matcher. Four cases used model output.
+                These results do not establish accuracy on customer data.
+              </p>
+            </section>
+            <section id="pilot">
+              <h2>Run a business pilot</h2>
+              <p>
+                The <Link href="/pilot">project review page</Link> accepts a business’s own
+                anonymized invoice, receipt, reserve and approved contractor obligations. It uses
+                the deterministic planner locally. Nothing is uploaded or retained in browser
+                storage.
+              </p>
+              <p>
+                Ask a consenting participant to compare the proposal with their own decision, record
+                what they would change, then export the session and feedback. Quotes require
+                separate permission. An export contains participant-reported facts and no payment
+                volume; review and verify the evidence before making an adoption claim.
+              </p>
+              <p>
+                A useful pilot includes a second session on a real project. Keep business planning
+                sessions, testnet token movements and real customer payments separate. No business
+                has been verified as onboarded yet.
               </p>
             </section>
             <section id="testnet">
@@ -120,8 +187,8 @@ export default function Documentation() {
                 the configured owner wallet when enabled. It is not a mainnet payment service.
               </p>
               <p>
-                Current model evaluations do not establish an improvement over the baseline. No real
-                business pilot or customer payment volume is claimed.
+                Allocation model evaluations do not establish an improvement over the baseline. No
+                real business pilot or customer payment volume is claimed.
               </p>
               <p>
                 Review the <a href="https://github.com/IamHarrie-Labs/splitt">source repository</a>{' '}

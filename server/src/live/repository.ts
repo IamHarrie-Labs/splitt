@@ -36,6 +36,28 @@ export type LiveState = {
   projects: Project[];
   plans: StoredPlan[];
   jobs: Job[];
+  receiptDrafts?: ReceiptDraft[];
+  notifications?: OwnerNotification[];
+  paymentNotes?: import('../agent/payment-notes.js').PaymentNoteRecord[];
+};
+export type ReceiptDraft = {
+  id: string;
+  projectId: string;
+  state: 'pending' | 'working' | 'done' | 'needs_review';
+  attempts: number;
+  leaseUntil: number;
+  leaseToken?: string;
+  planId?: string;
+  lastError?: string;
+};
+export type OwnerNotification = {
+  id: string;
+  projectId: string;
+  planId?: string;
+  kind: 'draft_ready' | 'receipt_needs_review';
+  message: string;
+  createdAt: string;
+  readAt?: string;
 };
 export interface LiveRepository {
   snapshot(): Promise<LiveState>;
