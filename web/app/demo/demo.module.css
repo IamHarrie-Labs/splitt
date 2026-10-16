@@ -377,3 +377,12 @@ button.primary {
     scale: 0.96;
   }
 }
+.notice:empty {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.intro em {
+  font-family: var(--serif);
+  letter-spacing: normal;
+}

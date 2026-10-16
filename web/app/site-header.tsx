@@ -1,8 +1,14 @@
 'use client';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { ArrowUpRight, List, X, ArrowCounterClockwise } from '@phosphor-icons/react';
+import { List, X } from '@phosphor-icons/react';
 import './site-header.css';
+const navigation = [
+  ['Overview', '/'],
+  ['Demo', '/demo'],
+  ['Documentation', '/docs'],
+] as const;
 export default function SiteHeader({
   demo = false,
   onReset,
@@ -11,6 +17,7 @@ export default function SiteHeader({
   onReset?: () => void;
 }) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
   const root = useRef<HTMLElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -37,8 +44,21 @@ export default function SiteHeader({
       query.removeEventListener('change', resize);
     };
   }, [open]);
+  const links = navigation.map(([label, href]) => (
+    <Link
+      key={href}
+      href={href}
+      aria-current={pathname === href ? 'page' : undefined}
+      onClick={() => setOpen(false)}
+    >
+      {label}
+    </Link>
+  ));
   return (
     <header className="splitt-header" ref={root}>
+      <a href="#main-content" className="skip-link">
+        Skip to content
+      </a>
       <Link href="/" className="splitt-wordmark" aria-label="Splitt home">
         <span className="splitt-mark" aria-hidden="true">
           <i />
@@ -47,23 +67,13 @@ export default function SiteHeader({
         splitt<span>.</span>
       </Link>
       <nav className="splitt-desktop-nav" aria-label="Main navigation">
-        <Link href="/#how-it-works">How it works</Link>
-        <Link href="/#controls">Your controls</Link>
-        <Link href={demo ? '/testnet' : '/#questions'}>
-          {demo ? 'Testnet workspace' : 'Build status'}
-        </Link>
+        {links}
       </nav>
-      <div className="splitt-header-actions">
-        {demo ? (
+      <div className={demo ? 'splitt-header-actions' : 'splitt-header-actions menu-only'}>
+        {demo && (
           <button className="splitt-header-cta" onClick={onReset}>
-            <span>Reset demo</span>
-            <ArrowCounterClockwise size={18} aria-hidden="true" />
+            Reset demo
           </button>
-        ) : (
-          <Link href="/demo" className="splitt-header-cta">
-            <span>Open demo</span>
-            <ArrowUpRight size={18} aria-hidden="true" />
-          </Link>
         )}
         <button
           className="splitt-menu-trigger"
@@ -73,22 +83,12 @@ export default function SiteHeader({
           aria-controls="splitt-mobile-menu"
           onClick={() => setOpen((value) => !value)}
         >
-          {open ? <X size={22} /> : <List size={22} />}
+          {open ? <X size={22} aria-hidden="true" /> : <List size={22} aria-hidden="true" />}
         </button>
       </div>
       {open && (
         <nav id="splitt-mobile-menu" className="splitt-mobile-menu" aria-label="Mobile navigation">
-          {[
-            ['How it works', '/#how-it-works'],
-            ['Your controls', '/#controls'],
-            ['Build status', '/#questions'],
-            ['Testnet workspace', '/testnet'],
-          ].map(([label, href]) => (
-            <Link key={href} href={href} onClick={() => setOpen(false)}>
-              {label}
-              <ArrowUpRight size={18} aria-hidden="true" />
-            </Link>
-          ))}
+          {links}
         </nav>
       )}
     </header>

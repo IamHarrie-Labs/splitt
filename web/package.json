@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@fontsource/poppins": "^5.3.0",
+    "@fontsource/source-serif-4": "5.3.1",
     "@fontsource/space-grotesk": "^5.3.0",
     "@phosphor-icons/react": "^2.1.10",
     "@splitt/core": "0.1.0",

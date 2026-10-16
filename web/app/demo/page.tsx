@@ -23,9 +23,7 @@ export default function PublicDemo() {
   const [settled, setSettled] = useState<string[]>([]);
   const applied = useRef(new Set<string>());
   const [remainder, setRemainder] = useState(false);
-  const [message, setMessage] = useState(
-    'Start with the partial receipt. Generate a plan to see the tradeoff.',
-  );
+  const [message, setMessage] = useState('');
   const reduced = useReducedMotion();
   const facts = useMemo(() => buildFacts(project, new Date('2026-10-03T12:00:00Z')), [project]);
   const validation = plan ? validatePlan(plan, facts, facts, baselinePlan(facts)) : null;
@@ -52,7 +50,7 @@ export default function PublicDemo() {
     }));
     setSettled((ids) => [...ids, hashJson(plan)]);
     setPlan(null);
-    setMessage('Simulated batch recorded once. Repeating this batch cannot add another payout.');
+    setMessage('Payment simulation recorded.');
   }
   function addRemainder() {
     if (remainder || settled.length !== 1) return;
@@ -64,9 +62,7 @@ export default function PublicDemo() {
     }));
     setRemainder(true);
     setPlan(null);
-    setMessage(
-      'The 800 USDC remainder arrived in this demo. Replan from the remaining obligations.',
-    );
+    setMessage('Client balance received. Generate a new allocation.');
   }
   function reset() {
     applied.current.clear();
@@ -74,20 +70,17 @@ export default function PublicDemo() {
     setPlan(null);
     setSettled([]);
     setRemainder(false);
-    setMessage('Demo reset. No wallet or chain balance was changed.');
+    setMessage('Demo reset.');
   }
   return (
     <div className={styles.page} id="top">
       <SiteHeader demo onReset={reset} />
-      <main className={styles.main}>
+      <main className={styles.main} id="main-content">
         <div className={styles.intro}>
-          <p className={styles.eyebrow}>Interactive fixture · No wallet needed</p>
-          <h1>
-            Less cash. A clear <em>decision.</em>
-          </h1>
+          <p className={styles.eyebrow}>Demo · Sample data</p>
+          <h1>Payment allocation</h1>
           <p>
-            Try the actual allocation engine with a synthetic agency project. Every settlement here
-            stays in your browser. This demo uses the deterministic baseline, not a live AI model.
+            Review a sample project, generate an allocation and simulate payment. No funds move.
           </p>
         </div>
         <div className={styles.grid}>
@@ -97,9 +90,7 @@ export default function PublicDemo() {
                 <p>Northstar Studio</p>
                 <h2 id="project-heading">Brand launch</h2>
               </div>
-              <span className={styles.tag}>
-                {remainder ? 'Invoice received in full' : 'Partial receipt'}
-              </span>
+              <span className={styles.tag}>{remainder ? 'Invoice paid' : 'Partially paid'}</span>
             </div>
             <dl className={styles.numbers}>
               {[
@@ -125,9 +116,7 @@ export default function PublicDemo() {
                   <div>
                     <strong>{c.name}</strong>
                     <p>
-                      {c.blocksDelivery
-                        ? 'Unlocks delivery · Full payment required'
-                        : 'Partial payment permitted · Can wait until 17 October'}
+                      {c.blocksDelivery ? 'Full payment required' : 'Partial payment permitted'}
                     </p>
                   </div>
                   <span>
@@ -143,15 +132,13 @@ export default function PublicDemo() {
                 disabled={totalPaid === 1200000000n}
                 onClick={() => {
                   setPlan(baselinePlan(facts));
-                  setMessage(
-                    'Plan generated from current facts. Review amounts and evidence before simulating settlement.',
-                  );
+                  setMessage('Allocation ready for review.');
                 }}
               >
                 Generate allocation
               </button>
               <button disabled={remainder || settled.length !== 1} onClick={addRemainder}>
-                Add 800 USDC remainder
+                Receive remaining 800 USDC
               </button>
             </div>
           </section>
@@ -162,13 +149,12 @@ export default function PublicDemo() {
             animate={{ opacity: 1, transform: 'translateY(0px)' }}
             transition={{ duration: reduced ? 0 : 0.3, ease: [0.23, 1, 0.32, 1] }}
           >
-            <p className={styles.eyebrow}>Owner review</p>
-            <h2 id="review-heading">Every amount has a reason.</h2>
+            <h2 id="review-heading">Review payments</h2>
             {plan ? (
               <>
                 <p className={styles.validation}>
                   {validation?.ok
-                    ? 'Validated · Reserve and limits protected'
+                    ? 'Validated against reserve and spending limits'
                     : 'Blocked by validation'}
                 </p>
                 {plan.items.map((item) => (
@@ -181,9 +167,16 @@ export default function PublicDemo() {
                         {item.action === 'pay' ? formatUSDC(item.amount_micro) + ' USDC' : 'Defer'}
                       </span>
                     </div>
-                    <p>{item.explanation}</p>
+                    <p>
+                      {item.reason_codes.includes('BLOCKS_DELIVERY')
+                        ? 'Payment is required to continue delivery.'
+                        : item.reason_codes.includes('PARTIAL_PERMITTED')
+                          ? 'Partial payment is allowed under the agreed terms.'
+                          : 'Approved work is eligible for payment.'}
+                    </p>
                     <details>
-                      <summary>Inspect fact references</summary>
+                      <summary>Payment details</summary>
+                      <p>{item.explanation}</p>
                       <ul>
                         {facts.facts
                           .filter((f) => item.fact_refs.includes(f.id))
@@ -196,7 +189,7 @@ export default function PublicDemo() {
                     </details>
                   </article>
                 ))}
-                <p>Unfunded hard obligations: {formatUSDC(plan.unfunded_shortfall_micro)} USDC</p>
+                <p>Unfunded obligations: {formatUSDC(plan.unfunded_shortfall_micro)} USDC</p>
                 <button
                   className={styles.primary}
                   disabled={!validation?.ok || !plan.items.some((i) => i.action === 'pay')}
@@ -210,8 +203,8 @@ export default function PublicDemo() {
                 <span aria-hidden="true">···</span>
                 <p>
                   {totalPaid === 1200000000n
-                    ? 'Both obligations are fully paid in the simulation. The project keeps 800 USDC, and Fieldwork remains untouched.'
-                    : 'Your next allocation appears here. The planner only considers approved, eligible work.'}
+                    ? 'All contractor payments are complete. The project retains 800 USDC.'
+                    : 'Generate an allocation to review proposed payments.'}
                 </p>
               </div>
             )}
@@ -228,22 +221,8 @@ export default function PublicDemo() {
           <strong>
             1,000 <small>USDC</small>
           </strong>
-          <p>
-            Untouched throughout this flow. A project’s cash cannot fund another project’s
-            obligations.
-          </p>
+          <p>This project’s balance is unchanged.</p>
         </aside>
-        <p className={styles.proof}>
-          Live implementation:{' '}
-          <a
-            href="https://repo.sourcify.dev/5042002/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6"
-            target="_blank"
-            rel="noreferrer"
-          >
-            inspect the verified Arc Testnet vault ↗
-          </a>
-          . Real payouts require owner authorization in the testnet workspace.
-        </p>
       </main>
       <SiteFooter fit="app" />
     </div>

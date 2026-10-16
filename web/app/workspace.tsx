@@ -5,7 +5,6 @@ import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNod
 import { createWalletClient, custom, type EIP1193Provider } from 'viem';
 import {
   ArrowDownLeft,
-  ArrowRight,
   ArrowsClockwise,
   ChartBar,
   Check,
@@ -606,18 +605,18 @@ export default function Workspace({ section }: { section: string }) {
                       : section === 'payments'
                         ? 'Incoming payments'
                         : section === 'allocation'
-                          ? 'A plan for every payment.'
+                          ? 'Allocation review'
                           : section === 'settlement'
-                            ? 'Follow every payment.'
-                            : 'Built for repeat use.'}
+                            ? 'Settlement'
+                            : 'Activity and metrics'}
                   </h1>
                   <p className="subtitle">
                     {section === 'overview'
-                      ? 'A clear view of what came in, what’s owed, and what can move.'
+                      ? 'Track receipts, outstanding obligations and available funds.'
                       : section === 'payments'
                         ? 'Match arrivals to the right project before allocating funds.'
                         : section === 'allocation'
-                          ? 'Review the trade-offs. Keep the reserve. Approve what moves.'
+                          ? 'Review proposed contractor payments before approval.'
                           : section === 'settlement'
                             ? 'Payment decisions and their settlement, in one place.'
                             : 'Sample activity is kept separate from real adoption.'}
@@ -703,8 +702,7 @@ export default function Workspace({ section }: { section: string }) {
                   <div className="overview-grid">
                     <div className="panel cash-panel">
                       <div className="panel-heading">
-                        <h2>Put available funds to work.</h2>
-                        <span className="little-label">Project balance</span>
+                        <h2>Project balance</h2>
                       </div>
                       <p className="large-balance">
                         {money(project.balance)}
@@ -741,7 +739,7 @@ export default function Workspace({ section }: { section: string }) {
                             {BigInt(obligations) === 0n && project.commitments.length > 0
                               ? 'Every contractor obligation is settled.'
                               : BigInt(facts.spendable) > 0n
-                                ? 'Your next allocation starts here.'
+                                ? 'Funds are available for allocation.'
                                 : 'Your reserve is protected.'}
                           </strong>
                           <p>
@@ -751,11 +749,11 @@ export default function Workspace({ section }: { section: string }) {
                                 ? 'Resume the project to generate a payment plan.'
                                 : BigInt(obligations) === 0n && project.commitments.length > 0
                                   ? 'The remaining balance stays with this project.'
-                                  : 'A validated plan shows who can be paid, and why.'}
+                                  : 'Review contractor amounts before approval.'}
                           </p>
                         </div>
                         <Link href="/allocation" className="button primary">
-                          Review allocation <ArrowRight size={17} />
+                          Review allocation
                         </Link>
                       </div>
                     </div>
@@ -794,7 +792,7 @@ export default function Workspace({ section }: { section: string }) {
                             </span>
                           </div>
                           <Link href="/payments" className="text-link">
-                            View payment details <ArrowRight size={16} />
+                            View payment details
                           </Link>
                         </>
                       ) : (
@@ -940,19 +938,11 @@ export default function Workspace({ section }: { section: string }) {
                     <span className="empty-icon">
                       <Stack size={34} weight="duotone" />
                     </span>
-                    <h2>Turn a partial payment into a clear plan.</h2>
+                    <h2>No allocation yet</h2>
                     <p>
                       {money(facts.spendable)} USDC is available after this project’s reserve and
                       daily limits. Generate a proposal to review contractor payments.
                     </p>
-                    <button
-                      className="button primary"
-                      disabled={!!busy || project.paused || project.unresolved}
-                      onClick={generate}
-                    >
-                      <Lightning size={18} />
-                      {busy ? 'Building plan…' : 'Generate first allocation'}
-                    </button>
                   </div>
                 ) : (
                   <>
@@ -1085,7 +1075,7 @@ export default function Workspace({ section }: { section: string }) {
                         </div>
                         <p className="summary-disclosure">
                           {plan.fallbackUsed
-                            ? 'This plan uses the deterministic baseline. No live AI response is claimed.'
+                            ? 'Planner: deterministic baseline.'
                             : 'Model proposal checked against deterministic payment rules.'}
                         </p>
                         <button
@@ -1108,9 +1098,7 @@ export default function Workspace({ section }: { section: string }) {
                           ) : plan.status === 'stale' ? (
                             'Generate a fresh plan'
                           ) : (
-                            <>
-                              Review & simulate <ArrowRight size={17} />
-                            </>
+                            <>Review & simulate</>
                           )}
                         </button>
                         <p className="micro-note">

@@ -27,7 +27,7 @@
   --radius: 8px;
   --sans: 'Poppins', 'Segoe UI', Arial, sans-serif;
   --heading: 'Space Grotesk', 'Segoe UI', Arial, sans-serif;
-  --serif: Georgia, 'Times New Roman', serif;
+  --serif: 'Source Serif 4', Georgia, serif;
 }
 * {
   box-sizing: border-box;
@@ -1826,4 +1826,35 @@ em {
   border-radius: 0;
   border: 0;
   border-bottom: 1px solid var(--line);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+em {
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: normal;
+}
+
+/* Institutional UI: consistent text sizes and touch targets in owner views. */
+.button {
+  min-height: 44px;
+  font-size: 12px;
+}
+.subtitle {
+  font-size: 13px;
+  line-height: 1.8;
+}
+.main-shell .eyebrow {
+  font-size: 12px;
+  letter-spacing: 0;
 }

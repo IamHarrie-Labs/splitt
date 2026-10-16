@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import SiteFooter from '../site-footer';
+import SiteHeader from '../site-header';
+import './testnet.css';
 import { createWalletClient, custom, type EIP1193Provider, type Address, type Hex } from 'viem';
 import { authorizationTypes, formatUSDC } from '@splitt/core';
 import type { LiveState } from '../../../server/src/live/repository';
@@ -90,11 +92,11 @@ export default function TestnetWorkspace() {
   }
   return (
     <>
-      <main style={{ maxWidth: 1100, margin: '0 auto', padding: '36px 24px' }}>
+      <SiteHeader />
+      <main className="testnet-main" id="main-content">
         <header className="art-band">
-          <Link href="/">← Splitt home</Link>
-          <h1>Arc Testnet workspace</h1>
-          <p>Review each allocation before your Circle operator submits it. Testnet USDC only.</p>
+          <h1>Testnet workspace</h1>
+          <p>Review and authorize payments on Arc Testnet. Testnet USDC only.</p>
         </header>
         {error && (
           <p role="alert" style={{ color: 'var(--danger)' }}>
@@ -106,12 +108,18 @@ export default function TestnetWorkspace() {
             <h2>
               {mode === 'checking'
                 ? 'Checking the connection…'
-                : demoOnly ? 'Live owner access is not hosted yet' : 'Testnet connection is not enabled yet'}
+                : demoOnly
+                  ? 'Owner access is not publicly hosted'
+                  : 'Testnet connection unavailable'}
             </h2>
-            <p>
-              {demoOnly ? 'The vault is deployed and verified on Arc Testnet. Its authenticated API and continuous worker currently run locally. You can try the complete synthetic allocation flow in the public demo.' : 'This workspace needs the configured Circle operator, PostgreSQL and a reachable authenticated API.'}
-            </p>
-            <Link href="/demo">Open the public demo →</Link>
+            {mode !== 'checking' && (
+              <p>
+                {demoOnly
+                  ? 'The vault is deployed. The owner API and payment worker currently run locally.'
+                  : 'The owner API is not connected. Configuration requirements are in the documentation.'}
+              </p>
+            )}
+            {mode !== 'checking' && <Link href="/docs#testnet">Connection documentation</Link>}
           </section>
         ) : (
           <>
