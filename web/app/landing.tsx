@@ -50,7 +50,7 @@ export default function Landing() {
             </div>
             <div className="payment-ledger">
               <div className="ledger-title">
-                <h3>Sample allocation</h3>
+                <h3>Example allocation</h3>
                 <p>Amounts in USDC</p>
               </div>
               <dl className="ledger-summary">
@@ -73,7 +73,7 @@ export default function Landing() {
               </dl>
               <table className="allocation-table">
                 <caption className="sr-only">
-                  Sample contractor allocation from a partial client payment
+                  Example contractor allocation from a partial client payment
                 </caption>
                 <thead>
                   <tr>
@@ -165,9 +165,9 @@ export default function Landing() {
           <div className="page-width">
             <h2 id="questions-heading">About Splitt</h2>
             <p>
-              Splitt is built for agencies managing client invoices and contractor payments. The
-              public demo uses sample data and simulated payments. Technical details, testnet access
-              and current limitations are in the <Link href="/docs">documentation</Link>.
+              Splitt is built for agencies managing client invoices and contractor payments.
+              Technical details, testnet access and current limitations are in the{' '}
+              <Link href="/docs">documentation</Link>.
             </p>
           </div>
         </section>

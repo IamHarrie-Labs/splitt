@@ -75,15 +75,14 @@ export default function Documentation() {
             <section id="demo">
               <h2>Using the demo</h2>
               <p>
-                The <Link href="/demo">public demo</Link> uses sample balances and simulated
-                settlement. It needs no wallet and does not move funds.
+                The <Link href="/demo">public demo</Link> needs no wallet and does not move funds.
               </p>
               <ol>
                 <li>Generate an allocation for the 1,200 USDC received.</li>
                 <li>Review 700 for Amara and 200 for Tobi, leaving the 300 reserve.</li>
-                <li>Simulate the approved batch.</li>
+                <li>Run the approved batch in the demo.</li>
                 <li>Add the 800 USDC still owed by the client, then generate a new allocation.</li>
-                <li>Review Tobi’s remaining 300 and simulate the final batch.</li>
+                <li>Review Tobi’s remaining 300 and run the final demo batch.</li>
               </ol>
               <p>
                 The project ends with 800 USDC. Fieldwork’s separate 1,000 balance is unchanged.
@@ -95,7 +94,7 @@ export default function Documentation() {
               <p>
                 Splitt is a testnet application. ProjectVault is deployed on Arc Testnet, with
                 independently verified source code. Circle wallet execution and PostgreSQL-backed
-                receipt indexing are implemented separately from the public simulation.
+                receipt indexing are implemented separately from the public demo.
               </p>
               <p>
                 The authenticated API and worker are not publicly hosted yet. The{' '}
