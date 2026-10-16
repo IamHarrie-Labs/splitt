@@ -367,3 +367,13 @@ button.primary {
     margin-bottom: 48px;
   }
 }
+@media (prefers-reduced-motion: no-preference) {
+  .actions button:not([data-static-press]),
+  .review button:not([data-static-press]) {
+    transition: scale var(--press-duration) ease-out;
+  }
+  .actions button:not(:disabled):not([data-static-press]):active,
+  .review button:not(:disabled):not([data-static-press]):active {
+    scale: 0.96;
+  }
+}

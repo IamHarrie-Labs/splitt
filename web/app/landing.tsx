@@ -62,9 +62,9 @@ export default function Landing() {
     return { project, plan, total, retained: BigInt(project.balance) - total };
   }, [remainder]);
   const reveal = {
-    initial: still ? (false as const) : { y: 16 },
-    whileInView: { y: 0 },
-    transition: { duration: still ? 0 : 0.4 },
+    initial: still ? (false as const) : { transform: 'translateY(12px)' },
+    whileInView: { transform: 'translateY(0px)' },
+    transition: { duration: still ? 0 : 0.3, ease: [0.23, 1, 0.32, 1] as const },
     viewport: { once: true, amount: 0.15 },
   };
   return (
@@ -193,9 +193,7 @@ export default function Landing() {
               </div>
               <div>
                 <dt>Proposed this time</dt>
-                <dd key={String(remainder)} className="ledger-figure">
-                  {formatUSDC(String(example.total))}
-                </dd>
+                <dd className="ledger-figure">{formatUSDC(String(example.total))}</dd>
               </div>
               <div>
                 <dt>Left after this batch</dt>

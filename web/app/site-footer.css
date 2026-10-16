@@ -15,8 +15,10 @@
   text-decoration: none;
   color: inherit;
 }
-.site-footer a:hover {
-  color: var(--accent);
+@media (hover: hover) and (pointer: fine) {
+  .site-footer a:hover {
+    color: var(--accent);
+  }
 }
 .site-footer :focus-visible {
   outline: 2px solid var(--accent);

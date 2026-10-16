@@ -134,8 +134,10 @@
   border-radius: 50%;
   transition: transform 0.2s;
 }
-.splitt-primary-link:hover > span {
-  transform: rotate(45deg);
+@media (hover: hover) and (pointer: fine) {
+  .splitt-primary-link:hover > span {
+    transform: rotate(45deg);
+  }
 }
 .splitt-text-link {
   display: inline-flex;
@@ -147,8 +149,10 @@
 .splitt-text-link svg {
   transition: transform 0.2s;
 }
-.splitt-text-link:hover svg {
-  transform: translateX(4px);
+@media (hover: hover) and (pointer: fine) {
+  .splitt-text-link:hover svg {
+    transform: translateX(4px);
+  }
 }
 .hero-scene-note {
   position: absolute;
@@ -533,9 +537,6 @@
   .hero-scene-note {
     animation: hero-settle 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
     animation-delay: 0.3s;
-  }
-  .ledger-figure {
-    animation: hero-settle 0.3s ease-out;
   }
   .landing-still * {
     animation: none !important;

@@ -158,9 +158,9 @@ export default function PublicDemo() {
           <motion.section
             className={styles.review}
             aria-labelledby="review-heading"
-            initial={reduced ? false : { opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: reduced ? 0 : 0.3 }}
+            initial={reduced ? false : { opacity: 0, transform: 'translateY(12px)' }}
+            animate={{ opacity: 1, transform: 'translateY(0px)' }}
+            transition={{ duration: reduced ? 0 : 0.3, ease: [0.23, 1, 0.32, 1] }}
           >
             <p className={styles.eyebrow}>Owner review</p>
             <h2 id="review-heading">Every amount has a reason.</h2>
