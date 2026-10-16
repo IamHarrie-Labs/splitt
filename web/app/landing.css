@@ -111,7 +111,8 @@
   font-size: 11px;
 }
 .payment-story {
-  padding-top: 112px;
+  background: var(--section-paper);
+  padding-block: 144px;
   scroll-margin-top: 32px;
 }
 .story-intro {
@@ -209,7 +210,8 @@
   margin-top: 20px;
 }
 .workflow {
-  padding-top: 104px;
+  background: var(--section-blue);
+  padding-block: 128px;
 }
 .workflow-rows {
   display: grid;
@@ -229,13 +231,16 @@
   max-width: 340px;
 }
 .owner-controls {
+  background: var(--section-stone);
+  padding-block: 144px;
+  scroll-margin-top: 32px;
+}
+.owner-controls > .page-width {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 100px;
-  padding-block: 112px;
-  scroll-margin-top: 32px;
 }
-.owner-controls > div:first-child > p {
+.owner-controls > .page-width > div:first-child > p {
   color: var(--muted);
   font-size: 14px;
   line-height: 1.9;
@@ -258,12 +263,14 @@
   max-width: 450px;
 }
 .landing-questions {
+  background: var(--canvas);
+  padding-block: 112px 128px;
+  scroll-margin-top: 32px;
+}
+.landing-questions > .page-width {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 100px;
-  padding: 44px 0 96px;
-  border-top: 1px solid var(--line);
-  scroll-margin-top: 32px;
 }
 .landing-questions h2 {
   font-size: 32px;
@@ -314,8 +321,8 @@
   .page-width {
     width: calc(100% - 64px);
   }
-  .owner-controls,
-  .landing-questions {
+  .owner-controls > .page-width,
+  .landing-questions > .page-width {
     gap: 56px;
   }
 }
@@ -354,7 +361,7 @@
     bottom: 20px;
   }
   .payment-story {
-    padding-top: 64px;
+    padding-block: 80px;
   }
   .landing h2 {
     font-size: clamp(28px, 6.4vw, 38px);
@@ -412,7 +419,7 @@
     font-size: 11px;
   }
   .workflow {
-    padding-top: 64px;
+    padding-block: 80px;
   }
   .workflow-rows {
     grid-template-columns: 1fr;
@@ -428,11 +435,13 @@
     max-width: 500px;
   }
   .owner-controls {
-    grid-template-columns: 1fr;
-    gap: 32px;
-    padding-block: 64px;
+    padding-block: 80px;
   }
-  .owner-controls > div:first-child > p {
+  .owner-controls > .page-width {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .owner-controls > .page-width > div:first-child > p {
     font-size: 13px;
   }
   .control-lines h3 {
@@ -442,9 +451,11 @@
     font-size: 12px;
   }
   .landing-questions {
+    padding-block: 72px 80px;
+  }
+  .landing-questions > .page-width {
     grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 32px 0 56px;
+    gap: 24px;
   }
   .landing-questions h2 {
     font-size: 28px;

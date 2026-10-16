@@ -5,11 +5,11 @@
 .main {
   width: min(1240px, calc(100% - 96px));
   margin: auto;
-  padding: 0;
+  padding: 0 0 104px;
   max-width: none;
 }
 .intro {
-  padding: 64px 0 52px;
+  padding: 88px 0 72px;
   max-width: 800px;
 }
 .eyebrow {
@@ -385,4 +385,13 @@ button.primary {
 .intro em {
   font-family: var(--serif);
   letter-spacing: normal;
+}
+
+@media (max-width: 759px) {
+  .main {
+    padding-bottom: 72px;
+  }
+  .intro {
+    padding: 48px 0 44px;
+  }
 }
