@@ -588,7 +588,7 @@ Demo amounts: real testnet USDC from the faucet is limited, so the video may use
 | D8 | Demo may use scaled amounts, labelled | Full amounts |
 | D9 | Product name is Splitt; availability checks remain | Rename before submission if unavailable |
 | D10 | One owner-authorized `payBatch` settles a plan atomically | Sequential item transactions |
-| D11 | Attribution IDs are derived from source chain, transaction hash, and log index and enforced on-chain | Database-only replay protection |
+| D11 | CCTP attribution IDs use destination chain, mint transaction and USDC log index, enforced on-chain; source burn and Circle nonce are independently unique (16 Oct implementation) | Source-only IDs; database-only replay protection |
 | D12 | JSON uses RFC 8785 and keccak256; execution arrays use Solidity ABI encoding | Implementation-specific serialization |
 | D13 | Direct viem wallet connection, owner login and exact fixture signing are implemented; live chain validation remains a gate | wagmi connector layer when more wallet types are needed |
 | D14 | Opaque hashed sessions with revocation/CSRF; fixture signatures use a non-executable domain | Self-contained signed cookies with revocation machinery |

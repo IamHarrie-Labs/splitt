@@ -1,5 +1,11 @@
 # Splitt build status
 
+## Current release work — 16 October 2026
+
+Validation: 125 tests passed across 14 suites, including 14 contract tests, 25 CCTP tests and 6 workspace-migration checks. The production Next.js build passed. Browser/mobile visual testing remains unavailable in this session.
+
+The dated entries below are historical. Current implemented work includes receipt-triggered drafts, payment-note evidence checks, pilot intake, invoice-bound CCTP funding and owner decision evidence. Arc payout/remainder and lost-response recovery are proven in `testnet-payout-proof.json`. CCTP is tested but has no completed transfer proof; the source owner wallet needs Base Sepolia USDC and ETH. No real pilot or customer volume is verified. API hosting is being staged on an isolated VPS; domain/HTTPS and public connection remain pending. See `judge-readiness.md` and `cctp-runbook.md` for claim boundaries.
+
 ## Latest update — 16 October 2026
 
 Receipt-triggered allocation drafts, durable leases/retries, in-app notifications, payment-note evidence checks and a participant-owned `/pilot` workflow are implemented. All 94 automated tests passed across 11 suites: 80 application tests plus 14 contract tests rerun with normal temporary-file permissions after a sandbox-only Ganache database rename denial. Strict type checking and the production build including `/pilot` passed. A ten-case synthetic note-reader evaluation scored 9/10 with model plus fallback versus 7/10 literal matching, with four model responses used. GitHub is connected to Vercel for automatic deployment. Public owner API hosting, a verified business participant and a current recorded submission video remain pending. Browser/mobile visual QA remains unavailable. See `agent-upgrade-release.md`; historical entries below retain their original dates and are superseded by this update.

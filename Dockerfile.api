@@ -9,6 +9,7 @@ COPY packages/core packages/core
 COPY server/src server/src
 COPY contracts/src contracts/src
 COPY tsconfig.json ./
+COPY scripts/migrate-workspace.ts scripts/migrate-workspace.ts
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV SPLITT_MODE=arc-testnet

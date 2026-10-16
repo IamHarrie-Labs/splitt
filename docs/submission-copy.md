@@ -28,6 +28,8 @@ A separate payment-note reader extracts quoted invoice, paid-amount and remainde
 
 ## Traction
 
+CCTP invoice funding is now implemented for Base Sepolia to Arc Testnet, including exact invoice intents, finalized message checks, net-mint verification, owner attribution and transaction recovery. A completed cross-chain transfer is not yet proven. See `cctp-readiness.json` and `cctp-runbook.md`. Paymaster and Gateway are outside this release; reserve yield remains roadmap only.
+
 No real business pilot is onboarded yet. Real customer payment volume is zero. The public demo, synthetic model evaluation and funded testnet scenario demonstrate development progress, not adoption. The owner is seeking a business with a real invoice and approved contractor obligations for a consenting pilot. The public /pilot page accepts anonymized participant facts and exports feedback locally; an unverified export does not count as adoption.
 
 ## Public source and demo

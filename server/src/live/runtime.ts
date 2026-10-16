@@ -14,6 +14,9 @@ import { circleOperator } from '../circle/operator.js';
 import { workerTick, indexReceipts } from './worker.js';
 import { draftReceipts } from '../agent/receipt-drafts.js';
 import { analyzePaymentNote, paymentNoteInput } from '../agent/payment-notes.js';
+import { cctpGateway } from '../bridge/gateway.js';
+import { BridgeService } from '../bridge/service.js';
+import { registerBridgeRoutes } from '../bridge/routes.js';
 export async function startTestnet() {
   if (
     [
@@ -74,6 +77,7 @@ export async function startTestnet() {
     network: 'Arc Testnet',
     livePayments: true,
   }));
+  registerBridgeRoutes(app, new BridgeService(repo, cctpGateway(vault, owner), vault, owner));
   app.get('/testnet/workspace', async () => {
     const state = await repo.snapshot();
     state.projects = await Promise.all(

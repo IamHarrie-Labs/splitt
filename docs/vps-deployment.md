@@ -2,6 +2,10 @@
 
 Prepared configuration, not a completed deployment. Inspect the host's operating system, disk space, existing containers, ports and reverse proxy before changing it. Preserve existing applications. This deployment uses only Arc Testnet.
 
+16 October staging: the PrepAI VPS is reachable with its existing SSH key; other applications and Caddy already own their ports. Splitt uses a separate `/opt/splitt` directory, project-local checksum-verified Compose binary and port 4400 on loopback. Do not start the optional Caddy profile on this host. The owner will supply a domain. The other saved VPS reported a changed host identity; its known_hosts entry was left untouched.
+
+`scripts/prepare-vps-env.mjs` creates an exclusive, ignored minimal operator configuration from existing local testnet settings. It never includes the owner signing key or a short-lived model token. `scripts/migrate-workspace.ts` exports only financial workspace state after refusing unfinished jobs and imports into an empty, matching vault scope after integrity checks. It does not migrate authentication sessions. Keep export files private; they include execution history and signatures. Stop the local worker before exporting and before starting the VPS worker.
+
 Use a dedicated checkout and `server/.secrets/vps.env` with permissions 600, populated from `vps.env.example`. Generate a 32-byte hexadecimal database password. The API needs the Circle TEST key/entity secret, not the owner's signing key or Circle recovery file. Configure a stable server-only model key separately; the current local Vercel OIDC token expires. Do not print `docker compose config` or environment files containing real credentials.
 
 If ports 80/443 are free, point the API subdomain's DNS to the VPS, open those ports, and use the optional Caddy profile:

@@ -23,6 +23,8 @@ export default function Documentation() {
             <a href="#demo">Using the demo</a>
             <a href="#automation">Receipt automation</a>
             <a href="#payment-notes">Payment notes</a>
+            <a href="#funding">Cross-chain funding</a>
+            <a href="#evidence">Verification evidence</a>
             <a href="#pilot">Business pilot</a>
             <a href="#testnet">Testnet and status</a>
           </nav>
@@ -154,6 +156,53 @@ export default function Documentation() {
                 A useful pilot includes a second session on a real project. Keep business planning
                 sessions, testnet token movements and real customer payments separate. No business
                 has been verified as onboarded yet.
+              </p>
+            </section>
+            <section id="funding">
+              <h2>Cross-chain invoice funding</h2>
+              <p>
+                The owner workspace includes a Base Sepolia to Arc Testnet funding flow using Circle
+                CCTP. An invoice intent records the payer, vault, amount and fee limit before a burn
+                is signed. Circle’s attestation and the actual Arc mint receipt are checked before
+                the owner attributes the net USDC to the invoice.
+              </p>
+              <p>
+                A direct mint does not automatically credit a project. Attribution is a separate
+                owner transaction; the receipt worker then detects the attributed funds and prepares
+                a draft. Existing transaction hashes can recover interrupted steps without another
+                burn.
+              </p>
+              <p>
+                The route’s contracts have been checked on both testnets. A completed cross-chain
+                transfer has not yet been proven. The public preview does not provide an anonymous
+                payment service. Paymaster, Gateway and reserve yield are outside this release.
+              </p>
+            </section>
+            <section id="evidence">
+              <h2>Verification evidence</h2>
+              <p>
+                Confirmed testnet payouts and missing-response recovery are documented in the{' '}
+                <a href="https://github.com/IamHarrie-Labs/splitt/blob/master/docs/testnet-payout-proof.json">
+                  transaction report
+                </a>
+                . The{' '}
+                <a href="https://github.com/IamHarrie-Labs/splitt/actions">automated checks</a>{' '}
+                cover allocation constraints, owner authorization, worker recovery and cross-chain
+                funding verification.
+              </p>
+              <p>
+                The{' '}
+                <a href="https://github.com/IamHarrie-Labs/splitt/blob/master/docs/payment-note-evaluation-live.json">
+                  payment-note experiment
+                </a>{' '}
+                uses ten synthetic examples. Model output was used in four; the combined model and
+                fallback path corrected two cases missed by literal matching. Allocation model
+                testing has not established a benefit over the deterministic planner.
+              </p>
+              <p>
+                In the owner workspace, each proposal exposes its triggering receipts, model or
+                fallback, baseline comparison and recorded facts. A pilot intake or test wallet
+                transfer does not establish business adoption.
               </p>
             </section>
             <section id="testnet">

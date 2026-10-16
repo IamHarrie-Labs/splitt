@@ -112,7 +112,7 @@ flowchart LR
 4. Onboard one consenting business with real invoice and contractor facts; synthetic scenarios stay excluded from adoption.
 5. Refresh the video with final evidence, upload to Loom/YouTube/Vimeo and complete the organizer's form. [Submission copy](docs/submission-copy.md) is ready for the owner.
 
-CCTP, USYC, document extraction and contractor share links remain optional/unimplemented. Integrations stay gated by `docs/project-spec.md`. No pilot or mainnet readiness is claimed.
+CCTP invoice funding is implemented for Base Sepolia → Arc Testnet with owner attribution, receipt verification and recovery. A completed transfer is still unproven; see [the runbook](docs/cctp-runbook.md). Paymaster and Gateway are outside this release; USYC, document extraction and contractor share links remain roadmap items. No pilot or mainnet readiness is claimed.
 
 ## Security boundaries
 

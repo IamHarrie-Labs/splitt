@@ -8,6 +8,7 @@ import { createWalletClient, custom, type EIP1193Provider, type Address, type He
 import { authorizationTypes, formatUSDC } from '@splitt/core';
 import type { LiveState } from '../../../server/src/live/repository';
 import type { BatchApproval } from '../../../server/src/store';
+import BridgeFunding from './bridge-funding';
 type Workspace = LiveState & { vault: Address; owner: Address; operator: Address };
 const demoOnly = process.env.NEXT_PUBLIC_DEMO_ONLY === 'true';
 export default function TestnetWorkspace() {
@@ -163,6 +164,13 @@ export default function TestnetWorkspace() {
                 >
                   Refresh receipts and settlement
                 </button>
+                <BridgeFunding
+                  workspace={workspace}
+                  api={api}
+                  refresh={refresh}
+                  busy={busy}
+                  run={run}
+                />
                 <section className="panel" style={{ padding: 24, marginTop: 24 }}>
                   <h2>Receipt activity</h2>
                   <p>
@@ -370,6 +378,11 @@ export default function TestnetWorkspace() {
                       <p>
                         {p.model} · {p.status}
                       </p>
+                      <p>
+                        {p.fallbackUsed
+                          ? 'Deterministic fallback used.'
+                          : 'Model proposal passed validation.'}
+                      </p>
                       {p.output.items.map((item) => (
                         <p key={item.commitment_id}>
                           {workspace.projects
@@ -381,6 +394,55 @@ export default function TestnetWorkspace() {
                       <p>
                         Unfunded obligations: {formatUSDC(p.output.unfunded_shortfall_micro)} USDC
                       </p>
+                      <details className="decision-evidence">
+                        <summary>Decision evidence and baseline</summary>
+                        <p>
+                          Created {p.createdAt}. Validation:{' '}
+                          {p.validation.ok ? 'passed' : 'rejected'}. Facts hash: {p.factsHash}
+                        </p>
+                        <p>
+                          Trigger:{' '}
+                          {workspace.receiptDrafts
+                            ?.filter((t) => t.planId === p.id)
+                            .map((t) => t.id)
+                            .join(', ') || 'Owner requested'}
+                        </p>
+                        <div className="decision-table">
+                          <table>
+                            <caption>Proposal compared with the deterministic baseline</caption>
+                            <thead>
+                              <tr>
+                                <th scope="col">Obligation</th>
+                                <th scope="col">Proposed USDC</th>
+                                <th scope="col">Baseline USDC</th>
+                                <th scope="col">Supporting facts</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {p.output.items.map((item) => (
+                                <tr key={item.commitment_id}>
+                                  <th scope="row">{item.commitment_id}</th>
+                                  <td>
+                                    {formatUSDC(item.amount_micro)} · {item.action}
+                                  </td>
+                                  <td>
+                                    {formatUSDC(
+                                      p.baseline.items.find(
+                                        (b) => b.commitment_id === item.commitment_id,
+                                      )?.amount_micro ?? '0',
+                                    )}
+                                  </td>
+                                  <td>{item.fact_refs.join(', ')}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                        <details>
+                          <summary>Recorded facts</summary>
+                          <pre>{JSON.stringify(p.facts, null, 2)}</pre>
+                        </details>
+                      </details>
                       <button
                         className="button secondary"
                         disabled={busy || p.status !== 'awaiting_owner'}

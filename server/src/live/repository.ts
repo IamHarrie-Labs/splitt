@@ -39,6 +39,7 @@ export type LiveState = {
   receiptDrafts?: ReceiptDraft[];
   notifications?: OwnerNotification[];
   paymentNotes?: import('../agent/payment-notes.js').PaymentNoteRecord[];
+  bridgeIntents?: import('../../../packages/core/src/cctp.js').BridgeIntent[];
 };
 export type ReceiptDraft = {
   id: string;

@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-10-16T20:03:57.393Z",
+  "source": "Base Sepolia",
+  "destination": "Arc Testnet",
+  "payer": "0x8bE0633d4fd1E8828338d4BC779dDb7dd2121fD1",
+  "vault": "0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6",
+  "amountMicro": "1000000",
+  "minimumFee": "0",
+  "usdcBalance": "0",
+  "nativeBalance": "0",
+  "allowance": "0",
+  "funded": false,
+  "transferProven": false
+}
