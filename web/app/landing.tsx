@@ -37,6 +37,10 @@ const questions = [
     'The example displays dollar values for clarity. Payments settle in USDC on Arc Testnet; Splitt does not send bank transfers.',
   ],
   [
+    'Has this run on chain?',
+    'Yes. On 15 October 2026 the demo scenario ran on Arc Testnet at 1/1000 scale, with owner-signed batches executed by a Circle wallet through ProjectVault. The transactions are linked at the end of the demo.',
+  ],
+  [
     'Can I use Splitt with real business funds?',
     'Splitt is currently a testnet application. It is not available for mainnet business payments.',
   ],

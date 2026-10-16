@@ -97,6 +97,24 @@ export default function Documentation() {
                 receipt indexing are implemented separately from the public demo.
               </p>
               <p>
+                On 15 October 2026 the demo scenario ran on Arc Testnet at 1/1000 scale:
+                owner-signed batches executed by a Circle developer-controlled wallet paid{' '}
+                <a href="https://explorer.testnet.arc.io/tx/0x938ea7d6370c06d25daf6c73493e5c43f304abf9938563b7bd934325edaebdc5">
+                  0.7 and 0.2 USDC
+                </a>
+                , recorded the{' '}
+                <a href="https://explorer.testnet.arc.io/tx/0xde2ce4f47108ab118ef30b7dd835b7da7dae60ed7b83504ead5011acddd35c6d">
+                  0.8 USDC remainder
+                </a>{' '}
+                and paid the{' '}
+                <a href="https://explorer.testnet.arc.io/tx/0x098fa70efda77e5f22396521bce7d5ccdeb3bbbaab8997e9ae8551a0ceb32881">
+                  final 0.3 USDC
+                </a>
+                . The project kept 0.8 USDC and the separate project’s balance was unchanged. A
+                deliberately lost provider response resumed as the same job without a duplicate
+                payment. Recipients were test wallets.
+              </p>
+              <p>
                 The authenticated API and worker are not publicly hosted yet. The{' '}
                 <Link href="/testnet">testnet workspace</Link> shows connection status and requires
                 the configured owner wallet when enabled. It is not a mainnet payment service.

@@ -1,0 +1,28 @@
+{
+  "checkedAt": "2026-10-15T15:21:38.410Z",
+  "chainId": 5042002,
+  "vault": "0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6",
+  "source": "testnet_demonstration",
+  "firstBatch": {
+    "id": "db24c982-7d4d-4601-bb84-c51b0e81cee4",
+    "providerId": "96425104-f0ed-5d27-986b-abf41b814491",
+    "txHash": "0x938ea7d6370c06d25daf6c73493e5c43f304abf9938563b7bd934325edaebdc5"
+  },
+  "secondBatch": {
+    "id": "c2d512de-02dd-4c59-aa23-d1e8f5c0daa9",
+    "providerId": "fdc65cef-a208-5af1-8e7e-620bb8379d3d",
+    "txHash": "0x098fa70efda77e5f22396521bce7d5ccdeb3bbbaab8997e9ae8551a0ceb32881"
+  },
+  "remainderTxHash": "0xde2ce4f47108ab118ef30b7dd835b7da7dae60ed7b83504ead5011acddd35c6d",
+  "finalNorthstarBalance": "800000",
+  "fieldworkBalance": "1000000",
+  "realBusinesses": 0,
+  "realCustomerVolume": "0",
+  "recovery": {
+    "responseLossInjected": true,
+    "sameJobId": true,
+    "sameCalldata": true,
+    "attempts": 2,
+    "cumulativePayoutsVerified": true
+  }
+}

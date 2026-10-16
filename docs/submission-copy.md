@@ -22,7 +22,7 @@ Splitt turns a partial client receipt into an owner-approved contractor payment 
 
 The owner reviews the exact amounts and recipients and signs an EIP-712 authorization. A Circle developer-controlled operator executes the approved batch against ProjectVault on Arc Testnet. The contract enforces project isolation, authorized recipients, replay guards and atomic payouts. PostgreSQL stores execution intents and receipt cursors; unresolved attempts block further allocations until their outcome is reconciled.
 
-The public synthetic demo starts with a 2,000-USDC invoice, a 1,200 receipt and a 300 reserve. It allocates 700 to one contractor and a permitted 200 to another. When the 800 remainder arrives, it proposes only the outstanding 300. Browser demo settlement is simulated. A scaled scenario is funded on Arc Testnet; the deployed source is independently verified. Contractor payout and recovery evidence are still pending the contract's activation delay.
+The public synthetic demo starts with a 2,000-USDC invoice, a 1,200 receipt and a 300 reserve. It allocates 700 to one contractor and a permitted 200 to another. When the 800 remainder arrives, it proposes only the outstanding 300. Browser demo settlement is simulated. The same flow ran on Arc Testnet at scaled amounts (1.2 of 2 USDC, 0.3 reserve) through the verified vault and a Circle developer-controlled operator: 0.7 + 0.2 USDC payouts (https://explorer.testnet.arc.io/tx/0x938ea7d6370c06d25daf6c73493e5c43f304abf9938563b7bd934325edaebdc5), the 0.8 remainder (https://explorer.testnet.arc.io/tx/0xde2ce4f47108ab118ef30b7dd835b7da7dae60ed7b83504ead5011acddd35c6d) and the final 0.3 (https://explorer.testnet.arc.io/tx/0x098fa70efda77e5f22396521bce7d5ccdeb3bbbaab8997e9ae8551a0ceb32881). The project ended at 0.8 USDC with its reserve intact, and a separate project's 1 USDC was untouched. A deliberately lost provider response resumed as the same job without a duplicate payment. Recipients are controlled test wallets, not real contractors.
 
 ## Traction
 
@@ -45,4 +45,4 @@ Fill contact email, Discord/Telegram handles, team names/size and previous parti
 
 ## Before final submission
 
-Record actual payout/remainder and recovery proof after 15 October 2026 at 16:18:53 Lagos. Replace pending statements only after verification. Include the AI acceptance/fallback result without claiming an improvement over the baseline unless demonstrated. Link the accepted video host and confirm the latest public demo works. Add a pilot only when real participants and activity exist.
+Payout/remainder and recovery proof recorded 15 October 2026 (docs/testnet-payout-proof.json). Include the AI acceptance/fallback result without claiming an improvement over the baseline unless demonstrated. Link the accepted video host and confirm the latest public demo works. Add a pilot only when real participants and activity exist.

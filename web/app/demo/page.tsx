@@ -16,6 +16,26 @@ import SiteFooter from '../site-footer';
 import SiteHeader from '../site-header';
 import styles from './demo.module.css';
 
+// Real Arc Testnet transactions for this same scenario at 1/1000 scale (docs/testnet-payout-proof.json).
+const EXPLORER = 'https://explorer.testnet.arc.io/tx/';
+const CHAIN_PROOF = [
+  {
+    step: 'First batch',
+    detail: '0.7 USDC to Amara, 0.2 USDC to Tobi',
+    tx: '0x938ea7d6370c06d25daf6c73493e5c43f304abf9938563b7bd934325edaebdc5',
+  },
+  {
+    step: 'Remainder received',
+    detail: '0.8 USDC deposited to the project',
+    tx: '0xde2ce4f47108ab118ef30b7dd835b7da7dae60ed7b83504ead5011acddd35c6d',
+  },
+  {
+    step: 'Final batch',
+    detail: '0.3 USDC to Tobi; project keeps 0.8',
+    tx: '0x098fa70efda77e5f22396521bce7d5ccdeb3bbbaab8997e9ae8551a0ceb32881',
+  },
+];
+
 // The shell and controls appear immediately; only the secondary review panel enters.
 export default function PublicDemo() {
   const [project, setProject] = useState(() => fixtureProjects()[0]);
@@ -80,7 +100,8 @@ export default function PublicDemo() {
           <p className={styles.eyebrow}>Demo · Sample data</p>
           <h1>Payment allocation</h1>
           <p>
-            Review a sample project, generate an allocation and simulate payment. No funds move.
+            Review a sample project, generate an allocation and simulate payment. No funds move
+            here; the real testnet transactions for this flow are listed below.
           </p>
         </div>
         <div className={styles.grid}>
@@ -223,6 +244,47 @@ export default function PublicDemo() {
           </strong>
           <p>This project’s balance is unchanged.</p>
         </aside>
+        <section className={styles.chain} aria-labelledby="chain-heading">
+          <div className={styles.chainHead}>
+            <h2 id="chain-heading">On Arc Testnet</h2>
+            <p>
+              This sequence also ran on chain on 15 October 2026, at 1/1000 scale. The owner signed
+              each batch, a Circle developer-controlled wallet executed it through ProjectVault, and
+              Fieldwork’s separate balance stayed untouched. Recipients are test wallets, not real
+              contractors.
+            </p>
+          </div>
+          <ol>
+            {CHAIN_PROOF.map((row, i) => {
+              const reached =
+                i === 0 ? settled.length >= 1 : i === 1 ? remainder : settled.length >= 2;
+              return (
+                <li key={row.tx} data-reached={reached || undefined}>
+                  <span className={styles.chainStep}>{String(i + 1).padStart(2, '0')}</span>
+                  <div>
+                    <strong>{row.step}</strong>
+                    <p>{row.detail}</p>
+                  </div>
+                  <a href={EXPLORER + row.tx} target="_blank" rel="noopener noreferrer">
+                    {row.tx.slice(0, 8)}…{row.tx.slice(-6)}
+                    <span className="sr-only"> on Arc explorer (opens in a new tab)</span>
+                  </a>
+                </li>
+              );
+            })}
+          </ol>
+          <p className={styles.proof}>
+            A provider response was deliberately lost during the run. The same job resumed with
+            identical calldata and paid once.{' '}
+            <a
+              href="https://github.com/IamHarrie-Labs/splitt/blob/master/docs/testnet-payout-proof.json"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Proof record
+            </a>
+          </p>
+        </section>
       </main>
       <SiteFooter fit="app" />
     </div>

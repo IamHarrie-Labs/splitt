@@ -1,5 +1,12 @@
 # Splitt build status
 
+## Payout proof on 15 October 2026
+
+- Ran `testnet:prove --recovery` after contractor activation. All three vault transactions succeeded on Arc Testnet: first batch 0.7 + 0.2 USDC (0x938ea7d6370c06d25daf6c73493e5c43f304abf9938563b7bd934325edaebdc5, block 67349681), 0.8 remainder deposit (0xde2ce4f47108ab118ef30b7dd835b7da7dae60ed7b83504ead5011acddd35c6d, block 67349716), final 0.3 payout (0x098fa70efda77e5f22396521bce7d5ccdeb3bbbaab8997e9ae8551a0ceb32881, block 67349747).
+- Independent RPC check: receipts status 1; test payee balances Amara 0.7 and Tobi 0.5 USDC. Final Northstar balance 0.8 USDC (reserve intact); Fieldwork unchanged at 1 USDC.
+- Recovery: an accepted provider response was deliberately lost; the same durable job resumed with identical calldata (2 attempts), no duplicate payment.
+- Recipients are controlled test wallets. Real businesses: 0. Real customer volume: 0.
+
 ## Current release checks on 14 October 2026
 
 - Arc explorer now returns verified source code; updated arc-verification.json. Sourcify retains exact creation/runtime matches.

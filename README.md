@@ -4,11 +4,11 @@ A project payment workspace for agencies. When a client pays part of an invoice,
 
 [Public website](https://splitt-dun.vercel.app) · [Interactive synthetic demo](https://splitt-dun.vercel.app/demo) · [Source repository](https://github.com/IamHarrie-Labs/splitt). The authenticated testnet API/worker currently runs locally; the hosted demo cannot move funds.
 
-[2:40 walkthrough preview and captions](https://github.com/IamHarrie-Labs/splitt/releases/tag/v0.1.0-preview). This captured-UI preview predates publication; its closing localhost URL is superseded by the public demo above. Final payout/model/pilot evidence remains pending.
+[2:40 walkthrough preview and captions](https://github.com/IamHarrie-Labs/splitt/releases/tag/v0.1.0-preview). This captured-UI preview predates publication; its closing localhost URL is superseded by the public demo above. It predates the on-chain payout proof below; final model/pilot evidence remains pending.
 
 ## Current build
 
-The public `/demo` runs the deterministic allocation engine in the browser with synthetic data. The authenticated `/testnet` workspace connects to Arc balances, a PostgreSQL queue and Circle execution. The vault is deployed at `0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6`; [Sourcify confirms exact creation/runtime bytecode matches](https://repo.sourcify.dev/5042002/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6). A real Circle contract query is confirmed, with zero transferred value. **Contractor payouts remain gated until 15 October 2026, 16:18:53 Lagos.** Live evaluation accepted 5/10 Nemotron outputs and 0/10 Poolside outputs; fallback kept all final plans valid. [Model reliability remains a release gap](docs/model-evaluation.md). Real pilot adoption remains pending. Fixture amounts do not count as adoption.
+The public `/demo` runs the deterministic allocation engine in the browser with synthetic data. The authenticated `/testnet` workspace connects to Arc balances, a PostgreSQL queue and Circle execution. The vault is deployed at `0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6`; [Sourcify confirms exact creation/runtime bytecode matches](https://repo.sourcify.dev/5042002/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6). A real Circle contract query is confirmed, with zero transferred value. **Contractor payouts executed on Arc Testnet on 15 October 2026** (scaled demo amounts, controlled test wallets): [first batch 0.7 + 0.2 USDC](https://explorer.testnet.arc.io/tx/0x938ea7d6370c06d25daf6c73493e5c43f304abf9938563b7bd934325edaebdc5), [0.8 USDC remainder deposit](https://explorer.testnet.arc.io/tx/0xde2ce4f47108ab118ef30b7dd835b7da7dae60ed7b83504ead5011acddd35c6d), [final 0.3 USDC payout](https://explorer.testnet.arc.io/tx/0x098fa70efda77e5f22396521bce7d5ccdeb3bbbaab8997e9ae8551a0ceb32881). Northstar ends at 0.8 USDC with its reserve intact; Fieldwork's separate 1 USDC was untouched. A deliberately lost provider response was resumed as the same job with the same calldata, with no duplicate payment. Evidence: [testnet-payout-proof.json](docs/testnet-payout-proof.json). Live evaluation accepted 5/10 Nemotron outputs and 0/10 Poolside outputs; fallback kept all final plans valid. [Model reliability remains a release gap](docs/model-evaluation.md). Real pilot adoption remains pending. Fixture amounts do not count as adoption.
 
 Implemented:
 
@@ -20,7 +20,7 @@ Implemented:
 - Solidity `ProjectVault`: project isolation, deposits, replay-safe attribution, owner withdrawal, pause/revocation, EIP-712 owner authorization and atomic batches.
 - Relational Postgres repositories, transaction locks, append-only audit entries and additive migrations.
 - Single-use EIP-4361 owner challenges, revocable sessions, CSRF checks and exact EIP-712 fixture approval in the browser.
-- Separate Arc Testnet workspace, chain-derived balances and receipt indexing, a durable PostgreSQL execution queue, Circle wallet/network verification and replay-flag reconciliation. Deployment, Circle query execution and authenticated indexing are verified; full payout/remainder and recovery proof remain pending.
+- Separate Arc Testnet workspace, chain-derived balances and receipt indexing, a durable PostgreSQL execution queue, Circle wallet/network verification and replay-flag reconciliation. Deployment, Circle execution, authenticated indexing, the full payout/remainder sequence and lost-response recovery are verified on Arc Testnet.
 
 ## Run locally
 
@@ -106,7 +106,7 @@ flowchart LR
 
 ## Remaining release gates
 
-1. Execute the prepared Circle payout, remainder and recovery proof after 15 October at 16:18:53 Lagos.
+1. ~~Execute the Circle payout, remainder and recovery proof.~~ Done 15 October 2026; see docs/testnet-payout-proof.json.
 2. Deploy the API and PostgreSQL on the owner's VPS; verify HTTPS, signed owner access and worker restart recovery. See [VPS deployment](docs/vps-deployment.md).
 3. Establish reliable real-model behavior and report validation/fallback rates honestly.
 4. Onboard one consenting business with real invoice and contractor facts; synthetic scenarios stay excluded from adoption.
