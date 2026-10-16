@@ -98,7 +98,6 @@ export default function Landing() {
         <section className="payment-story" id="how-it-works" aria-labelledby="story-heading">
           <div className="page-width">
             <div className="section-intro" data-reveal>
-              <span className="section-index">01 / The allocation</span>
               <h2 id="story-heading">
                 A clear split.
                 <br />
@@ -186,7 +185,6 @@ export default function Landing() {
         <section className="workflow" aria-labelledby="workflow-heading">
           <div className="page-width">
             <div className="section-intro" data-reveal>
-              <span className="section-index">02 / The workflow</span>
               <h2 id="workflow-heading">
                 From client receipt
                 <br />
@@ -301,7 +299,6 @@ export default function Landing() {
         <section className="owner-controls" id="controls" aria-labelledby="controls-heading">
           <div className="page-width controls-layout">
             <div className="section-intro" data-reveal>
-              <span className="section-index">03 / Your controls</span>
               <h2 id="controls-heading">
                 The rules are yours.
                 <br />
@@ -360,7 +357,6 @@ export default function Landing() {
         <section className="landing-questions" id="questions" aria-labelledby="questions-heading">
           <div className="page-width faq-layout">
             <div className="section-intro" data-reveal>
-              <span className="section-index">A few answers</span>
               <h2 id="questions-heading">
                 Frequently asked
                 <br />

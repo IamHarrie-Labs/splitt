@@ -104,14 +104,6 @@
   --on-blue-muted: #c3d4e8;
   --blue-rule: #41648b;
 }
-.section-index {
-  display: block;
-  font-size: 12px;
-  line-height: 1.6;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-  margin-bottom: 24px;
-}
 .section-intro {
   max-width: 730px;
 }
@@ -309,7 +301,6 @@
   background: var(--section-deep);
   color: var(--on-blue);
 }
-.workflow .section-index,
 .workflow .section-intro > p {
   color: var(--on-blue-muted);
 }
@@ -775,9 +766,6 @@
   }
   .landing h2 {
     font-size: clamp(30px, 7vw, 42px);
-  }
-  .section-index {
-    margin-bottom: 20px;
   }
   .section-intro > p {
     font-size: 14px;
