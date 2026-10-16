@@ -1,430 +1,366 @@
 'use client';
-
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
-import { ArrowRight, Check, ShieldCheck, ArrowDownLeft } from '@phosphor-icons/react';
-import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
-import { AnimatedValue, PaymentFlow, PaymentScene, TIMING } from './landing-motion';
-import ScrollStory, { DotField } from './landing-story';
+import { useMemo, useState } from 'react';
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Check,
+  Pause,
+  Play,
+  ShieldCheck,
+  Fingerprint,
+  ArrowsSplit,
+  LockKey,
+} from '@phosphor-icons/react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { baselinePlan, buildFacts, formatUSDC } from '@splitt/core';
+import { fixtureProjects } from '../../server/src/fixtures';
+import SiteHeader from './site-header';
 import SiteFooter from './site-footer';
+import CinematicMedia from './cinematic-media';
 import './landing.css';
-
+const controls = [
+  {
+    icon: ArrowsSplit,
+    title: 'A boundary for every project',
+    text: 'One project’s shortfall cannot spend another project’s accounted balance.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Your reserve, before payouts',
+    text: 'Protected cash, per-payment limits and daily caps shape every proposed batch.',
+  },
+  {
+    icon: Check,
+    title: 'Agreed terms come first',
+    text: 'Only approved work is eligible. Partial payments and deferrals follow the terms you confirmed.',
+  },
+  {
+    icon: LockKey,
+    title: 'An exact owner approval',
+    text: 'Authorization binds the recipients, amounts and expiry. A changed plan needs a fresh review.',
+  },
+];
+/* Entrance storyboard: shell and CTA are immediately usable.
+   80ms headline rises; 180ms copy settles; 300ms scene annotation enters.
+   Scroll reveals run once. Reduced motion and pause show the resting frame. */
 export default function Landing() {
-  const [remainder, setRemainder] = useState(false);
   const [paused, setPaused] = useState(false);
-  const reducedMotion = useReducedMotion();
-  const enabled = !paused && !reducedMotion;
-  const [stage, setStage] = useState(0);
-  const { scrollYProgress } = useScroll();
-  const readingProgress = useSpring(scrollYProgress, { stiffness: 180, damping: 30 });
-  const rootRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!enabled) return;
-    const timers = [TIMING.card, TIMING.flow, TIMING.branches].map((delay, index) =>
-      window.setTimeout(() => setStage((current) => Math.max(current, index + 1)), delay),
-    );
-    return () => timers.forEach(window.clearTimeout);
-  }, [enabled]);
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root || !('IntersectionObserver' in window) || !enabled) return;
-    root.classList.add('landing-reveals');
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries)
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            observer.unobserve(entry.target);
-          }
-      },
-      { threshold: 0.08 },
-    );
-    root.querySelectorAll('[data-reveal]').forEach((element) => observer.observe(element));
-    return () => {
-      observer.disconnect();
-      root.classList.remove('landing-reveals');
-    };
-  }, [enabled]);
+  const reduced = useReducedMotion();
+  const still = paused || !!reduced;
+  const [remainder, setRemainder] = useState(false);
+  const example = useMemo(() => {
+    const project = fixtureProjects()[0];
+    if (remainder) {
+      project.received = '2000000000';
+      project.balance = '1100000000';
+      project.commitments[0].paid = '700000000';
+      project.commitments[1].paid = '200000000';
+    }
+    const plan = baselinePlan(buildFacts(project, new Date('2026-10-03T12:00:00Z')));
+    const total = plan.items.reduce((sum, item) => sum + BigInt(item.amount_micro), 0n);
+    return { project, plan, total, retained: BigInt(project.balance) - total };
+  }, [remainder]);
+  const reveal = {
+    initial: still ? (false as const) : { y: 16 },
+    whileInView: { y: 0 },
+    transition: { duration: still ? 0 : 0.4 },
+    viewport: { once: true, amount: 0.15 },
+  };
   return (
-    <div className={`landing ${enabled ? 'motion-enabled' : 'motion-paused'}`} ref={rootRef}>
-      {enabled && (
-        <motion.div
-          className="landing-reading-progress"
-          style={{ scaleX: readingProgress }}
-          aria-hidden="true"
-        />
-      )}
-      <header className="landing-nav landing-width">
-        <Link href="/" className="brand" aria-label="Splitt home">
-          <span className="brand-mark" aria-hidden="true">
-            <i />
-            <i />
-          </span>
-          splitt<span className="brand-period">.</span>
-        </Link>
-        <nav aria-label="Main navigation">
-          <a href="#how-it-works">How it works</a>
-          <a href="#controls">Your controls</a>
-        </nav>
-        <Link href="/demo" className="landing-button small">
-          Open demo <ArrowRight size={16} />
-        </Link>
-      </header>
-
-      <main>
-        <section className="landing-hero landing-width">
-          <DotField enabled={enabled} />
-          <div className="landing-hero-copy landing-enter">
-            <p className="landing-kicker">
-              <span /> Project payments, with a plan
-            </p>
-            <h1>
-              A partial payment.
-              <br />A clear next <em>move.</em>
+    <div className={`landing${still ? ' landing-still' : ''}`} id="top">
+      <section className="splitt-hero" aria-labelledby="hero-heading">
+        <div className="splitt-hero-stage">
+          <CinematicMedia paused={still} />
+          <div className="splitt-hero-scrim" />
+        </div>
+        <SiteHeader />
+        <div className="splitt-hero-content page-width">
+          <div className="splitt-hero-copy">
+            <p className="hero-eyebrow">Project payments, with a plan</p>
+            <h1 id="hero-heading">
+              <span>Every payment.</span>
+              <span>
+                A clearer <em>next move.</em>
+              </span>
             </h1>
-            <p className="landing-intro">
-              Your client paid less than the invoice. Splitt helps you decide who gets paid now,
-              what can wait, and how much stays with the project.
+            <p className="hero-description">
+              Pay approved work. Protect your reserve. Know what comes next, even when your client
+              pays in parts.
             </p>
-            <div className="landing-hero-actions">
-              <Link href="/demo" className="landing-button">
-                Explore the demo <ArrowRight size={18} />
+            <div className="hero-actions">
+              <Link href="/demo" className="splitt-primary-link">
+                Explore the demo
+                <span>
+                  <ArrowUpRight size={21} aria-hidden="true" />
+                </span>
               </Link>
-              <a href="#how-it-works" className="landing-text-link">
-                See how it works <span>↗</span>
+              <a href="#how-it-works" className="splitt-text-link">
+                See how it works
+                <ArrowRight size={18} aria-hidden="true" />
               </a>
             </div>
-            <p className="landing-footnote">
-              For small agencies and studios. Built for USDC on Arc.
-            </p>
           </div>
-
-          <PaymentScene enabled={enabled}>
-            <motion.div
-              className="landing-example"
-              initial={false}
-              animate={{ y: enabled && stage < 1 ? 18 : 0 }}
-              transition={
-                enabled ? { type: 'spring', stiffness: 300, damping: 30 } : { duration: 0 }
-              }
-              aria-label="Interactive illustrative payment example"
-            >
-              <div className="example-heading">
-                <span>The Northstar project</span>
-                <span className="example-label">Illustrative example</span>
-              </div>
-              <PaymentFlow enabled={enabled} remainder={remainder} stage={stage} />
-              <div className="example-arrival">
-                <span className="example-arrival-icon">
-                  <ArrowDownLeft size={23} />
-                </span>
-                <div>
-                  <span>
-                    {remainder ? 'The remaining payment arrives' : 'A client payment arrives'}
-                  </span>
-                  <strong>
-                    <AnimatedValue enabled={enabled}>{remainder ? '800' : '1,200'}</AnimatedValue>{' '}
-                    <small>USDC</small>
-                  </strong>
-                </div>
-                <span className="example-invoice">
-                  Invoice total
-                  <br />
-                  <b>2,000 USDC</b>
-                </span>
-              </div>
-              <div className="example-progress" aria-hidden="true">
-                <motion.span
-                  initial={false}
-                  animate={{ scaleX: remainder ? 1 : 0.6 }}
-                  transition={
-                    enabled ? { type: 'spring', stiffness: 160, damping: 25 } : { duration: 0 }
-                  }
-                  style={{ transformOrigin: 'left', width: '100%' }}
-                />
-              </div>
-              <p className="example-progress-label">
-                {remainder
-                  ? 'Invoice fully received. Earlier payments stay accounted for.'
-                  : '60% of the invoice received. The project still needs to move.'}
-              </p>
-              <div className="example-allocation-heading">
-                <h2>
-                  {remainder ? 'Pay the remaining obligation' : 'A plan for the money you have'}
-                </h2>
-                <ShieldCheck size={20} />
-              </div>
-              <div className="example-payee">
-                <span className="example-initials">AO</span>
-                <div>
-                  <strong>Amara Okafor</strong>
-                  <span>Brand direction · unlocks delivery</span>
-                </div>
-                <div className="example-payee-amount">
-                  <strong>
-                    <AnimatedValue enabled={enabled}>
-                      {remainder ? 'Paid' : '700 USDC'}
-                    </AnimatedValue>
-                  </strong>
-                  <span>{remainder ? '700 USDC earlier' : 'Full obligation'}</span>
-                </div>
-              </div>
-              <div className="example-payee">
-                <span className="example-initials muted">TA</span>
-                <div>
-                  <strong>Tobi Adebayo</strong>
-                  <span>Development · partial payment agreed</span>
-                </div>
-                <div className="example-payee-amount">
-                  <strong>
-                    <AnimatedValue enabled={enabled}>{remainder ? '300' : '200'}</AnimatedValue>{' '}
-                    USDC
-                  </strong>
-                  <span>{remainder ? 'Final balance' : '300 USDC remains'}</span>
-                </div>
-              </div>
-              <div className="example-total">
-                <span>Proposed batch</span>
-                <strong>
-                  <AnimatedValue enabled={enabled}>{remainder ? '300' : '900'}</AnimatedValue> USDC
-                </strong>
-              </div>
-              <div className="example-reserve">
-                <ShieldCheck size={18} />
-                <span>
-                  {remainder
-                    ? '800 USDC stays in the project after this batch.'
-                    : '300 USDC stays protected as the project reserve.'}
-                </span>
-              </div>
-              <div className="example-switch" role="group" aria-label="Choose a payment stage">
-                <button aria-pressed={!remainder} onClick={() => setRemainder(false)}>
-                  {!remainder && (
-                    <motion.span
-                      className="example-switch-active"
-                      layoutId="payment-stage"
-                      transition={
-                        enabled ? { type: 'spring', stiffness: 400, damping: 32 } : { duration: 0 }
-                      }
-                    />
-                  )}
-                  <span>First payment</span>
-                </button>
-                <button aria-pressed={remainder} onClick={() => setRemainder(true)}>
-                  {remainder && (
-                    <motion.span
-                      className="example-switch-active"
-                      layoutId="payment-stage"
-                      transition={
-                        enabled ? { type: 'spring', stiffness: 400, damping: 32 } : { duration: 0 }
-                      }
-                    />
-                  )}
-                  <span>When the rest arrives</span> <ArrowRight size={13} />
-                </button>
-              </div>
-            </motion.div>
-          </PaymentScene>
-        </section>
-
-        <div className="landing-principles landing-width">
-          <span>Project funds stay separate.</span>
-          <span>The reserve stays protected.</span>
-          <span>You approve the plan.</span>
-        </div>
-
-        <ScrollStory enabled={enabled} />
-
-        <section className="landing-process landing-width" id="how-it-works" data-reveal>
-          <div className="landing-section-heading">
-            <p className="landing-kicker">From arrival to allocation</p>
-            <h2>
-              Less guesswork.
-              <br />
-              More room to keep working.
-            </h2>
-            <p>A smaller payment doesn’t change what you owe. It changes what you can do today.</p>
-          </div>
-          <div className="landing-steps">
-            <article className="process-card">
-              <div className="process-visual visual-match" aria-hidden="true">
-                <i />
-                <i />
-                <i />
-                <span>↙</span>
-              </div>
-              <span className="step-number">01 / Match</span>
-              <h3>
-                Put the money with
-                <br />
-                the right project.
-              </h3>
-              <p>
-                Track the invoice, the incoming payment, and the work it belongs to. Review
-                uncertain arrivals before allocating them.
-              </p>
-            </article>
-            <article className="process-card">
-              <div className="process-visual visual-split" aria-hidden="true">
-                <i />
-                <i />
-                <i />
-                <i />
-              </div>
-              <span className="step-number">02 / Decide</span>
-              <h3>
-                Make the tradeoffs
-                <br />
-                visible.
-              </h3>
-              <p>
-                Splitt proposes an allocation from approved work, due dates, partial-payment terms,
-                and your reserve. See the reason behind each amount.
-              </p>
-            </article>
-            <article className="process-card">
-              <div className="process-visual visual-review" aria-hidden="true">
-                <span>
-                  <Check size={24} />
-                </span>
-                <i />
-                <i />
-              </div>
-              <span className="step-number">03 / Review</span>
-              <h3>
-                Keep the final
-                <br />
-                decision yours.
-              </h3>
-              <p>
-                Review the recipients and exact amounts before approval. When more money arrives,
-                plan for the unpaid balance instead of paying twice.
-              </p>
-            </article>
-          </div>
-        </section>
-
-        <section className="landing-controls" id="controls">
-          <div className="landing-width landing-controls-grid" data-reveal>
+          <div className="hero-scene-note">
+            <span className="scene-note-symbol">
+              <ArrowsSplit size={25} aria-hidden="true" />
+            </span>
             <div>
-              <p className="landing-kicker">A project is a boundary</p>
-              <h2>
-                Your commitments.
-                <br />
-                Your limits.
-                <br />
-                <em>Your call.</em>
-              </h2>
-              <p>Allocation should come with an explanation and a set of rules you can trust.</p>
-              <Link href="/allocation" className="landing-text-link">
-                Try allocation review <ArrowRight size={17} />
-              </Link>
+              <strong>One receipt. A considered split.</strong>
+              <p>
+                Approved obligations.
+                <br />A reserve that stays yours.
+              </p>
             </div>
-            <div className="landing-rule-list">
-              {[
-                [
-                  'Separate project balances',
-                  'One project’s shortfall should never quietly spend another project’s money.',
-                ],
-                [
-                  'A reserve before payouts',
-                  'Set the cash that needs to stay put, alongside per-payment and daily caps.',
-                ],
-                [
-                  'Terms before suggestions',
-                  'Only approved work is eligible. Agreed partial-payment and deferral terms shape the plan.',
-                ],
-                [
-                  'An exact owner approval',
-                  'Review the batch, not a blanket spending permission. Changes require a fresh review.',
-                ],
-              ].map(([title, body]) => (
-                <article key={title}>
-                  <Check size={19} />
+          </div>
+          <div className="hero-bottom">
+            <p>
+              Built for agencies.
+              <br />
+              <span>Settled in USDC on Arc.</span>
+            </p>
+            <a href="#controls" className="hero-owner-note">
+              <Fingerprint size={28} aria-hidden="true" />
+              <span>
+                Your money.
+                <br />
+                <strong>Your final approval.</strong>
+              </span>
+              <ArrowUpRight size={19} aria-hidden="true" />
+            </a>
+            <button
+              className="hero-motion"
+              aria-pressed={paused}
+              disabled={!!reduced}
+              onClick={() => setPaused((value) => !value)}
+              aria-label={
+                reduced ? 'Reduced motion enabled' : paused ? 'Play animation' : 'Pause animation'
+              }
+            >
+              {still ? <Play size={15} /> : <Pause size={15} />}
+              <span>{reduced ? 'Reduced motion' : paused ? 'Play motion' : 'Pause motion'}</span>
+            </button>
+          </div>
+        </div>
+      </section>
+      <main className="landing-body">
+        <section
+          className="payment-story page-width"
+          id="how-it-works"
+          aria-labelledby="story-heading"
+        >
+          <motion.div {...reveal} className="story-intro">
+            <p className="section-caption">A familiar situation</p>
+            <h2 id="story-heading">
+              The invoice says one thing.
+              <br />
+              Your balance says <em>another.</em>
+            </h2>
+            <p>
+              The work is approved. The client has paid part of the invoice. Make a plan for the
+              money you actually have.
+            </p>
+          </motion.div>
+          <div
+            className="story-stage-picker"
+            role="group"
+            aria-label="Choose an illustrative payment stage"
+          >
+            <button aria-pressed={!remainder} onClick={() => setRemainder(false)}>
+              <span>01</span> First payment
+            </button>
+            <ArrowRight size={19} aria-hidden="true" />
+            <button aria-pressed={remainder} onClick={() => setRemainder(true)}>
+              <span>02</span> The remainder arrives
+            </button>
+          </div>
+          <div className="payment-ledger" aria-label="Illustrative Northstar payment allocation">
+            <div className="ledger-title">
+              <div>
+                <span>Northstar Studio</span>
+                <h3>Brand launch</h3>
+              </div>
+              <p>Illustrative example · USDC</p>
+            </div>
+            <dl className="ledger-summary">
+              <div>
+                <dt>Invoice total</dt>
+                <dd>2,000</dd>
+              </div>
+              <div>
+                <dt>Received to date</dt>
+                <dd>{formatUSDC(example.project.received)}</dd>
+              </div>
+              <div>
+                <dt>Proposed this time</dt>
+                <dd key={String(remainder)} className="ledger-figure">
+                  {formatUSDC(String(example.total))}
+                </dd>
+              </div>
+              <div>
+                <dt>Left after this batch</dt>
+                <dd>{formatUSDC(String(example.retained))}</dd>
+              </div>
+            </dl>
+            <div className="ledger-columns" aria-hidden="true">
+              <span>Approved work</span>
+              <span>Payment terms</span>
+              <span>This batch</span>
+            </div>
+            {example.project.commitments.map((commitment) => {
+              const payment = example.plan.items.find(
+                (item) => item.commitment_id === commitment.id,
+              );
+              return (
+                <div className="ledger-row" key={commitment.id}>
                   <div>
-                    <h3>{title}</h3>
-                    <p>{body}</p>
+                    <strong>{commitment.name}</strong>
+                    <p>{commitment.blocksDelivery ? 'Brand direction' : 'Development'}</p>
                   </div>
-                </article>
-              ))}
+                  <p>
+                    {commitment.blocksDelivery
+                      ? remainder
+                        ? '700 USDC already paid'
+                        : 'Full payment unlocks delivery'
+                      : 'Partial payment agreed'}
+                  </p>
+                  <strong className="ledger-amount">
+                    {payment?.action === 'pay' ? formatUSDC(payment.amount_micro) : 'Paid'}
+                    <small>{payment?.action === 'pay' ? 'USDC' : 'earlier'}</small>
+                  </strong>
+                </div>
+              );
+            })}
+            <div className="ledger-bottom">
+              <p>
+                <ShieldCheck size={20} aria-hidden="true" />
+                300 USDC reserve protected in both stages.
+              </p>
+              <span>
+                {remainder
+                  ? 'Earlier payouts stay accounted for.'
+                  : 'The unpaid balance stays visible.'}
+              </span>
             </div>
           </div>
+          <p className="story-disclosure">
+            Try both stages. This example and the public demo use synthetic data. No funds move.
+          </p>
         </section>
-
-        <section className="landing-faq landing-width" id="questions" data-reveal>
-          <div className="landing-section-heading">
-            <p className="landing-kicker">Before you open it</p>
-            <h2>A few useful details.</h2>
+        <section className="workflow page-width" aria-labelledby="workflow-heading">
+          <div className="workflow-title">
+            <h2 id="workflow-heading">
+              From money received
+              <br />
+              to work <em>moving.</em>
+            </h2>
+            <Link href="/demo" className="splitt-text-link">
+              Try the complete flow
+              <ArrowUpRight size={19} aria-hidden="true" />
+            </Link>
           </div>
+          <div className="workflow-rows">
+            {[
+              [
+                'Match the receipt.',
+                'Keep the invoice, the payment and the project together. Review uncertain arrivals before allocating them.',
+              ],
+              [
+                'Make the tradeoffs visible.',
+                'See which approved obligations fit the available cash, agreed terms and protected reserve.',
+              ],
+              [
+                'Review. Then authorize.',
+                'Check the exact recipients and amounts. When the remainder arrives, pay only what is still owed.',
+              ],
+            ].map(([title, text], index) => (
+              <motion.article {...reveal} key={title}>
+                <span className="workflow-number">0{index + 1}</span>
+                <h3>{title}</h3>
+                <p>{text}</p>
+                <ArrowUpRight size={24} aria-hidden="true" />
+              </motion.article>
+            ))}
+          </div>
+        </section>
+        <section
+          className="owner-controls page-width"
+          id="controls"
+          aria-labelledby="controls-heading"
+        >
+          <div className="control-manifesto">
+            <span className="control-seal">
+              <Fingerprint size={58} weight="thin" aria-hidden="true" />
+            </span>
+            <h2 id="controls-heading">
+              A suggestion.
+              <br />
+              Never a blank <em>cheque.</em>
+            </h2>
+            <p>Splitt prepares the plan. You keep the authority.</p>
+          </div>
+          <div className="control-lines">
+            {controls.map(({ icon: Icon, title, text }) => (
+              <article key={title}>
+                <Icon size={23} weight="light" aria-hidden="true" />
+                <div>
+                  <h3>{title}</h3>
+                  <p>{text}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+        <section
+          className="landing-questions page-width"
+          id="questions"
+          aria-labelledby="questions-heading"
+        >
+          <h2 id="questions-heading">A few useful details.</h2>
           <div>
-            <details>
-              <summary>
-                Who is Splitt for?<span aria-hidden="true">+</span>
-              </summary>
-              <p>
-                Small agencies and studios that coordinate contractors, receive partial client
-                payments, and need to keep each project’s obligations and cash separate.
-              </p>
-            </details>
-            <details>
-              <summary>
-                Does the demo move real money?<span aria-hidden="true">+</span>
-              </summary>
-              <p>
-                No. The public demo uses synthetic balances and browser-only simulations. Live
-                Arc Testnet operations are separate and require the configured owner’s authorization.
-              </p>
-            </details>
-            <details>
-              <summary>
-                Is Splitt live on Arc?<span aria-hidden="true">+</span>
-              </summary>
-              <p>
-                The vault is deployed on Arc Testnet and its source matches the bytecode exactly.
-                Circle contract execution and receipt indexing are verified. Contractor payouts
-                await activation on 15 October 2026. A real business pilot is still pending.
-              </p>
-            </details>
-            <details>
-              <summary>
-                Does an agent decide who gets paid?<span aria-hidden="true">+</span>
-              </summary>
-              <p>
-                It proposes a plan. Deterministic rules check eligibility, amounts, reserves, caps
-                and agreed terms. The owner reviews the result. Without an AI provider configured,
-                the demo uses a labelled deterministic baseline.
-              </p>
-            </details>
+            {[
+              [
+                'Who is Splitt for?',
+                'Small agencies and studios that coordinate contractors, receive partial client payments and need to keep each project’s obligations and cash separate.',
+              ],
+              [
+                'Does the demo move money?',
+                'No. The public demo uses synthetic balances and browser-only settlement. It runs the deterministic allocation engine and does not require a wallet or live AI model.',
+              ],
+              [
+                'What is live on Arc?',
+                'ProjectVault is deployed on Arc Testnet with independently verified source code. The owner workspace is separate from the public demo. Testnet evidence and current limitations are recorded in the public repository; no real business adoption is claimed.',
+              ],
+              [
+                'Can an agent pay without my approval?',
+                'No. A proposed allocation must pass deterministic validation. Live payouts require the owner’s signature for the exact batch. Model errors fall back to the labelled baseline.',
+              ],
+            ].map(([title, text]) => (
+              <details key={title}>
+                <summary>
+                  {title}
+                  <span aria-hidden="true">+</span>
+                </summary>
+                <p>{text}</p>
+              </details>
+            ))}
           </div>
         </section>
-
-        <section className="landing-final landing-width" data-reveal>
-          <p className="landing-kicker">Start with one project</p>
+        <section className="landing-closing page-width">
+          <p>Start with one project.</p>
           <h2>
-            See what the next
-            <br />
-            payment can do.
+            A little less guesswork.
+            <br />A lot more <em>clarity.</em>
           </h2>
-          <Link href="/demo" className="landing-button">
-            Open the sample workspace <ArrowRight size={18} />
+          <Link href="/demo" className="splitt-primary-link">
+            Open the sample workspace
+            <span>
+              <ArrowUpRight size={21} aria-hidden="true" />
+            </span>
           </Link>
-          <p>Explore the underpayment, allocation, and remainder flow. No funds move.</p>
         </section>
       </main>
-      <button
-        className="landing-motion-toggle"
-        aria-pressed={paused}
-        onClick={() => setPaused((value) => !value)}
-        disabled={!!reducedMotion}
-      >
-        <span className="motion-indicator" aria-hidden="true">
-          <i />
-          <i />
-          <i />
-        </span>
-        {reducedMotion ? 'Reduced motion enabled' : paused ? 'Play animation' : 'Pause animation'}
-      </button>
-      <SiteFooter motion={enabled} />
+      <SiteFooter fit="app" motion={!still} />
     </div>
   );
 }

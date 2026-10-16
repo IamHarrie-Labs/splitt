@@ -14,25 +14,28 @@ import {
 import './site-footer.css';
 
 const VIDEO =
-  'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260901_122529_931c22c8-8d2d-47c0-ad51-b97f56a91e42.mp4';
+  'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260912_105953_21ad8049-9088-4a00-bad3-aee6b5575a2b.mp4';
 const FOOTER_POSTER =
-  'https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/4f690bd1-881a-4192-82f2-d714d34c8fb9.png';
+  'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260912_105822_bf7c2d53-9957-4521-bbbf-7c1ab7a70130.png';
 
 // Optional public links. Unset values are not rendered, so the footer never shows a dead link.
 const PILOT_EMAIL = process.env.NEXT_PUBLIC_PILOT_EMAIL;
 const REPO_URL = process.env.NEXT_PUBLIC_REPO_URL;
 const X_URL = process.env.NEXT_PUBLIC_X_URL;
 
-const workspaceLinks = process.env.NEXT_PUBLIC_DEMO_ONLY === 'true' ? [
-  ['Interactive demo', '/demo'],
-  ['Testnet connection status', '/testnet'],
-] as const : [
-  ['Overview', '/workspace'],
-  ['Payments', '/payments'],
-  ['Allocation', '/allocation'],
-  ['Settlement', '/settlement'],
-  ['Metrics', '/metrics'],
-] as const;
+const workspaceLinks =
+  process.env.NEXT_PUBLIC_DEMO_ONLY === 'true'
+    ? ([
+        ['Interactive demo', '/demo'],
+        ['Testnet connection status', '/testnet'],
+      ] as const)
+    : ([
+        ['Overview', '/workspace'],
+        ['Payments', '/payments'],
+        ['Allocation', '/allocation'],
+        ['Settlement', '/settlement'],
+        ['Metrics', '/metrics'],
+      ] as const);
 const productLinks = [
   ['How it works', '/#how-it-works'],
   ['Your controls', '/#controls'],
@@ -167,7 +170,7 @@ function FooterVideo({ motion }: { motion: boolean }) {
 }
 
 /**
- * Site-wide footer over the ink-landscape loop.
+ * Site-wide footer using the same pearl-and-glass visual as the landing hero.
  * `fit="screen"` (landing) fills the viewport. `fit="app"` (workspace, testnet) is shorter, so
  * a dashboard does not end in a full screen of footer.
  */

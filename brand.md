@@ -1,13 +1,13 @@
 # Splitt visual direction
 
-Status: implementation direction, subject to later brand refinement.
+Updated 16 October 2026 following the owner's glass-sphere reference and request for fewer cards.
 
-Every page shares one scene: a hand-drawn ink landscape (misty hills, a still lake, pines, two cranes) on cream paper. It appears behind the landing hero, in each app page header, and as the video footer on every page.
+- One light theme throughout: cool pearl canvas `#f0f3f6`, near-white surface `#fbfcfe`, deep ink `#162337`, muted blue-gray `#526176`, restrained blue accent `#456c98`, rules `#d4dce5`.
+- Space Grotesk for headings and wordmarks, Poppins for interface copy, Georgia italic for emphasis, as requested by the owner. Use sentence case.
+- The supplied glass-sphere film anchors the full-height landing hero. Use a quiet static version or lightly visible loop in supporting surfaces. The old warm-paper landscape is superseded.
+- Lay out content with whitespace, ruled ledgers and open rows. Avoid nested panels, repeated feature-card grids and heavy shadows. Pills are reserved for navigation and primary controls; ledger surfaces have square edges.
+- Shared public header, consistent page gutters, readable amounts and compact footer across the landing page and demo. The owner workspace inherits the same global palette.
+- Motion: brief masked headline entrance, restrained hover feedback, payment-stage changes and a subtle background loop. Pause control, reduced-motion preference, offscreen pausing and hidden-tab pausing are required for decorative video.
+- Tokens live in `web/app/globals.css`; public page composition lives in landing.css, site-header.css, site-footer.css and demo/demo.module.css.
 
-- Paper `#f5f2ec` is the page canvas and matches the artwork's paper. The footer video's paper is darker (`#e9e3de`), so the video is lifted with `brightness(1.055) saturate(0.8)` to remove the seam.
-- Ink green `#234b3a` for brand, buttons and accents; ink black `#1c2f27` for text. Cards are `#fffdf9` on the paper.
-- Amber marks review states; red marks errors. Both are unchanged from the earlier palette.
-- Tokens live in `web/app/globals.css` (`:root`), including `--ink-art` for the artwork. Footer tokens live in `web/app/site-footer.css`.
-- Space Grotesk for headings and the wordmark, Poppins for interface text, Georgia italic for emphasis.
-
-Voice: clear, specific and calm. Show obligations, eligibility, reserve and settlement state plainly. Never present fixtures as customers or simulated execution as real payment. Amounts use tabular digits and six-decimal base units, trimming trailing zeros for display.
+Voice: clear, specific and calm. Never present fixtures as customers, simulations as chain payments or a model fallback as an AI success. Amounts retain exact micro-USDC arithmetic and tabular digits.
