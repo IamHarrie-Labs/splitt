@@ -96,20 +96,6 @@
   font-size: 13px;
   font-weight: 500;
 }
-.hero-motion {
-  position: absolute;
-  right: 0;
-  bottom: 24px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 0;
-  min-height: 44px;
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  font-size: 11px;
-}
 .payment-story {
   background: var(--section-paper);
   padding-block: 144px;
@@ -355,10 +341,6 @@
       rgba(236, 241, 247, 0.72) 58%,
       rgba(236, 241, 247, 0.35)
     );
-  }
-  .hero-motion {
-    font-size: 10px;
-    bottom: 20px;
   }
   .payment-story {
     padding-block: 80px;

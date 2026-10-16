@@ -1,8 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { useState } from 'react';
 import { useReducedMotion } from 'framer-motion';
-import { Pause, Play } from '@phosphor-icons/react';
 import CinematicMedia from './cinematic-media';
 import './site-footer.css';
 const REPO = process.env.NEXT_PUBLIC_REPO_URL || 'https://github.com/IamHarrie-Labs/splitt';
@@ -10,9 +8,8 @@ export default function SiteFooter({
   fit = 'app',
   motion = true,
 }: { fit?: 'screen' | 'app'; motion?: boolean } = {}) {
-  const [paused, setPaused] = useState(false);
   const reduced = useReducedMotion();
-  const still = paused || !motion || !!reduced;
+  const still = !motion || !!reduced;
   return (
     <footer className={`site-footer ${fit === 'screen' ? 'sf-full' : 'sf-app'}`}>
       <div className="sf-scene" aria-hidden="true">
@@ -33,32 +30,6 @@ export default function SiteFooter({
         </div>
         <div className="sf-bottom">
           <small>© {new Date().getFullYear()} Splitt</small>
-          <button
-            className="sf-motion"
-            aria-pressed={paused}
-            disabled={!!reduced || !motion}
-            onClick={() => setPaused((value) => !value)}
-            aria-label={
-              reduced
-                ? 'Reduced motion enabled'
-                : !motion
-                  ? 'Page animations paused'
-                  : paused
-                    ? 'Play footer background'
-                    : 'Pause footer background'
-            }
-          >
-            {still ? <Play size={15} aria-hidden="true" /> : <Pause size={15} aria-hidden="true" />}
-            <span>
-              {reduced
-                ? 'Reduced motion'
-                : !motion
-                  ? 'Motion paused'
-                  : paused
-                    ? 'Play background'
-                    : 'Pause background'}
-            </span>
-          </button>
         </div>
       </div>
     </footer>

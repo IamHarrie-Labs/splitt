@@ -75,17 +75,6 @@
   font-size: 11px;
   white-space: nowrap;
 }
-.sf-motion {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 8px 0;
-  background: transparent;
-  border: 0;
-  color: var(--text);
-  font-size: 11px;
-}
 @media (hover: hover) and (pointer: fine) {
   .site-footer nav a:hover {
     text-decoration: underline;
@@ -119,9 +108,6 @@
   }
   .sf-name {
     font-size: clamp(94px, 24vw, 180px);
-  }
-  .sf-motion {
-    font-size: 10px;
   }
   .sf-scene video {
     object-position: 65% 50%;

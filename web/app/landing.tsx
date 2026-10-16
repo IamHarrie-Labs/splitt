@@ -1,7 +1,5 @@
 'use client';
 import Link from 'next/link';
-import { useState } from 'react';
-import { Pause, Play } from '@phosphor-icons/react';
 import { useReducedMotion } from 'framer-motion';
 import { baselinePlan, buildFacts, formatUSDC } from '@splitt/core';
 import { fixtureProjects } from '../../server/src/fixtures';
@@ -11,9 +9,8 @@ import CinematicMedia from './cinematic-media';
 import './landing.css';
 
 export default function Landing() {
-  const [paused, setPaused] = useState(false);
   const reduced = useReducedMotion();
-  const still = paused || !!reduced;
+  const still = !!reduced;
   const project = fixtureProjects()[0];
   const plan = baselinePlan(buildFacts(project, new Date('2026-10-03T12:00:00Z')));
   return (
@@ -39,24 +36,6 @@ export default function Landing() {
               Open demo
             </Link>
           </div>
-          <button
-            className="hero-motion"
-            aria-pressed={paused}
-            disabled={!!reduced}
-            onClick={() => setPaused((value) => !value)}
-            aria-label={
-              reduced
-                ? 'Reduced motion enabled'
-                : paused
-                  ? 'Play background animation'
-                  : 'Pause background animation'
-            }
-          >
-            {still ? <Play size={16} aria-hidden="true" /> : <Pause size={16} aria-hidden="true" />}
-            <span>
-              {reduced ? 'Reduced motion' : paused ? 'Play background' : 'Pause background'}
-            </span>
-          </button>
         </div>
       </section>
       <main className="landing-body" id="main-content">

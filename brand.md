@@ -7,7 +7,7 @@ Updated 16 October 2026 following the owner's glass-sphere reference and request
 - The supplied glass-sphere film anchors the full-height landing hero. Use a quiet static version or lightly visible loop in supporting surfaces. The old warm-paper landscape is superseded.
 - Lay out content with whitespace, ruled ledgers and open rows. Avoid nested panels, repeated feature-card grids and heavy shadows. Pills are reserved for navigation and primary controls; ledger surfaces have square edges.
 - Shared public header, consistent page gutters, readable amounts and spacious cinematic footer across the landing page and demo. The owner workspace inherits the same global palette.
-- Motion: a short headline entrance, restrained hover feedback and a subtle background loop. Pause control, reduced-motion preference, offscreen pausing and hidden-tab pausing are required for decorative video.
+- Motion: a short headline entrance, restrained hover feedback and a subtle background loop. Decorative video respects reduced-motion preferences and pauses offscreen or in hidden tabs. The hero and footer have no visible playback controls, as requested by the owner.
 - Tokens live in `web/app/globals.css`; public page composition lives in landing.css, site-header.css, site-footer.css and demo/demo.module.css.
 
 Voice: clear, specific and calm. Never present fixtures as customers, simulations as chain payments or a model fallback as an AI success. Amounts retain exact micro-USDC arithmetic and tabular digits.
