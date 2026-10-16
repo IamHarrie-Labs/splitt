@@ -27,6 +27,10 @@ export default function SiteFooter({
           <Link href="/" className="sf-name" aria-label="Splitt home">
             splitt.
           </Link>
+          <p className="sf-about">
+            Splitt helps agencies manage client receipts and contractor payments, with a separate
+            balance and reserve for each project.
+          </p>
         </div>
         <div className="sf-bottom">
           <small>© {new Date().getFullYear()} Splitt</small>

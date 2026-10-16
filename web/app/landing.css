@@ -96,201 +96,579 @@
   font-size: 13px;
   font-weight: 500;
 }
+/* Editorial payment statement: a single composition with unequal card roles. */
+.landing {
+  --section-space: 128px;
+  --card-space: 32px;
+  --on-blue: #f8fbff;
+  --on-blue-muted: #c3d4e8;
+  --blue-rule: #41648b;
+}
+.section-index {
+  display: block;
+  font-size: 12px;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+.section-intro {
+  max-width: 730px;
+}
+.section-intro > p {
+  max-width: 520px;
+  margin-top: 24px;
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--muted);
+}
 .payment-story {
   background: var(--section-paper);
-  padding-block: 144px;
+  padding-block: var(--section-space);
   scroll-margin-top: 32px;
 }
-.story-intro {
-  max-width: 760px;
+.cash-composition {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr;
+  gap: 20px;
+  margin-top: 56px;
 }
-.story-intro > p {
-  max-width: 610px;
+.cash-card {
+  position: relative;
+  min-width: 0;
+  padding: var(--card-space);
+  border-radius: 12px;
+}
+.cash-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 32px;
+}
+.cash-card-top h3,
+.cash-card-top > span {
+  font: 400 12px/1.5 var(--sans);
+}
+.cash-received {
+  grid-row: span 2;
+  background: var(--section-deep);
+  color: var(--on-blue);
+  display: flex;
+  flex-direction: column;
+  min-height: 440px;
+}
+.receipt-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--on-blue-muted);
+}
+.cash-value {
+  font-family: var(--heading);
+  font-size: clamp(38px, 4.3vw, 60px);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.055em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.cash-received > .cash-value {
+  margin-top: 40px;
+}
+.cash-value > span {
+  display: block;
+  font: 400 12px/1.6 var(--sans);
+  letter-spacing: 0.04em;
+  margin-top: 8px;
+  color: var(--on-blue-muted);
+}
+.receipt-illustration {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex: 1;
+  gap: 12px;
+  margin-block: 32px;
+  min-height: 60px;
+}
+.receipt-progress {
+  height: 4px;
+  background: var(--blue-rule);
+  overflow: hidden;
+  border-radius: 2px;
+}
+.receipt-progress span {
+  display: block;
+  width: 60%;
+  height: 100%;
+  background: var(--on-blue-muted);
+  transform-origin: left;
+}
+.receipt-illustration p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--on-blue-muted);
+}
+.receipt-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  padding-top: 24px;
+  border-top: 1px solid var(--blue-rule);
+}
+.receipt-foot dt {
+  color: var(--on-blue-muted);
+  font-size: 12px;
+}
+.receipt-foot dd {
+  margin: 8px 0 0;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+}
+.cash-contractor {
+  background: var(--section-blue);
+  padding-top: 24px;
+}
+.contractor-1 {
+  background: var(--canvas);
+}
+.contractor-initial {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+}
+.cash-card-top > span:last-child {
   color: var(--muted);
-  font-size: 14px;
-  line-height: 1.9;
-  margin-top: 22px;
 }
-.payment-ledger {
-  margin-top: 44px;
+.cash-contractor h3 {
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  margin-top: 24px;
 }
-.ledger-title {
+.cash-contractor .cash-value {
+  margin-top: 12px;
+}
+.payment-track {
+  height: 3px;
+  background: var(--line);
+  margin-top: 32px;
+  overflow: hidden;
+}
+.payment-track span {
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform-origin: left;
+  background: var(--accent);
+}
+.cash-caption {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 12px;
+  line-height: 1.6;
+}
+.cash-reserve {
+  grid-column: 2 / 4;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  margin-bottom: 28px;
+  border: 1px solid var(--line);
+  padding-block: 28px;
 }
-.ledger-title h3 {
-  font-size: 19px;
-  letter-spacing: -0.02em;
-}
-.ledger-title p {
-  font-size: 11px;
-  color: var(--muted);
-}
-.ledger-summary {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 32px;
-  margin: 0 0 32px;
-  padding: 28px 32px;
-  background: var(--surface);
-  border-radius: 6px;
-}
-.ledger-summary dt {
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 12px;
-}
-.ledger-summary dd {
-  margin: 0;
-  font: 400 36px/1.2 var(--heading);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.04em;
-}
-.allocation-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  text-align: left;
-}
-.allocation-table th,
-.allocation-table td {
-  padding: 20px 0;
-  border-bottom: 1px solid var(--line);
-}
-.allocation-table thead th {
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--muted);
-}
-.allocation-table th:first-child {
-  width: 46%;
-}
-.allocation-table th:not(:first-child),
-.allocation-table td {
-  text-align: right;
-}
-.allocation-table tbody th {
+.reserve-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 14px;
-  font-weight: 500;
 }
-.allocation-table tbody th span {
-  display: block;
+.cash-reserve div > p {
+  margin: 8px 0 0 28px;
   color: var(--muted);
-  font-size: 11px;
-  font-weight: 400;
-  margin-top: 7px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.reserve-value {
+  font: 400 36px/1.2 var(--heading);
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+.currency-note {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 24px;
   line-height: 1.7;
 }
-.allocation-table td {
-  font: 400 24px var(--heading);
+.workflow {
+  padding-block: var(--section-space);
+  background: var(--section-deep);
+  color: var(--on-blue);
+}
+.workflow .section-index,
+.workflow .section-intro > p {
+  color: var(--on-blue-muted);
+}
+.workflow-stage {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 88px;
+  align-items: center;
+  margin-top: 64px;
+}
+.workflow-steps {
+  display: flex;
+  flex-direction: column;
+}
+.workflow-step {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+  padding: 28px 0;
+  text-align: left;
+  border: 0;
+  border-top: 1px solid var(--blue-rule);
+  background: transparent;
+  color: var(--on-blue-muted);
+}
+.workflow-step:last-child {
+  border-bottom: 1px solid var(--blue-rule);
+}
+.workflow-step:focus-visible {
+  outline-color: var(--on-blue);
+}
+.step-number {
+  font: 400 14px/1.8 var(--heading);
+}
+.workflow-step strong {
+  display: block;
+  font: 400 22px/1.4 var(--heading);
+  letter-spacing: -0.025em;
+}
+.step-description {
+  display: block;
+  max-width: 340px;
+  margin-top: 12px;
+  font-size: 13px;
+  line-height: 1.85;
+}
+.step-indicator {
+  flex: 0 0 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  margin-left: auto;
+  margin-top: 10px;
+  opacity: 0.3;
+}
+.workflow-step.is-active {
+  color: var(--on-blue);
+}
+.is-active .step-indicator {
+  opacity: 1;
+}
+.workflow-preview {
+  padding: 40px;
+  background: var(--section-paper);
+  color: var(--text);
+  border-radius: 12px;
+  min-height: 470px;
+}
+.preview-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 390px;
+}
+.preview-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 32px;
+}
+.preview-symbol {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  background: var(--section-blue);
+  border-radius: 50%;
+  margin-bottom: 16px;
+}
+.preview-content h3 {
+  font-size: 22px;
+  letter-spacing: -0.03em;
+  line-height: 1.35;
+}
+.preview-amount {
+  font: 400 clamp(40px, 4vw, 56px)/1.2 var(--heading);
+  letter-spacing: -0.05em;
+  margin-top: 12px;
   font-variant-numeric: tabular-nums;
 }
-.allocation-summary {
-  max-width: 660px;
+.preview-caption {
   font-size: 12px;
-  line-height: 1.9;
   color: var(--muted);
-  margin-top: 20px;
+  margin-top: 12px;
+  line-height: 1.7;
 }
-.workflow {
-  background: var(--section-blue);
-  padding-block: 128px;
+.preview-lines {
+  margin: auto 0 0;
+  padding-top: 28px;
 }
-.workflow-rows {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 48px;
-  margin-top: 36px;
+.preview-lines > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 12px;
+  border-bottom: 1px solid var(--line);
 }
-.workflow-rows h3 {
-  font-size: 20px;
-  letter-spacing: -0.03em;
-  margin-bottom: 14px;
-}
-.workflow-rows p {
+.preview-lines dt {
+  color: var(--muted);
   font-size: 13px;
-  line-height: 1.9;
+}
+.preview-lines dd {
+  margin: 0;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.preview-total dd,
+.preview-total dt {
+  font-weight: 500;
+  color: var(--text);
+}
+.split-ribbon {
+  display: flex;
+  height: 6px;
+  gap: 3px;
+  margin-top: 28px;
+  border-radius: 3px;
+  overflow: hidden;
+  transform-origin: left;
+}
+.split-ribbon span:nth-child(1) {
+  flex: 7;
+  background: var(--section-deep);
+}
+.split-ribbon span:nth-child(2) {
+  flex: 2;
+  background: var(--accent);
+}
+.split-ribbon span:nth-child(3) {
+  flex: 3;
+  background: var(--line);
+}
+.approval-caption {
+  margin-top: 20px;
+  font-size: 12px;
+  line-height: 1.7;
   color: var(--muted);
-  max-width: 340px;
 }
 .owner-controls {
-  background: var(--section-stone);
-  padding-block: 144px;
+  background: var(--section-paper);
+  padding-block: var(--section-space);
   scroll-margin-top: 32px;
 }
-.owner-controls > .page-width {
+.controls-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 100px;
+  align-items: start;
 }
-.owner-controls > .page-width > div:first-child > p {
+.reserve-diagram {
+  margin-top: 48px;
+}
+.reserve-diagram-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
   color: var(--muted);
-  font-size: 14px;
-  line-height: 1.9;
-  max-width: 380px;
-  margin-top: 22px;
+  font-size: 12px;
 }
-.control-lines {
+.reserve-diagram-labels b {
+  display: block;
+  font: 400 24px/1.5 var(--heading);
+  color: var(--text);
+  margin-top: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.reserve-diagram-bar {
+  display: flex;
+  gap: 5px;
+  height: 18px;
+  margin-block: 20px;
+  overflow: hidden;
+  border-radius: 3px;
+  transform-origin: left;
+}
+.reserve-diagram-bar span:first-child {
+  flex: 9;
+  background: var(--section-deep);
+}
+.reserve-diagram-bar span:last-child {
+  flex: 3;
+  background: repeating-linear-gradient(
+    135deg,
+    var(--line),
+    var(--line) 2px,
+    var(--canvas) 2px,
+    var(--canvas) 6px
+  );
+}
+.reserve-diagram p {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.control-lines > article {
   display: grid;
-  gap: 30px;
+  grid-template-columns: 24px 1fr;
+  gap: 24px;
+  padding-block: 32px;
+  border-top: 1px solid var(--line);
+}
+.control-lines > article:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+.control-lines > article > span {
+  color: var(--muted);
+  font-size: 12px;
+  padding-top: 5px;
 }
 .control-lines h3 {
-  font-size: 20px;
-  letter-spacing: -0.025em;
-  margin-bottom: 12px;
+  font-size: 24px;
+  line-height: 1.4;
+  letter-spacing: -0.03em;
 }
 .control-lines p {
-  font-size: 13px;
+  margin-top: 12px;
+  font-size: 14px;
   line-height: 1.9;
   color: var(--muted);
-  max-width: 450px;
+  max-width: 420px;
 }
 .landing-questions {
-  background: var(--canvas);
   padding-block: 112px 128px;
+  background: var(--section-blue);
   scroll-margin-top: 32px;
 }
-.landing-questions > .page-width {
+.faq-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.85fr 1.15fr;
   gap: 100px;
 }
-.landing-questions h2 {
-  font-size: 32px;
+.faq-list details {
+  border-top: 1px solid var(--line);
 }
-.landing-questions p {
-  font-size: 13px;
+.faq-list details:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.faq-list summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  cursor: pointer;
+  list-style: none;
+  padding-block: 24px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.faq-list summary::-webkit-details-marker {
+  display: none;
+}
+.faq-list summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+.faq-list details[open] summary svg {
+  transform: rotate(45deg);
+}
+.faq-list details > p {
+  margin-bottom: 28px;
+  max-width: 540px;
+  font-size: 14px;
   line-height: 1.9;
   color: var(--muted);
-}
-.landing-questions a {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  color: var(--text);
+  padding-right: 32px;
 }
 @media (hover: hover) and (pointer: fine) {
   .splitt-primary-link:hover {
     background: var(--ink-lift);
   }
+  .cash-contractor:hover {
+    transform: translateY(-4px);
+  }
+  .workflow-step:hover {
+    color: var(--on-blue);
+  }
+  .faq-list summary:hover {
+    color: var(--accent);
+  }
 }
 @media (prefers-reduced-motion: no-preference) {
   .splitt-primary-link {
     transition:
-      background-color 150ms ease-out,
-      scale var(--press-duration) ease-out;
+      background-color 150ms ease,
+      transform 150ms var(--ease-out);
   }
   .splitt-primary-link:active {
-    scale: 0.96;
+    transform: scale(0.97);
   }
   .splitt-hero h1 {
     animation: heading-enter 500ms var(--ease-out) both;
   }
-  .landing-still * {
-    animation: none !important;
-    transition: none !important;
+  .cash-contractor {
+    transition: transform 250ms var(--ease-out);
+  }
+  .workflow-step {
+    transition: color 200ms ease;
+  }
+  .faq-list summary svg {
+    transition: transform 200ms var(--ease-out);
+  }
+  .landing[data-motion='ready'] [data-reveal] {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 600ms var(--ease-out),
+      transform 600ms var(--ease-out);
+  }
+  .landing[data-motion='ready'] [data-reveal][data-visible='true'] {
+    opacity: 1;
+    transform: none;
+  }
+  .cash-composition > :nth-child(2) {
+    transition-delay: 60ms !important;
+  }
+  .cash-composition > :nth-child(3) {
+    transition-delay: 120ms !important;
+  }
+  .cash-composition > :nth-child(4) {
+    transition-delay: 180ms !important;
+  }
+  .cash-received[data-visible] .receipt-progress span {
+    animation: line-enter 800ms var(--ease-out) both;
+  }
+  .reserve-diagram[data-visible] .reserve-diagram-bar {
+    animation: line-enter 850ms var(--ease-out) both;
+  }
+  .preview-content {
+    animation: heading-enter 250ms var(--ease-out) both;
+  }
+  .preview-content .split-ribbon {
+    animation: line-enter 600ms var(--ease-out) both;
   }
 }
 @keyframes heading-enter {
@@ -300,19 +678,72 @@
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
+  }
+}
+@keyframes line-enter {
+  from {
+    transform: scaleX(0.15);
+    opacity: 0.3;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
   }
 }
 @media (max-width: 1050px) {
   .page-width {
     width: calc(100% - 64px);
   }
-  .owner-controls > .page-width,
-  .landing-questions > .page-width {
-    gap: 56px;
+  .landing {
+    --card-space: 24px;
+    --section-space: 104px;
+  }
+  .cash-composition {
+    grid-template-columns: 1fr 1fr;
+  }
+  .cash-received {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    min-height: 300px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 48px;
+  }
+  .cash-received .cash-card-top {
+    grid-column: 1 / -1;
+  }
+  .cash-received > .cash-value {
+    margin-top: 28px;
+  }
+  .receipt-illustration {
+    min-height: 100px;
+    grid-column: 2;
+    grid-row: 2;
+    margin: 24px 0;
+  }
+  .receipt-foot {
+    grid-column: 1 / -1;
+  }
+  .cash-reserve {
+    grid-column: 1 / -1;
+  }
+  .workflow-stage {
+    gap: 40px;
+  }
+  .workflow-preview {
+    padding: 28px;
+  }
+  .controls-layout,
+  .faq-layout {
+    gap: 48px;
   }
 }
 @media (max-width: 759px) {
+  .landing {
+    --section-space: 80px;
+    --card-space: 24px;
+  }
   .page-width {
     width: calc(100% - 40px);
   }
@@ -342,113 +773,141 @@
       rgba(236, 241, 247, 0.35)
     );
   }
-  .payment-story {
-    padding-block: 80px;
-  }
   .landing h2 {
-    font-size: clamp(28px, 6.4vw, 38px);
+    font-size: clamp(30px, 7vw, 42px);
   }
-  .story-intro > p {
-    font-size: 13px;
-    margin-top: 18px;
-  }
-  .payment-ledger {
-    margin-top: 32px;
-  }
-  .ledger-title {
+  .section-index {
     margin-bottom: 20px;
   }
-  .ledger-title h3 {
-    font-size: 18px;
+  .section-intro > p {
+    font-size: 14px;
+    margin-top: 20px;
   }
-  .ledger-summary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 24px;
+  .cash-composition {
+    gap: 12px;
+    margin-top: 36px;
+  }
+  .cash-received {
+    column-gap: 16px;
+    min-height: 280px;
+  }
+  .cash-received .cash-value {
+    font-size: 44px;
+  }
+  .cash-contractor {
+    padding: 20px 16px;
+  }
+  .cash-contractor .cash-card-top {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .cash-contractor .cash-card-top > span:last-child {
+    font-size: 11px;
+  }
+  .cash-contractor h3 {
+    margin-top: 20px;
+    font-size: 20px;
+  }
+  .cash-contractor .cash-value {
+    font-size: clamp(28px, 7.5vw, 42px);
+  }
+  .payment-track {
+    margin-top: 24px;
+  }
+  .cash-reserve {
+    gap: 16px;
     padding: 24px 20px;
   }
-  .ledger-summary dd {
-    font-size: 32px;
+  .reserve-label {
+    gap: 8px;
+    font-size: 13px;
   }
-  .ledger-summary dt {
-    font-size: 11px;
+  .cash-reserve div > p {
+    margin-left: 0;
+    max-width: 150px;
   }
-  .allocation-table th:first-child {
-    width: 44%;
+  .reserve-value {
+    font-size: 30px;
   }
-  .allocation-table th,
-  .allocation-table td {
-    padding: 18px 0;
-  }
-  .allocation-table thead th {
-    font-size: 10px;
-    padding-left: 10px;
-    line-height: 1.6;
-  }
-  .allocation-table thead th:first-child {
-    padding-left: 0;
-  }
-  .allocation-table tbody th {
-    font-size: 12px;
-  }
-  .allocation-table tbody th span {
-    font-size: 10px;
-    max-width: 130px;
-  }
-  .allocation-table td {
-    font-size: 21px;
-  }
-  .allocation-summary {
-    font-size: 11px;
-  }
-  .workflow {
-    padding-block: 80px;
-  }
-  .workflow-rows {
-    grid-template-columns: 1fr;
-    gap: 28px;
-    margin-top: 28px;
-  }
-  .workflow-rows h3 {
-    font-size: 19px;
-    margin-bottom: 10px;
-  }
-  .workflow-rows p {
-    font-size: 12px;
-    max-width: 500px;
-  }
-  .owner-controls {
-    padding-block: 80px;
-  }
-  .owner-controls > .page-width {
+  .workflow-stage,
+  .controls-layout,
+  .faq-layout {
     grid-template-columns: 1fr;
     gap: 40px;
   }
-  .owner-controls > .page-width > div:first-child > p {
-    font-size: 13px;
+  .workflow-stage {
+    margin-top: 40px;
+  }
+  .workflow-step {
+    gap: 16px;
+    padding-block: 24px;
+  }
+  .workflow-step strong {
+    font-size: 21px;
+  }
+  .workflow-preview {
+    min-height: 440px;
+    padding: 24px;
+  }
+  .preview-content {
+    min-height: 392px;
+  }
+  .control-lines > article {
+    gap: 16px;
+    padding-block: 28px;
   }
   .control-lines h3 {
-    font-size: 19px;
+    font-size: 22px;
   }
   .control-lines p {
-    font-size: 12px;
+    font-size: 14px;
   }
   .landing-questions {
-    padding-block: 72px 80px;
+    padding-block: 80px;
   }
-  .landing-questions > .page-width {
-    grid-template-columns: 1fr;
-    gap: 24px;
+  .faq-list summary {
+    font-size: 14px;
   }
-  .landing-questions h2 {
-    font-size: 28px;
-  }
-  .landing-questions p {
-    font-size: 12px;
+  .faq-list details > p {
+    font-size: 13px;
+    padding-right: 12px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .landing * {
+  .landing *,
+  .landing *::before,
+  .landing *::after {
     animation: none !important;
     transition: none !important;
+  }
+  .cash-contractor:hover {
+    transform: none;
+  }
+}
+
+/* Keep the receipt status legible on ink, and preserve room for full amounts. */
+.cash-received .cash-card-top > .receipt-stamp {
+  color: var(--on-blue-muted);
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .landing[data-motion='ready'] .cash-contractor[data-visible='true']:hover {
+    transform: translateY(-4px);
+    transition-delay: 0ms !important;
+  }
+}
+@media (max-width: 459px) {
+  .cash-received {
+    display: flex;
+    min-height: 0;
+  }
+  .cash-received > .cash-value {
+    font-size: 52px;
+  }
+  .receipt-illustration {
+    flex: none;
+    height: 64px;
+    min-height: 64px;
+    margin-block: 28px;
   }
 }
