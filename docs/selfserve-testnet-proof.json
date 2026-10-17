@@ -1,0 +1,111 @@
+{
+  "checkedAt": "2026-10-17T07:36:14.346Z",
+  "chainId": 5042002,
+  "classification": "controlled_test",
+  "freshWallets": 2,
+  "realBusinesses": 0,
+  "realCustomerVolume": "0",
+  "maximumInitialFundingUsdc": "6",
+  "finalProjectBalances": [
+    "800000",
+    "300000"
+  ],
+  "crossWalletAccessDenied": true,
+  "executionHistory": [
+    {
+      "vault": "0x5c6a73d2626a94978364f5d6a3f00fda42148186",
+      "id": "d9fc7623-f766-4312-b449-87ca26553e57",
+      "state": "confirmed",
+      "txHash": "0xa0566589625feca126be75a3893696eb08dde8d5acb5cc6cc60cb56a5ecd8cdb",
+      "deadline": "1792221859"
+    },
+    {
+      "vault": "0x5c6a73d2626a94978364f5d6a3f00fda42148186",
+      "id": "6ae91384-6baa-4881-a8bf-7b3999fa5b40",
+      "state": "confirmed",
+      "txHash": "0x46e72325757afc2daef6e6a37fb1116a914cdb7621e2d457bdc41acc00bb5226",
+      "deadline": "1792223331"
+    },
+    {
+      "vault": "0x202a98767c9260f327e3e1905df9eede7a4b591c",
+      "id": "e0e7b216-e66d-450c-95fd-c91ba86a80ab",
+      "state": "expired",
+      "deadline": "1792222086"
+    },
+    {
+      "vault": "0x202a98767c9260f327e3e1905df9eede7a4b591c",
+      "id": "2996f912-df31-4a4c-be05-1da6aaf29278",
+      "state": "confirmed",
+      "txHash": "0x6fa8f7f27aa72ad124870a0f9e35e4df84d8abadde473fd4a2aa6738c4035769",
+      "deadline": "1792223177"
+    }
+  ],
+  "setupIntervention": "The first vault metadata was registered through the same deployed TestnetService during diagnosis of API failures. The second vault used the authenticated HTTP registration flow. This report is API/chain evidence, not an uninterrupted browser walkthrough.",
+  "evidence": {
+    "activation:0x387565237CacE460b9BeA78F74DAC3c26246F347": 1792220587,
+    "activation:0xE6fBA1b21a6Ed911F8d4C7C2612ab20F9BC1F65A": 1792220829,
+    "0x387565237CacE460b9BeA78F74DAC3c26246F347:first": {
+      "vault": "0x5c6a73d2626a94978364f5d6a3f00fda42148186",
+      "owner": "0x387565237CacE460b9BeA78F74DAC3c26246F347",
+      "depositHash": "0x4e6e988f9be3714480c96a96e0265e7c80e49604658697be2f34c87afee9e549",
+      "planId": "d9fc7623-f766-4312-b449-87ca26553e57",
+      "receiptTrigger": true,
+      "model": "Deterministic baseline",
+      "fallbackUsed": true,
+      "validationPassed": true,
+      "payoutHash": "0xa0566589625feca126be75a3893696eb08dde8d5acb5cc6cc60cb56a5ecd8cdb",
+      "projectBalance": "300000",
+      "payments": [
+        {
+          "commitmentId": "selfserve-proof-387565237cace460b9bea78f74dac3c26246f347:0",
+          "amount": "700000"
+        },
+        {
+          "commitmentId": "selfserve-proof-387565237cace460b9bea78f74dac3c26246f347:1",
+          "amount": "200000"
+        }
+      ]
+    },
+    "0xE6fBA1b21a6Ed911F8d4C7C2612ab20F9BC1F65A:first": {
+      "vault": "0x202a98767c9260f327e3e1905df9eede7a4b591c",
+      "owner": "0xE6fBA1b21a6Ed911F8d4C7C2612ab20F9BC1F65A",
+      "depositHash": "0xae54ecab8553522fcbb33349aa95387a9020701a5811f6b831d6e528ad4c18af",
+      "planId": "2996f912-df31-4a4c-be05-1da6aaf29278",
+      "receiptTrigger": true,
+      "model": "Deterministic baseline",
+      "fallbackUsed": true,
+      "validationPassed": true,
+      "payoutHash": "0x6fa8f7f27aa72ad124870a0f9e35e4df84d8abadde473fd4a2aa6738c4035769",
+      "projectBalance": "300000",
+      "payments": [
+        {
+          "commitmentId": "selfserve-proof-e6fba1b21a6ed911f8d4c7c2612ab20f9bc1f65a:0",
+          "amount": "700000"
+        },
+        {
+          "commitmentId": "selfserve-proof-e6fba1b21a6ed911f8d4c7c2612ab20f9bc1f65a:1",
+          "amount": "200000"
+        }
+      ]
+    },
+    "0x387565237CacE460b9BeA78F74DAC3c26246F347:remainder": {
+      "vault": "0x5c6a73d2626a94978364f5d6a3f00fda42148186",
+      "owner": "0x387565237CacE460b9BeA78F74DAC3c26246F347",
+      "depositHash": "0x7ccde9b5a4b471be2bce007a90a4fc2a79b764e93c3ac6b5c3b0b9cd6d36eefc",
+      "planId": "6ae91384-6baa-4881-a8bf-7b3999fa5b40",
+      "receiptTrigger": true,
+      "model": "Deterministic baseline",
+      "fallbackUsed": true,
+      "validationPassed": true,
+      "payoutHash": "0x46e72325757afc2daef6e6a37fb1116a914cdb7621e2d457bdc41acc00bb5226",
+      "projectBalance": "800000",
+      "payments": [
+        {
+          "commitmentId": "selfserve-proof-387565237cace460b9bea78f74dac3c26246f347:1",
+          "amount": "300000"
+        }
+      ]
+    }
+  },
+  "limitation": "API and chain execution proof through a private SSH tunnel. Not a browser interaction recording, public HTTPS proof or business adoption."
+}

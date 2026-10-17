@@ -297,8 +297,19 @@ if (mode === 'setup') {
         (plan.status !== 'awaiting_owner' && !workspace!.jobs.some((j) => j.id === plan!.id))
       )
         throw new Error('No automatic payable draft yet. Resume without another deposit.');
-      const expected = remainder ? ['0', '300000'] : ['700000', '200000'];
-      if (plan.output.items.map((i) => i.amount_micro).join(',') !== expected.join(','))
+      const expected = new Map(
+        remainder
+          ? [[p.commitments[1].id, '300000']]
+          : [
+              [p.commitments[0].id, '700000'],
+              [p.commitments[1].id, '200000'],
+            ],
+      );
+      const payments = plan.output.items.filter((item) => BigInt(item.amount_micro) > 0n);
+      if (
+        payments.length !== expected.size ||
+        payments.some((item) => expected.get(item.commitment_id) !== item.amount_micro)
+      )
         throw new Error('Allocation differs from the reviewed controlled case. Nothing signed.');
       journal.plans[tag] = plan.id;
       await save();
@@ -360,6 +371,13 @@ if (mode === 'setup') {
   for (const [i, account] of accounts.entries()) await stage(account, i);
   await stage(accounts[0], 0, true);
   const finalBalances: string[] = [];
+  const executionHistory: {
+    vault: Address;
+    id: string;
+    state: string;
+    txHash?: string;
+    deadline: string;
+  }[] = [];
   for (const account of accounts) {
     const session = await login(account);
     try {
@@ -367,6 +385,15 @@ if (mode === 'setup') {
         `/selfserve/vaults/${journal.vaults[account.address]}/workspace`,
       )) as Workspace;
       finalBalances.push(own.projects[0].balance);
+      executionHistory.push(
+        ...own.jobs.map((job) => ({
+          vault: own.vault,
+          id: job.id,
+          state: job.state,
+          txHash: job.txHash,
+          deadline: job.approval.message.deadline,
+        })),
+      );
       const foreign = journal.vaults[accounts.find((a) => a.address !== account.address)!.address];
       let denied = false;
       try {
@@ -391,6 +418,7 @@ if (mode === 'setup') {
     maximumInitialFundingUsdc: '6',
     finalProjectBalances: finalBalances,
     crossWalletAccessDenied: true,
+    executionHistory,
     setupIntervention:
       'The first vault metadata was registered through the same deployed TestnetService during diagnosis of API failures. The second vault used the authenticated HTTP registration flow. This report is API/chain evidence, not an uninterrupted browser walkthrough.',
     evidence: journal.evidence,

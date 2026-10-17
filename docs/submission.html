@@ -82,6 +82,14 @@
       is implemented and tested, but no completed cross-chain transfer is proven. Yield management
       and production customer payments are not claimed.
     </p>
+    <p>
+      On 17 October, two fresh controlled wallets deployed their own vaults and completed three
+      Circle-executed payouts totalling 2.1 test USDC. Receipt-triggered drafts, an expired
+      authorization followed by a fresh owner-reviewed proposal, remainder handling and cross-wallet
+      access denial are recorded in <a href="selfserve-testnet-proof.json">the two-wallet proof</a>.
+      The runs used the deterministic fallback. Final balances were 0.8 and 0.3 USDC. This is
+      controlled API/chain evidence; no business pilot or uninterrupted browser walkthrough is claimed.
+    </p>
   </section>
   <section>
     <h2>Links and submission fields</h2>
@@ -92,8 +100,8 @@
       </li>
       <li>
         Testnet workspace:
-        <a href="https://splitt-dun.vercel.app/testnet">owner workspace status</a> (public connection pending;
-        owner wallet required when enabled)
+        <a href="https://splitt-dun.vercel.app/start">wallet-owned testnet workspace</a> (API runs on the VPS;
+        public HTTPS connection awaits the supplied domain)
       </li>
       <li>Public repository: <a href="https://github.com/IamHarrie-Labs/splitt">IamHarrie-Labs/splitt</a></li>
       <li>Video: <a href="https://github.com/IamHarrie-Labs/splitt/releases/tag/v0.1.0-preview">published 2:40 walkthrough preview</a>; final recording must show receipt-triggered drafting and verified payouts and use an accepted video host.</li>
@@ -146,8 +154,9 @@ npm run build</pre>
         “The invoice is not fully paid, but the work still needs to move.”
       </li>
       <li>
-        <strong>0:20–0:45:</strong> Generate the allocation. Explain Amara's full 700, Tobi's
-        permitted partial 200 and the evidence behind both. Show the shortfall explicitly.
+        <strong>0:20–0:45:</strong> Show a confirmed receipt and wait for the worker's automatic
+        allocation. Explain the full obligation, permitted partial payment and retained reserve.
+        Distinguish the synthetic demo from controlled testnet footage.
       </li>
       <li>
         <strong>0:45–1:10:</strong> Review exact recipients, amounts, chain and deadline. If live

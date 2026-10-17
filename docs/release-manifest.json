@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-10-17T07:31:30.628Z",
+  "checkedAt": "2026-10-17T07:37:00.713Z",
   "secretScanPassed": true,
-  "fileCount": 222,
+  "fileCount": 224,
   "files": [
     ".dockerignore",
     ".env.example",
@@ -49,7 +49,9 @@
     "docs/public-demo-mobile.png",
     "docs/publication-runbook.md",
     "docs/release-manifest.json",
+    "docs/selfserve-deployment-proof.json",
     "docs/selfserve-proof-plan.json",
+    "docs/selfserve-testnet-proof.json",
     "docs/selfserve-testnet.md",
     "docs/sourcify-verification.json",
     "docs/splitt-georgia-review.png",

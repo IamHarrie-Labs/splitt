@@ -1,0 +1,47 @@
+{
+  "checkedAt": "2026-10-17T07:36:28.8669711Z",
+  "runtimeCommit": "fe99557f054d05de73d91556b3efa3348a9a1636",
+  "containerImage": "sha256:34265ac936205133ceb8875029770afb79ae720041fccc466dc8c5587a1f5af3",
+  "source": "private_ssh_tunnel_to_vps",
+  "publicHttpsConnected": false,
+  "immutableImageRunning": true,
+  "health": {
+    "status": "ok",
+    "mode": "selfserve-testnet",
+    "network": "Arc Testnet",
+    "livePayments": true
+  },
+  "anonymousStatus": 401,
+  "untrustedOriginStatus": 403,
+  "limits": {
+    "chainId": 5042002,
+    "usdc": "0x3600000000000000000000000000000000000000",
+    "delaySeconds": 180,
+    "maxVaults": 100,
+    "maxProjects": 1,
+    "maxContractors": 2,
+    "maxInvoice": "10000000",
+    "maxBatch": "5000000",
+    "walletDailyBatches": 3,
+    "globalDailyBatches": 30,
+    "walletDailyGas": "250000000000000000",
+    "globalDailyGas": "1000000000000000000",
+    "lifetimeGas": "10000000000000000000"
+  },
+  "activity": {
+    "controlledTests": {
+      "vaults": 2,
+      "confirmedBatches": 3,
+      "paidMicro": "2100000"
+    },
+    "unverifiedTestnet": {
+      "vaults": 0,
+      "confirmedBatches": 0,
+      "paidMicro": "0"
+    },
+    "verifiedBusinesses": 0
+  },
+  "ownerKeysStayedLocal": true,
+  "modelCredentialDeployed": false,
+  "limitation": "Controlled testnet API and chain checks. Browser/mobile interaction, public HTTPS, accepted video hosting and business adoption remain unverified."
+}

@@ -205,6 +205,15 @@ export default function Documentation() {
                 fallback, baseline comparison and recorded facts. A pilot intake or test wallet
                 transfer does not establish business adoption.
               </p>
+              <p>
+                The{' '}
+                <a href="https://github.com/IamHarrie-Labs/splitt/blob/master/docs/selfserve-testnet-proof.json">
+                  two-wallet testnet report
+                </a>{' '}
+                records three confirmed payouts, automatic drafts, expired-signature recovery and
+                private workspace isolation. These controlled tests used the deterministic fallback;
+                they are API and chain evidence, rather than a browser recording or business pilot.
+              </p>
             </section>
             <section id="selfserve">
               <h2>Your own vault</h2>
