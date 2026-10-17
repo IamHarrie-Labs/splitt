@@ -1,5 +1,7 @@
 # Splitt: evidence and remaining gates
 
+17 October update: two fresh controlled wallets completed three Circle payouts; see `selfserve-testnet-proof.json`. The isolated VPS worker is healthy. Claude Haiku 5.5 is now configured privately on the VPS, and an authenticated note check used the model without changing financial state (`anthropic-hosted-note-proof.json`). Two post-fix note regression runs scored 10/10 for the combined path versus 7/10 for literal matching, with five accepted model responses and five safety fallbacks each. These are small development cases. A separate allocation smoke rejected both model proposals and used the baseline. Public API HTTPS, browser/mobile verification, genuine business usage and the final video remain gaps. The assessment below is the earlier 16 October snapshot, not a current organizer score.
+
 Updated 16 October 2026. A readiness assessment, not an organizer score or predicted placement.
 
 | Area                  | Evidence a reviewer can inspect                                                                 | Remaining limitation                                                                                   |

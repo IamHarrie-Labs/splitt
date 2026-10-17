@@ -211,6 +211,15 @@ export default function Documentation() {
                 after both model proposals failed validation.
               </p>
               <p>
+                An{' '}
+                <a href="https://github.com/IamHarrie-Labs/splitt/blob/master/docs/anthropic-hosted-note-proof.json">
+                  authenticated VPS check
+                </a>{' '}
+                also used Haiku to match a synthetic note to an existing testnet receipt. Balances
+                and payout jobs stayed unchanged. This verifies hosted note analysis; public API
+                access still awaits HTTPS.
+              </p>
+              <p>
                 In the owner workspace, each proposal exposes its triggering receipts, model or
                 fallback, baseline comparison and recorded facts. A pilot intake or test wallet
                 transfer does not establish business adoption.

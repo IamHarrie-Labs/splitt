@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-10-17T08:15:54.054Z",
+  "checkedAt": "2026-10-17T08:21:47.438Z",
   "secretScanPassed": true,
-  "fileCount": 232,
+  "fileCount": 233,
   "files": [
     ".dockerignore",
     ".env.example",
@@ -21,6 +21,7 @@
     "contracts/test/MockUSDC.sol",
     "docs/agent-upgrade-release.md",
     "docs/anthropic-evaluation.md",
+    "docs/anthropic-hosted-note-proof.json",
     "docs/anthropic-planner-smoke.json",
     "docs/arc-deployment.json",
     "docs/arc-verification.json",

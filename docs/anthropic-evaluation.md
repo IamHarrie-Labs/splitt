@@ -25,6 +25,8 @@ The self-serve note endpoint is scoped to the signed-in owner's verified vault a
 
 Hosted provider calls are reserved in PostgreSQL before the request. Allocation corrections and payment-note analysis share limits of eight requests per vault per UTC day and forty globally. Failures consume reservations. Exhaustion uses a labelled deterministic fallback. These are request limits, not a fixed dollar-price guarantee.
 
+`anthropic-hosted-note-proof.json` records an authenticated check through the deployed VPS API. Claude Haiku 5.5 matched a synthetic note to an existing controlled testnet receipt without fallback. Project balances and payout jobs were unchanged; no payment was sent. The running image is `sha256:56670f1be28d1399cdbefac30b27bb4a2e3fdb93df9ba70e74f011e726d29fe8`, built from runtime commit `1c2c019e8a425b0752ec061d6edee18b182227a1`. API health and server-side model configuration were checked without displaying the key. The Vercel frontend release was Ready; the public API still awaits domain/HTTPS configuration.
+
 ```sh
 npx tsx --env-file=.env --env-file=server/.secrets/anthropic.env scripts/evaluate-payment-notes.ts --live --provider=anthropic --allow-paid --run=1
 npx tsx --env-file=.env --env-file=server/.secrets/anthropic.env scripts/check-anthropic-planner.ts --live --allow-paid

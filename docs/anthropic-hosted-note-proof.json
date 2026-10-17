@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-10-17T08:20:12.123Z",
+  "source": "controlled_test",
+  "vault": "0x5c6a73d2626a94978364f5d6a3f00fda42148186",
+  "receipt": "0x4e6e988f9be3714480c96a96e0265e7c80e49604658697be2f34c87afee9e549",
+  "status": "suggested_match",
+  "model": "claude-haiku-5-5",
+  "fallbackUsed": false,
+  "modelAttempted": true,
+  "modelIssues": [],
+  "issues": [],
+  "remainderQuote": "The remaining $0.80 comes Friday.",
+  "financialStateUnchanged": true,
+  "newPaymentSent": false,
+  "ownerKeyStayedLocal": true,
+  "publicHttpsConnected": false,
+  "limitation": "A synthetic client note attached to an existing controlled testnet receipt through the private VPS tunnel. Not a business pilot, new payout or browser walkthrough."
+}
