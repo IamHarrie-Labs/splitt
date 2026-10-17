@@ -55,7 +55,7 @@ export type OwnerNotification = {
   id: string;
   projectId: string;
   planId?: string;
-  kind: 'draft_ready' | 'receipt_needs_review';
+  kind: 'draft_ready' | 'receipt_needs_review' | 'receipt_no_action';
   message: string;
   createdAt: string;
   readAt?: string;

@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-10-16T20:33:24.940Z",
+  "source": "private_ssh_tunnel_to_vps",
+  "publicHttpsConnected": false,
+  "ownerKeyStayedLocal": true,
+  "authenticated": true,
+  "anonymousDenied": true,
+  "bridgeCsrfRequired": true,
+  "chainId": 5042002,
+  "vault": "0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6",
+  "projects": [
+    {
+      "id": "northstar",
+      "balance": "800000"
+    },
+    {
+      "id": "fieldwork",
+      "balance": "1000000"
+    }
+  ],
+  "jobs": [
+    "confirmed",
+    "confirmed"
+  ],
+  "eventsIndexed": 4,
+  "nextBlock": "67341549",
+  "bridgeQuote": {
+    "minimumFee": "0",
+    "usdcBalance": "0",
+    "nativeBalance": "0",
+    "allowance": "0",
+    "funded": false
+  },
+  "modelCredentialDeployed": false,
+  "realBusinesses": 0
+}

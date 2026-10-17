@@ -8,11 +8,17 @@ import { addressSchema } from '@splitt/core';
 import { MemoryAuthRepository, type AuthRepository } from './repository.js';
 
 export type AuthOptions = {
-  owner: Address;
+  owner?: Address;
+  allowAnyWallet?: boolean;
   repository?: AuthRepository;
   now?: () => Date;
   currentOwner?: () => Promise<Address>;
 };
+declare module 'fastify' {
+  interface FastifyRequest {
+    splittWallet?: Address;
+  }
+}
 export const signatureSchema = z
   .string()
   .regex(/^0x[0-9a-fA-F]{130}$/, 'Expected an EOA wallet signature');
@@ -30,7 +36,9 @@ export async function registerAuth(
   await app.register(cookie);
   const repo = options?.repository ?? new MemoryAuthRepository();
   const now = options?.now ?? (() => new Date());
-  const expectedOwner = options?.owner.toLowerCase();
+  const expectedOwner = options?.owner?.toLowerCase();
+  if (options && !options.owner && !options.allowAnyWallet)
+    throw new Error('Configure an owner or explicitly enable public wallet authentication.');
   const cookieName = 'splitt_session';
   const secure = new URL(origin).protocol === 'https:';
   const cookieOptions = {
@@ -41,6 +49,7 @@ export async function registerAuth(
     maxAge: 60 * 60 * 8,
   };
   async function checkOwner(wallet: string) {
+    if (options?.allowAnyWallet) return;
     if (!expectedOwner || wallet.toLowerCase() !== expectedOwner)
       throw failure(403, 'This wallet is not the configured workspace owner.');
     if (options?.currentOwner && (await options.currentOwner()).toLowerCase() !== expectedOwner)
@@ -88,7 +97,9 @@ export async function registerAuth(
         nonce,
         issuedAt,
         expirationTime: expiresAt,
-        statement: 'Sign in to Splitt as workspace owner. This does not authorize payments.',
+        statement: options?.allowAnyWallet
+          ? 'Sign in to your Splitt testnet workspace. This does not authorize payments.'
+          : 'Sign in to Splitt as workspace owner. This does not authorize payments.',
       });
       await repo.putChallenge({ nonce, wallet: address.toLowerCase(), message, expiresAt });
       return { nonce, message, expiresAt: expiresAt.toISOString() };
@@ -155,11 +166,13 @@ export async function registerAuth(
       !options ||
       request.method === 'OPTIONS' ||
       path === '/health' ||
+      (options?.allowAnyWallet && request.method === 'GET' && path === '/selfserve/config') ||
       ['/auth/session', '/auth/challenge', '/auth/verify'].includes(path)
     )
       return;
     const s = await session(request);
     if (!s) throw failure(401, 'Sign in with the workspace owner wallet to continue.');
+    request.splittWallet = s.wallet as Address;
     if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)) {
       const csrf = request.headers['x-splitt-csrf'];
       if (

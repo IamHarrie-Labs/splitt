@@ -151,6 +151,37 @@ describe('durable Arc execution worker', () => {
   });
 });
 describe('restart-safe receipt index', () => {
+  it('recovers a confirmed job hash from the matching vault execution event', async () => {
+    const job = makeJob();
+    await repo.transaction((s) => {
+      s.jobs[0].state = 'confirmed';
+    });
+    const event = {
+      id: '5042002:payout:0',
+      block: '100',
+      txHash: idHash('actual-payout'),
+      name: 'PlanExecuted',
+      source: 'arc_testnet' as const,
+      args: {
+        planId: job.approval.message.planId,
+        planHash: job.approval.message.planHash,
+        projectId: job.approval.message.projectId,
+        totalAmount: '900000000',
+      },
+    };
+    await indexReceipts(repo, {
+      head: async () => 101n,
+      events: async () => [
+        {
+          ...event,
+          txHash: idHash('wrong-payout'),
+          args: { ...event.args, planHash: idHash('wrong-plan') },
+        },
+        event,
+      ],
+    });
+    expect((await repo.snapshot()).jobs[0].txHash).toBe(event.txHash);
+  });
   it('stores events and cursor atomically, deduplicates overlap and never attributes a transfer', async () => {
     const event = {
       id: '5042002:tx:0',

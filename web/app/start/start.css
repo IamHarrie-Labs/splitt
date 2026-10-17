@@ -1,0 +1,234 @@
+.selfserve-main {
+  width: min(1120px, calc(100% - 96px));
+  margin: 0 auto;
+  padding: 64px 0 96px;
+  min-height: 70dvh;
+}
+.selfserve-intro {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--line);
+}
+.selfserve-intro h1 {
+  font: 400 clamp(34px, 5vw, 60px)/1.1 var(--heading);
+  letter-spacing: -0.045em;
+  margin: 0 0 24px;
+}
+.selfserve-main p {
+  max-width: 68ch;
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--muted);
+}
+.selfserve-network {
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: 12px;
+  padding-top: 12px;
+}
+.selfserve-section {
+  padding: 40px 0;
+  border-bottom: 1px solid var(--line);
+}
+.selfserve-main h2 {
+  font: 400 28px/1.3 var(--heading);
+  margin: 0 0 20px;
+  letter-spacing: -0.03em;
+}
+.selfserve-main h3 {
+  font: 500 20px/1.4 var(--heading);
+  margin: 0 0 16px;
+}
+.selfserve-wallet,
+.selfserve-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.selfserve-main a,
+.selfserve-main p {
+  overflow-wrap: anywhere;
+}
+.selfserve-main a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.selfserve-main .button {
+  margin: 12px 16px 12px 0;
+  min-height: 44px;
+}
+.selfserve-main fieldset {
+  min-width: 0;
+  padding: 24px 0;
+  margin: 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+}
+.selfserve-main legend {
+  font: 500 18px var(--heading);
+  padding-top: 24px;
+}
+.selfserve-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.selfserve-main label {
+  display: block;
+  margin: 16px 0;
+  color: var(--text);
+  font-size: 13px;
+}
+.selfserve-main input,
+.selfserve-main select {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  min-height: 48px;
+  padding: 12px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--muted);
+  border-radius: 6px;
+  font: inherit;
+}
+.selfserve-main .selfserve-check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.selfserve-check input {
+  width: 20px;
+  min-height: 20px;
+  flex: 0 0 20px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+.selfserve-main summary {
+  cursor: pointer;
+  padding: 16px 0;
+  font-size: 13px;
+}
+.selfserve-main summary:focus-visible,
+.selfserve-main button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+.selfserve-main details p {
+  font-size: 12px;
+}
+.selfserve-main pre {
+  overflow-x: auto;
+  padding: 16px;
+  background: var(--surface);
+  font-size: 11px;
+  line-height: 1.7;
+}
+.selfserve-error {
+  color: var(--danger) !important;
+  padding: 16px 0;
+}
+.selfserve-status {
+  min-height: 28px;
+}
+.selfserve-balances {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.selfserve-balances span {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+.selfserve-balances strong {
+  color: var(--text);
+  font: 400 30px var(--heading);
+  font-variant-numeric: tabular-nums;
+}
+.selfserve-balances small {
+  font: 400 12px var(--sans);
+}
+.selfserve-plan {
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+}
+.selfserve-payment {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  padding: 16px 0;
+}
+.selfserve-payment strong {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.selfserve-payment p {
+  font-size: 12px;
+  margin-bottom: 0;
+}
+.selfserve-confirmation {
+  border: 1px solid var(--accent);
+  background: var(--section-blue);
+  padding: 32px;
+}
+.selfserve-activity {
+  background: var(--section-blue);
+  padding: 48px max(20px, calc((100% - 1120px) / 2));
+}
+.selfserve-activity h2 {
+  font: 400 26px var(--heading);
+}
+.selfserve-activity p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+.selfserve-activity-table {
+  overflow-x: auto;
+}
+.selfserve-activity table {
+  width: 100%;
+  min-width: 500px;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.selfserve-activity th,
+.selfserve-activity td {
+  text-align: left;
+  padding: 16px 12px;
+  border-bottom: 1px solid var(--line);
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 759px) {
+  .selfserve-main {
+    width: calc(100% - 40px);
+    padding: 32px 0 64px;
+  }
+  .selfserve-intro,
+  .selfserve-wallet,
+  .selfserve-section-heading {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .selfserve-grid,
+  .selfserve-balances {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .selfserve-section {
+    padding: 32px 0;
+  }
+  .selfserve-confirmation {
+    padding: 24px;
+  }
+  .selfserve-payment {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}

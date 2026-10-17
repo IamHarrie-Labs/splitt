@@ -1,0 +1,14 @@
+{
+  "source": "controlled_test_plan",
+  "chainId": 5042002,
+  "owner": "0x8bE0633d4fd1E8828338d4BC779dDb7dd2121fD1",
+  "fundingPerWalletNativeUsdc": "3",
+  "maximumFundingNativeUsdc": "6",
+  "ownerNativeUsdc": "15.9266903",
+  "sufficientForFundingAndGas": true,
+  "wallets": [
+    "0x387565237CacE460b9BeA78F74DAC3c26246F347",
+    "0xE6fBA1b21a6Ed911F8d4C7C2612ab20F9BC1F65A"
+  ],
+  "realBusinesses": 0
+}

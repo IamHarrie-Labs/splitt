@@ -141,7 +141,15 @@ export class TestnetService {
       latest.facts,
       baselinePlan(snapshot.facts),
     );
-    if (!validation.ok || BigInt(validation.total) === 0n)
+    const noAction = BigInt(validation.total) === 0n;
+    const waitingForRecipient = snapshot.project.commitments.some(
+      (c) => BigInt(c.maximum) > BigInt(c.paid) && c.activeAfter > snapshot.now.getTime() / 1000,
+    );
+    if (
+      !validation.ok ||
+      (noAction &&
+        (!trigger || waitingForRecipient || snapshot.project.paused || snapshot.project.unresolved))
+    )
       fail('No valid payable allocation. Refresh project facts.');
     const plan: StoredPlan = {
       id: randomUUID(),
@@ -154,7 +162,7 @@ export class TestnetService {
       validation,
       model: result.model,
       fallbackUsed: result.fallbackUsed,
-      status: 'awaiting_owner',
+      status: noAction ? 'no_action' : 'awaiting_owner',
       createdAt: new Date().toISOString(),
     };
     await this.repo.transaction((s) => {
@@ -193,8 +201,10 @@ export class TestnetService {
             id: `draft:${plan.id}`,
             projectId: id,
             planId: plan.id,
-            kind: 'draft_ready',
-            message: 'A client receipt was detected. Your allocation is ready for review.',
+            kind: noAction ? 'receipt_no_action' : 'draft_ready',
+            message: noAction
+              ? 'Receipt recorded. No payout is available under the current reserve, limits and outstanding obligations.'
+              : 'A client receipt was detected. Your allocation is ready for review.',
             createdAt: new Date().toISOString(),
           });
       }

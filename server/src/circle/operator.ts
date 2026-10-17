@@ -1,8 +1,10 @@
 import { initiateDeveloperControlledWalletsClient } from '@circle-fin/developer-controlled-wallets';
-import type { Hex } from 'viem';
-export function circleOperator() {
+import type { Hex, Address } from 'viem';
+export type OperatorFee = { gasLimit: string; maxFee: string; priorityFee: string };
+export function circleOperator(targetVault?: Address) {
   const { CIRCLE_API_KEY, CIRCLE_ENTITY_SECRET, CIRCLE_WALLET_ID, VAULT_ADDRESS } = process.env;
-  if (!CIRCLE_API_KEY || !CIRCLE_ENTITY_SECRET || !CIRCLE_WALLET_ID || !VAULT_ADDRESS)
+  const vault = targetVault ?? VAULT_ADDRESS;
+  if (!CIRCLE_API_KEY || !CIRCLE_ENTITY_SECRET || !CIRCLE_WALLET_ID || !vault)
     throw new Error('Circle execution is not configured.');
   const client = initiateDeveloperControlledWalletsClient({
     apiKey: CIRCLE_API_KEY,
@@ -18,13 +20,15 @@ export function circleOperator() {
       )
         throw new Error('Circle wallet must match the vault operator on ARC-TESTNET.');
     },
-    async submit(callData: Hex, idempotencyKey: string) {
+    async submit(callData: Hex, idempotencyKey: string, fee?: OperatorFee) {
       const response = await client.createContractExecutionTransaction({
         walletId: CIRCLE_WALLET_ID,
-        contractAddress: VAULT_ADDRESS,
+        contractAddress: vault,
         callData,
         idempotencyKey,
-        fee: { type: 'level', config: { feeLevel: 'MEDIUM' } },
+        fee: fee
+          ? { type: 'absolute', config: fee }
+          : { type: 'level', config: { feeLevel: 'MEDIUM' } },
       });
       if (!response.data?.id)
         throw new Error('Circle did not return a transaction ID; reconcile before retrying.');

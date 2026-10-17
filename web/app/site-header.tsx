@@ -7,6 +7,7 @@ import './site-header.css';
 const navigation = [
   ['Overview', '/'],
   ['Demo', '/demo'],
+  ['Testnet', '/start'],
   ['Documentation', '/docs'],
 ] as const;
 export default function SiteHeader({

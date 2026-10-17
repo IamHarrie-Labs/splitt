@@ -61,6 +61,17 @@ beforeEach(() => {
   service = new TestnetService(repo, chain, address, address, planner);
 });
 describe('receipt-driven draft worker', () => {
+  it('records a valid no-payout decision once when the receipt cannot exceed the reserve', async () => {
+    state.projects[0].balance = state.projects[0].reserve;
+    await draftReceipts(service, 1000);
+    expect(state.plans[0].status).toBe('no_action');
+    expect(state.notifications?.[0].kind).toBe('receipt_no_action');
+    expect(state.receiptDrafts?.[0].state).toBe('done');
+    expect(state.jobs).toEqual([]);
+    await draftReceipts(service, 2000);
+    expect(state.plans).toHaveLength(1);
+    await expect(service.prepare(state.plans[0].id)).rejects.toThrow('Plan changed');
+  });
   it('persists completed receipts and notifications across a PostgreSQL repository reopen', async () => {
     const pg = new PGlite();
     const db: Database = {

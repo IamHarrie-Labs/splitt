@@ -9,8 +9,13 @@ import { PostgresAuthRepository } from './auth/repository.js';
 import { initialState, type StateStore } from './store.js';
 const mode = process.env.SPLITT_MODE ?? 'fixture';
 if (mode === 'arc-testnet') {
-  const { startTestnet } = await import('./live/runtime.js');
-  await startTestnet();
+  if (process.env.SPLITT_SELF_SERVE === 'true') {
+    const { startSelfServe } = await import('./selfserve/runtime.js');
+    await startSelfServe();
+  } else {
+    const { startTestnet } = await import('./live/runtime.js');
+    await startTestnet();
+  }
 } else {
   if (mode !== 'fixture')
     throw new Error(

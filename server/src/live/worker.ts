@@ -7,6 +7,8 @@ export type Operator = {
   submit(callData: Hex, idempotencyKey: string): Promise<string>;
   status(id: string): Promise<{ state?: string; txHash?: string } | undefined>;
 };
+/** Only for fixed local policy failures before any provider submission. */
+export class OperatorPolicyError extends Error {}
 const terminal = (job: Job) =>
   ['confirmed', 'failed', 'expired', 'invariant_violation'].includes(job.state);
 export async function indexReceipts(
@@ -23,6 +25,18 @@ export async function indexReceipts(
     if (state.nextBlock !== snapshot.nextBlock) return 0;
     const known = new Set(state.events.map((e) => e.id));
     state.events.push(...events.filter((e) => !known.has(e.id)));
+    // Replay flags can confirm a fast payout before Circle returns its hash.
+    // Recover the explorer link from this vault's indexed execution event.
+    for (const job of state.jobs) {
+      const executed = events.find(
+        (e) =>
+          e.name === 'PlanExecuted' &&
+          e.args.planId?.toLowerCase() === job.approval.message.planId.toLowerCase() &&
+          e.args.planHash?.toLowerCase() === job.approval.message.planHash.toLowerCase() &&
+          e.args.projectId?.toLowerCase() === job.approval.message.projectId.toLowerCase(),
+      );
+      if (executed) job.txHash = executed.txHash as Hex;
+    }
     state.nextBlock = String(to + 1n);
     return events.length;
   });
@@ -102,10 +116,13 @@ export async function workerTick(
       j.state = 'pending';
       delete j.lastError;
     });
-  } catch {
+  } catch (error) {
     // Errors can contain credential headers. Store a safe message instead of raw SDK errors.
     await save((j) => {
-      j.lastError = 'Attempt unresolved. Retry uses the same batch and idempotency key.';
+      if (error instanceof OperatorPolicyError) {
+        j.state = 'failed';
+        j.lastError = error.message;
+      } else j.lastError = 'Attempt unresolved. Retry uses the same batch and idempotency key.';
       j.leaseUntil = now + 15000;
     });
   }

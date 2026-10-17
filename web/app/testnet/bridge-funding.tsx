@@ -220,7 +220,7 @@ export default function BridgeFunding({ workspace, api, refresh, busy, run }: Pr
           </h3>
           <p>
             {labels[intent.state]} · Fee limit {formatUSDC(intent.maxFee)} USDC
-            {intent.netAmount ? ` · Minted amount ${formatUSDC(intent.netAmount)} USDC` : ''}
+              {intent.netAmount ? ` · Net amount ${formatUSDC(intent.netAmount)} USDC` : ''}
           </p>
           <p>
             From {intent.payer} to {intent.vault}

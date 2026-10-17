@@ -14,7 +14,7 @@ export type StoredPlan = {
   validation: Validation;
   fallbackUsed: boolean;
   model: string;
-  status: 'awaiting_owner' | 'done' | 'unresolved' | 'stale';
+  status: 'awaiting_owner' | 'done' | 'unresolved' | 'stale' | 'no_action';
   createdAt: string;
   approval?: BatchApproval;
 };
