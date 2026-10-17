@@ -24,6 +24,8 @@ After health verification, set `SPLITT_API_URL=https://YOUR_API_DOMAIN` on Verce
 
 ## Domain handoff for this host
 
+The owner supplied `usesplitt.xyz` on 17 October. The prepared API host is `api.usesplitt.xyz`; its isolated site block is `api.usesplitt.xyz.Caddyfile`. At the initial check, independent Cloudflare and Google resolvers returned NXDOMAIN, so registration/delegation and the API A record must become resolvable before TLS activation. The staged configuration passed Caddy validation alongside existing sites, using the running service's environment privately (existing routes rely on environment substitutions). The live proxy was not reloaded. Keep the existing Vercel website and API rewrite unchanged until HTTPS passes. A prepared configuration is not an active public deployment.
+
 Supply an API subdomain you control, then set its DNS A record to `38.49.210.22`. Avoid an AAAA record unless IPv6 on this VPS is separately confirmed. The existing system Caddy already owns ports 80/443. Add only a new site block after inspecting and privately backing up its current configuration:
 
 ```caddy
