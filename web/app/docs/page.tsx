@@ -201,6 +201,16 @@ export default function Documentation() {
                 testing has not established a benefit over the deterministic planner.
               </p>
               <p>
+                A later{' '}
+                <a href="https://github.com/IamHarrie-Labs/splitt/blob/master/docs/anthropic-evaluation.md">
+                  Claude Haiku 5.5 regression check
+                </a>{' '}
+                scored ten of ten twice after an amount-parser fix, with five accepted model
+                responses and five safety fallbacks per run. These are the same small development
+                cases, not a production accuracy estimate. A separate allocation check fell back
+                after both model proposals failed validation.
+              </p>
+              <p>
                 In the owner workspace, each proposal exposes its triggering receipts, model or
                 fallback, baseline comparison and recorded facts. A pilot intake or test wallet
                 transfer does not establish business adoption.

@@ -28,6 +28,8 @@ export type PaymentNoteRecord = {
   issues: string[];
   model: string;
   fallbackUsed: boolean;
+  modelAttempted?: boolean;
+  modelIssues?: string[];
   createdAt: string;
 };
 const amountPattern = /\$?\b\d{1,3}(?:,\d{3})+(?:\.\d{1,6})?\b|\$?\b\d+(?:\.\d{1,6})?\b/g;
@@ -48,6 +50,21 @@ function micro(text: string) {
   } catch {
     return null;
   }
+}
+/** Compare one complete amount inside a verbatim quote; never choose among amounts. */
+function quotedAmountMicro(text: string) {
+  const exact = micro(text);
+  if (exact !== null) return exact;
+  const tokens = [
+    ...text.matchAll(
+      /(?<![\w$.,+\-])(?:\$\s*)?\d+(?:,\d+)*(?:\.\d+)?(?:\s*(?:USDC|USD))?(?![\w.]|,\d)/gi,
+    ),
+  ];
+  if (tokens.length !== 1) return null;
+  const token = tokens[0],
+    outside = text.slice(0, token.index) + text.slice(token.index! + token[0].length);
+  if (/[\d$%+\-€£¥]/.test(outside) || /\b(?:EUR|GBP|JPY|BTC|ETH)\b/i.test(outside)) return null;
+  return micro(token[0]);
 }
 function referencePosition(note: string, reference: string) {
   const escaped = reference.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -99,7 +116,7 @@ export function validateNoteExtraction(
   if (
     !/^[1-9]\d*$/.test(amount) ||
     !extracted.amount_text ||
-    micro(extracted.amount_text) !== amount
+    quotedAmountMicro(extracted.amount_text) !== amount
   )
     issues.push('RECEIPT_AMOUNT_MISMATCH');
   const payer = event.args.payer ?? event.args.from;
@@ -127,16 +144,22 @@ export async function analyzePaymentNote(
   note: string,
   event: ChainEvent,
   projects: Project[],
+  permitModelRequest?: () => Promise<boolean>,
 ): Promise<PaymentNoteRecord> {
   let extraction = literalExtraction(note, event, projects);
   let model = 'Literal evidence matcher',
     fallbackUsed = true;
+  let modelAttempted = false;
+  const modelIssues: string[] = [];
   const gateway = process.env.PLANNER_PROVIDER === 'vercel-gateway';
   const key = gateway
     ? process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN
     : process.env.ANTHROPIC_API_KEY;
   const configuredModel = process.env.PAYMENT_NOTE_MODEL;
-  if (key && configuredModel) {
+  const permitted = key && configuredModel && (!permitModelRequest || (await permitModelRequest()));
+  if (key && configuredModel && !permitted) modelIssues.push('MODEL_BUDGET_EXHAUSTED');
+  if (permitted) {
+    modelAttempted = true;
     try {
       const client = new Anthropic({
         apiKey: key,
@@ -178,15 +201,20 @@ export async function analyzePaymentNote(
       });
       const tool = response.content.find((b) => b.type === 'tool_use');
       const parsed = noteExtraction.safeParse(tool?.type === 'tool_use' ? tool.input : null);
-      if (
-        parsed.success &&
-        !validateNoteExtraction(note, event, projects, parsed.data).issues.length
-      ) {
+      const validationIssues = parsed.success
+        ? validateNoteExtraction(note, event, projects, parsed.data).issues
+        : [tool ? 'MODEL_SCHEMA_REJECTED' : 'MODEL_TOOL_MISSING'];
+      if (parsed.success && !validationIssues.length) {
         extraction = parsed.data;
         model = configuredModel;
         fallbackUsed = false;
-      }
-    } catch {
+      } else modelIssues.push(...validationIssues);
+    } catch (error) {
+      modelIssues.push(
+        error instanceof Anthropic.APIError
+          ? `PROVIDER_HTTP_${error.status ?? 'UNKNOWN'}`
+          : 'PROVIDER_UNAVAILABLE',
+      );
       /* Keep provider diagnostics and credentials out of stored evidence. */
     }
   }
@@ -207,6 +235,8 @@ export async function analyzePaymentNote(
     issues: checked.issues,
     model,
     fallbackUsed,
+    modelAttempted,
+    modelIssues,
     createdAt: new Date().toISOString(),
   };
 }

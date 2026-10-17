@@ -90,6 +90,14 @@
       The runs used the deterministic fallback. Final balances were 0.8 and 0.3 USDC. This is
       controlled API/chain evidence; no business pilot or uninterrupted browser walkthrough is claimed.
     </p>
+    <p>
+      The configured model is Claude Haiku 5.5, with a rule-based fallback and validator.
+      After an amount-quotation parser fix, two runs on the same ten synthetic notes scored
+      10/10 for the combined path versus 7/10 for literal matching. Each run accepted five
+      model responses and rejected five safety cases through fallback. This is development
+      regression evidence, not production accuracy. A separate allocation smoke check rejected
+      both model proposals and used the safe baseline. See <a href="anthropic-evaluation.md">evaluation details</a>.
+    </p>
   </section>
   <section>
     <h2>Links and submission fields</h2>

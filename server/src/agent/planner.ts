@@ -9,6 +9,7 @@ import {
 } from '@splitt/core';
 export async function propose(
   facts: Facts,
+  permitModelRequest?: () => Promise<boolean>,
 ): Promise<{
   output: PlanOutput;
   model: string;
@@ -42,6 +43,10 @@ export async function propose(
   const failureCodes: string[] = [];
   try {
     for (let attempt = 0; attempt < 2; attempt++) {
+      if (permitModelRequest && !(await permitModelRequest())) {
+        failureCodes.push('MODEL_BUDGET_EXHAUSTED');
+        break;
+      }
       attempts++;
       const response = await client.messages.create({
         model: process.env.PLANNER_MODEL,

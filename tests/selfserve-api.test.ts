@@ -1,7 +1,8 @@
-import { beforeAll, afterAll, describe, it, expect, vi } from 'vitest';
+import { beforeAll, beforeEach, afterAll, describe, it, expect, vi } from 'vitest';
 import { PGlite } from '@electric-sql/pglite';
 import { generatePrivateKey, privateKeyToAccount, type PrivateKeyAccount } from 'viem/accounts';
 import { idHash } from '@splitt/core';
+import { fixtureProjects } from '../server/src/fixtures';
 import type { Database } from '../server/src/db/driver';
 import { buildSelfServeApp } from '../server/src/selfserve/runtime';
 vi.mock('../server/src/circle/operator', () => ({
@@ -13,6 +14,12 @@ const alice = privateKeyToAccount(generatePrivateKey()),
 const a = '0x1111111111111111111111111111111111111111',
   b = '0x2222222222222222222222222222222222222222';
 let pg: PGlite, db: Database, built: Awaited<ReturnType<typeof buildSelfServeApp>>;
+beforeEach(async () => {
+  vi.clearAllMocks();
+  vi.stubEnv('PAYMENT_NOTE_MODEL', '');
+  await db.query('DELETE FROM arc_workspaces');
+  for (const record of await built.registry.list()) await built.registry.repository(record);
+});
 beforeAll(async () => {
   pg = new PGlite();
   db = {
@@ -39,6 +46,7 @@ beforeAll(async () => {
   vi.spyOn(built.registry, 'verify').mockResolvedValue();
 });
 afterAll(async () => {
+  vi.unstubAllEnvs();
   await built.app.close();
   await db.close();
 });
@@ -68,6 +76,60 @@ async function login(account: PrivateKeyAccount) {
   };
 }
 describe('multi-wallet HTTP boundaries', () => {
+  it('matches only receipts in the signed-in vault and returns duplicate notes without modifying balances', async () => {
+    const headers = await login(alice),
+      record = (await built.registry.list(alice.address))[0],
+      repo = await built.registry.repository(record),
+      project = fixtureProjects()[0];
+    await repo.transaction((state) => {
+      state.projects = [project];
+      state.events = [
+        {
+          id: 'private-receipt',
+          block: '100',
+          txHash: idHash('receipt'),
+          name: 'PaymentReceived',
+          source: 'arc_testnet',
+          args: {
+            projectId: project.onchainId,
+            invoiceId: idHash(project.invoiceRef),
+            payer: project.clientWallet,
+            amount: '1200000000',
+          },
+        },
+      ];
+    });
+    const payload = {
+      eventId: 'private-receipt',
+      note: `${project.invoiceRef}: $1,200 paid, rest next week`,
+    };
+    const first = await built.app.inject({
+      method: 'POST',
+      url: `/selfserve/vaults/${a}/payment-notes`,
+      headers,
+      payload,
+    });
+    expect(first.statusCode).toBe(200);
+    expect(first.json().status).toBe('suggested_match');
+    const again = await built.app.inject({
+      method: 'POST',
+      url: `/selfserve/vaults/${a}/payment-notes`,
+      headers,
+      payload,
+    });
+    expect(again.json().id).toBe(first.json().id);
+    expect((await repo.snapshot()).projects[0].balance).toBe(project.balance);
+    expect(
+      (
+        await built.app.inject({
+          method: 'POST',
+          url: `/selfserve/vaults/${b}/payment-notes`,
+          headers,
+          payload,
+        })
+      ).statusCode,
+    ).toBe(404);
+  });
   it('exposes public chain configuration while keeping vault lists private', async () => {
     expect((await built.app.inject('/selfserve/config')).statusCode).toBe(200);
     expect((await built.app.inject('/selfserve/vaults')).statusCode).toBe(401);

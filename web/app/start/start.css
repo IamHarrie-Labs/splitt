@@ -84,12 +84,14 @@
   font-size: 13px;
 }
 .selfserve-main input,
-.selfserve-main select {
+.selfserve-main select,
+.selfserve-main textarea {
   display: block;
   width: 100%;
   margin-top: 8px;
   min-height: 48px;
   padding: 12px;
+  font: inherit;
   color: var(--text);
   background: var(--surface);
   border: 1px solid var(--muted);

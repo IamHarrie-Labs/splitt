@@ -28,6 +28,32 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllEnvs());
 describe('model adapter safety', () => {
+  it('reserves correction requests separately and stops when the next reservation is denied', async () => {
+    vi.stubEnv('ANTHROPIC_API_KEY', 'test-only-anthropic');
+    vi.stubEnv('PLANNER_MODEL', 'test-model');
+    const invalid = baselinePlan(facts());
+    invalid.items[0].amount_micro = '2000000000';
+    mocks.create.mockResolvedValue({
+      content: [{ type: 'tool_use', input: invalid }],
+      stop_reason: 'tool_use',
+    });
+    const permit = vi.fn().mockResolvedValueOnce(true).mockResolvedValueOnce(false);
+    const result = await propose(facts(), permit);
+    expect(result.attempts).toBe(1);
+    expect(result.fallbackUsed).toBe(true);
+    expect(result.failureCodes).toEqual(['VALIDATION_REJECTED', 'MODEL_BUDGET_EXHAUSTED']);
+    expect(mocks.create).toHaveBeenCalledTimes(1);
+    expect(permit).toHaveBeenCalledTimes(2);
+  });
+  it('falls back without a provider request when the hosted request budget is exhausted', async () => {
+    vi.stubEnv('ANTHROPIC_API_KEY', 'test-only-anthropic');
+    vi.stubEnv('PLANNER_MODEL', 'test-model');
+    const result = await propose(facts(), async () => false);
+    expect(result.fallbackUsed).toBe(true);
+    expect(result.attempts).toBe(0);
+    expect(result.failureCodes).toContain('MODEL_BUDGET_EXHAUSTED');
+    expect(mocks.create).not.toHaveBeenCalled();
+  });
   it('does not call a provider when no credential is configured', async () => {
     const result = await propose(facts());
     expect(result.fallbackUsed).toBe(true);

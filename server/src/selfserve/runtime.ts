@@ -2,7 +2,7 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import { ZodError } from 'zod';
-import { addressSchema } from '@splitt/core';
+import { addressSchema, hashJson } from '@splitt/core';
 import { type Address } from 'viem';
 import { SELF_SERVE } from '../../../packages/core/src/selfserve.js';
 import { connectDatabase, type Database } from '../db/driver.js';
@@ -15,6 +15,9 @@ import { draftReceipts } from '../agent/receipt-drafts.js';
 import { circleOperator, CircleFeeRejectedError } from '../circle/operator.js';
 import { VaultRegistry, policyError, type RegisteredVault } from './registry.js';
 import { SponsorshipBudget, circleFee } from './sponsorship.js';
+import { ModelRequestBudget } from '../agent/model-budget.js';
+import { propose } from '../agent/planner.js';
+import { analyzePaymentNote, paymentNoteInput } from '../agent/payment-notes.js';
 
 function errorLocation(error: unknown) {
   const causes: string[] = [];
@@ -44,6 +47,7 @@ export async function buildSelfServeApp(
       .filter(Boolean),
   ).init();
   const budget = await new SponsorshipBudget(db).init();
+  const modelBudget = await new ModelRequestBudget(db).init();
   const operatorClient = circleOperator(process.env.VAULT_ADDRESS as Address | undefined);
   await operatorClient.verify(operator);
   const app = Fastify({ logger: options.logger ?? true, bodyLimit: 100000 });
@@ -94,7 +98,9 @@ export async function buildSelfServeApp(
   async function createContext(record: RegisteredVault) {
     const repo = await registry.repository(record),
       chain = arcGateway(record.vault, record.owner, operator),
-      service = new TestnetService(repo, chain, record.owner, record.vault),
+      service = new TestnetService(repo, chain, record.owner, record.vault, (facts) =>
+        propose(facts, () => modelBudget.reserve(record.vault, 'allocation')),
+      ),
       provider = circleOperator(record.vault);
     const limited: Operator = {
       status: provider.status,
@@ -179,6 +185,35 @@ export async function buildSelfServeApp(
     },
   );
   type Params = { vault: string; id: string };
+  app.post<{ Params: Params }>('/selfserve/vaults/:vault/payment-notes', mutation, async (req) => {
+    const ctx = await owned(req.params.vault, req.splittWallet),
+      input = paymentNoteInput.parse(req.body),
+      state = await ctx.repo.snapshot();
+    const existing = state.paymentNotes?.find(
+      (n) => n.eventId === input.eventId && n.noteHash === hashJson(input.note),
+    );
+    if (existing) return existing;
+    const event = state.events.find(
+      (e) =>
+        e.id === input.eventId &&
+        ['PaymentReceived', 'PaymentAttributed', 'Transfer'].includes(e.name),
+    );
+    if (!event) throw policyError('Choose a receipt from this vault.');
+    const result = await analyzePaymentNote(input.note, event, state.projects, () =>
+      modelBudget.reserve(ctx.record.vault, 'payment_note'),
+    );
+    return ctx.repo.transaction((s) => {
+      const notes = (s.paymentNotes ??= []),
+        duplicate = notes.find(
+          (n) => n.eventId === result.eventId && n.noteHash === result.noteHash,
+        );
+      if (duplicate) return duplicate;
+      if (notes.length >= 100)
+        throw policyError('This preview workspace has reached its payment-note limit.');
+      notes.push(result);
+      return result;
+    });
+  });
   app.get<{ Params: Params }>('/selfserve/vaults/:vault/workspace', async (req) => {
     const ctx = await owned(req.params.vault, req.splittWallet),
       state = await ctx.repo.snapshot();

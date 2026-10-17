@@ -810,6 +810,86 @@ export default function SelfServe() {
                               Deposit test payment
                             </button>
                           </form>
+                          <details>
+                            <summary>Match a client payment note</summary>
+                            <p>
+                              The note is sent to the configured AI provider. A match cannot
+                              authorize a payout or change contractor terms.
+                            </p>
+                            <form
+                              onSubmit={(event) => {
+                                event.preventDefault();
+                                const data = new FormData(event.currentTarget);
+                                void run(async () => {
+                                  await api(`${path}/payment-notes`, {
+                                    eventId: String(data.get('receipt')),
+                                    note: String(data.get('note')),
+                                  });
+                                  await refresh();
+                                  setStatus(
+                                    'Payment note checked. Review the match and quoted statement below.',
+                                  );
+                                });
+                              }}
+                            >
+                              <label htmlFor="note-receipt">Confirmed receipt</label>
+                              <select id="note-receipt" name="receipt" required disabled={busy}>
+                                <option value="">Choose a receipt</option>
+                                {workspace?.events
+                                  .filter(
+                                    (event) =>
+                                      ['PaymentReceived', 'PaymentAttributed'].includes(
+                                        event.name,
+                                      ) &&
+                                      event.args.projectId?.toLowerCase() ===
+                                        project.onchainId.toLowerCase(),
+                                  )
+                                  .map((event) => (
+                                    <option key={event.id} value={event.id}>
+                                      {formatUSDC(event.args.amount)} USDC ·{' '}
+                                      {event.txHash.slice(0, 12)}…
+                                    </option>
+                                  ))}
+                              </select>
+                              <label htmlFor="client-payment-note">Client note</label>
+                              <textarea
+                                id="client-payment-note"
+                                name="note"
+                                minLength={3}
+                                maxLength={2000}
+                                required
+                                disabled={busy}
+                                rows={3}
+                              />
+                              <button className="button secondary" disabled={busy}>
+                                Match note
+                              </button>
+                            </form>
+                            {workspace?.paymentNotes
+                              ?.slice(-3)
+                              .reverse()
+                              .map((note) => (
+                                <div className="selfserve-payment" key={note.id}>
+                                  <div>
+                                    <strong>
+                                      {note.status === 'suggested_match'
+                                        ? `Matched to ${note.invoiceRef}`
+                                        : 'Needs your review'}
+                                    </strong>
+                                    {note.remainderQuote && (
+                                      <p>Client statement, unverified: “{note.remainderQuote}”</p>
+                                    )}
+                                    <p>
+                                      {note.model}
+                                      {note.fallbackUsed ? ' · Rule-based fallback' : ''}
+                                    </p>
+                                    {note.issues.length > 0 && (
+                                      <p>Checks: {note.issues.join(', ')}</p>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                          </details>
                         </section>
                         <section className="selfserve-section">
                           <div className="selfserve-section-heading">

@@ -82,23 +82,39 @@ const cases = [
   },
 ];
 const live = process.argv.includes('--live');
+const providerArg = process.argv.find((arg) => arg.startsWith('--provider='))?.slice(11);
+if (providerArg && (!live || !['anthropic', 'vercel-gateway'].includes(providerArg)))
+  throw new Error('Use --live --provider=anthropic or --live --provider=vercel-gateway.');
+const provider = providerArg ?? 'vercel-gateway';
+const run = process.argv.find((arg) => arg.startsWith('--run='))?.slice(6);
+if (run && (!live || !/^[a-z0-9-]{1,24}$/.test(run)))
+  throw new Error('Use a short live run label.');
 const requestedModel = process.env.PAYMENT_NOTE_MODEL;
 if (live) {
-  if (
-    !requestedModel ||
-    process.env.PLANNER_PROVIDER !== 'vercel-gateway' ||
-    !(process.env.VERCEL_OIDC_TOKEN || process.env.AI_GATEWAY_API_KEY)
-  )
-    throw new Error('Configure a project-scoped gateway credential and PAYMENT_NOTE_MODEL.');
-  const response = await fetch('https://ai-gateway.vercel.sh/v1/models', {
-    signal: AbortSignal.timeout(15000),
-  });
-  if (!response.ok) throw new Error('Could not verify model pricing.');
-  const catalog = await response.json();
-  const model = catalog.data?.find((m: { id: string }) => m.id === requestedModel);
-  if (!model?.pricing || Number(model.pricing.input) !== 0 || Number(model.pricing.output) !== 0)
-    throw new Error('This evaluation only runs a currently zero-priced model.');
-  console.log('Verified zero-priced model: ' + requestedModel);
+  process.env.PLANNER_PROVIDER = provider;
+  if (provider === 'anthropic') {
+    if (!process.argv.includes('--allow-paid') || !process.env.ANTHROPIC_API_KEY || !requestedModel)
+      throw new Error(
+        'Anthropic evaluation requires ANTHROPIC_API_KEY, PAYMENT_NOTE_MODEL and --allow-paid. At most 10 requests, 500 output tokens each, no provider retries.',
+      );
+    console.log('Explicit Anthropic evaluation: ' + requestedModel + '; maximum 10 requests.');
+  } else {
+    if (
+      !requestedModel ||
+      process.env.PLANNER_PROVIDER !== 'vercel-gateway' ||
+      !(process.env.VERCEL_OIDC_TOKEN || process.env.AI_GATEWAY_API_KEY)
+    )
+      throw new Error('Configure a project-scoped gateway credential and PAYMENT_NOTE_MODEL.');
+    const response = await fetch('https://ai-gateway.vercel.sh/v1/models', {
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!response.ok) throw new Error('Could not verify model pricing.');
+    const catalog = await response.json();
+    const model = catalog.data?.find((m: { id: string }) => m.id === requestedModel);
+    if (!model?.pricing || Number(model.pricing.input) !== 0 || Number(model.pricing.output) !== 0)
+      throw new Error('This evaluation only runs a currently zero-priced model.');
+    console.log('Verified zero-priced model: ' + requestedModel);
+  }
 }
 const results: {
   case: string;
@@ -108,6 +124,8 @@ const results: {
   fallbackUsed: boolean;
   issues: string[];
   remainderQuote: string | null;
+  modelAttempted: boolean;
+  modelIssues: string[];
 }[] = [];
 for (const item of cases) {
   const event = { ...base, args: { ...base.args, payer: item.payer ?? base.args.payer } };
@@ -131,6 +149,8 @@ for (const item of cases) {
     fallbackUsed: candidate.fallbackUsed,
     issues: candidate.issues,
     remainderQuote: candidate.remainderQuote,
+    modelAttempted: candidate.modelAttempted ?? false,
+    modelIssues: candidate.modelIssues ?? [],
   });
   console.log(item.name + ': ' + candidate.status + '; ' + candidate.model);
 }
@@ -139,18 +159,32 @@ const successful = (key: 'baseline' | 'candidate') =>
 const report = {
   evaluatedAt: new Date().toISOString(),
   source: 'synthetic_fixture',
-  mode: live ? 'live_free_model' : 'offline_literal_matcher',
+  mode: live
+    ? provider === 'anthropic'
+      ? 'live_anthropic'
+      : 'live_free_model'
+    : 'offline_literal_matcher',
+  provider: live ? provider : null,
+  run: run ?? null,
   requestedModel: live ? requestedModel : null,
   caseCount: cases.length,
   baselineFullyCorrect: successful('baseline'),
   candidateFullyCorrect: successful('candidate'),
   modelResponsesUsed: results.filter((r) => !r.fallbackUsed).length,
+  modelRequestsAttempted: results.filter((r) => r.modelAttempted).length,
+  validCasesFullyCorrect: results.filter(
+    (r, i) => cases[i].match && r.candidate.matchCorrect && r.candidate.remainderCorrect,
+  ).length,
+  safetyCasesCorrect: results.filter((r, i) => !cases[i].match && r.candidate.matchCorrect).length,
   results,
   note: 'Synthetic evidence-matching evaluation, not business traction or allocation-quality improvement. Client remainder statements remain unverified. No payment, attribution or external message was sent.',
 };
 await writeFile(
   new URL(
-    '../docs/payment-note-evaluation-' + (live ? 'live' : 'offline') + '.json',
+    '../docs/payment-note-evaluation-' +
+      (live ? (provider === 'anthropic' ? 'anthropic' : 'live') : 'offline') +
+      (run ? '-' + run : '') +
+      '.json',
     import.meta.url,
   ),
   JSON.stringify(report, null, 2) + '\n',

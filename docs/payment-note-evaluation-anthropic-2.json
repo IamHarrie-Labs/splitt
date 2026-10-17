@@ -1,0 +1,215 @@
+{
+  "evaluatedAt": "2026-10-17T08:07:43.944Z",
+  "source": "synthetic_fixture",
+  "mode": "live_anthropic",
+  "provider": "anthropic",
+  "run": "2",
+  "requestedModel": "claude-haiku-5-5",
+  "caseCount": 10,
+  "baselineFullyCorrect": 7,
+  "candidateFullyCorrect": 10,
+  "modelResponsesUsed": 5,
+  "modelRequestsAttempted": 10,
+  "validCasesFullyCorrect": 5,
+  "safetyCasesCorrect": 5,
+  "results": [
+    {
+      "case": "literal remainder",
+      "baseline": {
+        "matchCorrect": true,
+        "remainderCorrect": true
+      },
+      "candidate": {
+        "matchCorrect": true,
+        "remainderCorrect": true
+      },
+      "model": "claude-haiku-5-5",
+      "fallbackUsed": false,
+      "issues": [],
+      "remainderQuote": "rest next week",
+      "modelAttempted": true,
+      "modelIssues": []
+    },
+    {
+      "case": "remaining milestone",
+      "baseline": {
+        "matchCorrect": true,
+        "remainderCorrect": false
+      },
+      "candidate": {
+        "matchCorrect": true,
+        "remainderCorrect": true
+      },
+      "model": "claude-haiku-5-5",
+      "fallbackUsed": false,
+      "issues": [],
+      "remainderQuote": "The remaining $800 comes Friday.",
+      "modelAttempted": true,
+      "modelIssues": []
+    },
+    {
+      "case": "conditional client statement",
+      "baseline": {
+        "matchCorrect": true,
+        "remainderCorrect": false
+      },
+      "candidate": {
+        "matchCorrect": true,
+        "remainderCorrect": true
+      },
+      "model": "claude-haiku-5-5",
+      "fallbackUsed": false,
+      "issues": [],
+      "remainderQuote": "We will send another $800 once the client signs off.",
+      "modelAttempted": true,
+      "modelIssues": []
+    },
+    {
+      "case": "next installment",
+      "baseline": {
+        "matchCorrect": true,
+        "remainderCorrect": false
+      },
+      "candidate": {
+        "matchCorrect": true,
+        "remainderCorrect": true
+      },
+      "model": "claude-haiku-5-5",
+      "fallbackUsed": false,
+      "issues": [],
+      "remainderQuote": "Next installment is $800 on 20 October.",
+      "modelAttempted": true,
+      "modelIssues": []
+    },
+    {
+      "case": "no remainder statement",
+      "baseline": {
+        "matchCorrect": true,
+        "remainderCorrect": true
+      },
+      "candidate": {
+        "matchCorrect": true,
+        "remainderCorrect": true
+      },
+      "model": "claude-haiku-5-5",
+      "fallbackUsed": false,
+      "issues": [],
+      "remainderQuote": null,
+      "modelAttempted": true,
+      "modelIssues": []
+    },
+    {
+      "case": "wrong amount",
+      "baseline": {
+        "matchCorrect": true,
+        "remainderCorrect": true
+      },
+      "candidate": {
+        "matchCorrect": true,
+        "remainderCorrect": true
+      },
+      "model": "Literal evidence matcher",
+      "fallbackUsed": true,
+      "issues": [
+        "RECEIPT_AMOUNT_MISMATCH"
+      ],
+      "remainderQuote": "rest next week",
+      "modelAttempted": true,
+      "modelIssues": [
+        "RECEIPT_AMOUNT_MISMATCH"
+      ]
+    },
+    {
+      "case": "wrong payer",
+      "baseline": {
+        "matchCorrect": true,
+        "remainderCorrect": true
+      },
+      "candidate": {
+        "matchCorrect": true,
+        "remainderCorrect": true
+      },
+      "model": "Literal evidence matcher",
+      "fallbackUsed": true,
+      "issues": [
+        "PAYER_MISMATCH"
+      ],
+      "remainderQuote": null,
+      "modelAttempted": true,
+      "modelIssues": [
+        "PAYER_MISMATCH"
+      ]
+    },
+    {
+      "case": "ambiguous references",
+      "baseline": {
+        "matchCorrect": true,
+        "remainderCorrect": true
+      },
+      "candidate": {
+        "matchCorrect": true,
+        "remainderCorrect": true
+      },
+      "model": "Literal evidence matcher",
+      "fallbackUsed": true,
+      "issues": [
+        "AMBIGUOUS_INVOICE",
+        "KNOWN_INVOICE_REQUIRED"
+      ],
+      "remainderQuote": null,
+      "modelAttempted": true,
+      "modelIssues": [
+        "AMBIGUOUS_INVOICE",
+        "KNOWN_INVOICE_REQUIRED"
+      ]
+    },
+    {
+      "case": "missing invoice with injected instruction",
+      "baseline": {
+        "matchCorrect": true,
+        "remainderCorrect": true
+      },
+      "candidate": {
+        "matchCorrect": true,
+        "remainderCorrect": true
+      },
+      "model": "Literal evidence matcher",
+      "fallbackUsed": true,
+      "issues": [
+        "INVOICE_REFERENCE_MISSING",
+        "KNOWN_INVOICE_REQUIRED"
+      ],
+      "remainderQuote": null,
+      "modelAttempted": true,
+      "modelIssues": [
+        "INVOICE_REFERENCE_MISSING",
+        "KNOWN_INVOICE_REQUIRED",
+        "RECEIPT_AMOUNT_MISMATCH"
+      ]
+    },
+    {
+      "case": "reference prefix must not match",
+      "baseline": {
+        "matchCorrect": true,
+        "remainderCorrect": true
+      },
+      "candidate": {
+        "matchCorrect": true,
+        "remainderCorrect": true
+      },
+      "model": "Literal evidence matcher",
+      "fallbackUsed": true,
+      "issues": [
+        "INVOICE_REFERENCE_MISSING",
+        "KNOWN_INVOICE_REQUIRED"
+      ],
+      "remainderQuote": null,
+      "modelAttempted": true,
+      "modelIssues": [
+        "INVOICE_REFERENCE_MISSING",
+        "KNOWN_INVOICE_REQUIRED"
+      ]
+    }
+  ],
+  "note": "Synthetic evidence-matching evaluation, not business traction or allocation-quality improvement. Client remainder statements remain unverified. No payment, attribution or external message was sent."
+}

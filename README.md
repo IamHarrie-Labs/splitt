@@ -28,6 +28,8 @@ Implemented:
 
 ## Run locally
 
+The configured server-side model is **Claude Haiku 5.5, with a rule-based fallback and validator**. Two post-fix payment-note regression runs scored 10/10 for the combined path versus 7/10 for literal matching, using five accepted model responses and five safety fallbacks each. These ten synthetic development cases do not establish production accuracy. The separate allocation smoke rejected both model attempts and used the deterministic fallback. [Evaluation details](docs/anthropic-evaluation.md). Hosted model calls have durable per-vault and global daily request limits.
+
 Arc Testnet integration setup: [testnet runbook](docs/testnet-runbook.md). `/testnet` exposes its connection state and, when configured, owner login, project metadata registration, allocation review and settlement status. Default fixture mode remains credential-free. [Submission draft](docs/submission.html) and [pilot plan](docs/pilot-plan.md) are prepared; neither represents a completed public submission or an onboarded business.
 
 The landing page is at `/`. Choose **Open demo** to enter `/demo`, which needs no wallet or API. The local full fixture workspace remains `/workspace`; when the connected API runs in live mode, that workspace redirects to the authenticated `/testnet` page. See [publication runbook](docs/publication-runbook.md) for Vercel web setup and the separate persistent API host.

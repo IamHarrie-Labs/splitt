@@ -49,7 +49,14 @@ async function visit(relative) {
 }
 for (const entry of entries) await visit(entry);
 const secrets = [];
-for (const envFile of ['.env', '.env.local', '.env.testnet.local', 'web/.env.local']) {
+for (const envFile of [
+  '.env',
+  '.env.local',
+  '.env.testnet.local',
+  'web/.env.local',
+  'server/.secrets/anthropic.env',
+  'server/.secrets/vps.env',
+]) {
   try {
     const env = await readFile(path.join(root, envFile), 'utf8');
     for (const line of env.split(/\r?\n/)) {
