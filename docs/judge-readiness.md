@@ -1,27 +1,32 @@
-# Splitt: evidence and remaining gates
+# Splitt judge readiness — 17 October 2026
 
-17 October update: two fresh controlled wallets completed three Circle payouts; see `selfserve-testnet-proof.json`. The isolated VPS worker is healthy. Claude Haiku 5.5 is now configured privately on the VPS, and an authenticated note check used the model without changing financial state (`anthropic-hosted-note-proof.json`). Two post-fix note regression runs scored 10/10 for the combined path versus 7/10 for literal matching, with five accepted model responses and five safety fallbacks each. These are small development cases. A separate allocation smoke rejected both model proposals and used the baseline. Public API HTTPS, browser/mobile verification, genuine business usage and the final video remain gaps. The assessment below is the earlier 16 October snapshot, not a current organizer score.
+This is an evidence assessment, not an organizer score or a prediction of placement.
 
-Updated 16 October 2026. A readiness assessment, not an organizer score or predicted placement.
+| Area                  | Verified evidence                                                                                                                                 | Remaining gap                                                                        |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Receipt-driven drafts | Hosted single worker; two controlled vaults; three confirmed Circle payout batches; receipt/remainder and expired-authorization recovery          | Public HTTPS and an uninterrupted browser recording                                  |
+| Allocation decisions  | Independent constraint validator, baseline comparison, bounded corrections and safe fallback; structured reasons checked against recorded terms   | Model allocation checks remain inconsistent; no measured advantage over the baseline |
+| Payment notes         | Two ten-case synthetic regression runs: combined path 10/10 vs literal 7/10, five accepted model responses each; authenticated hosted Haiku check | Development examples, not held-out accuracy or customer evidence                     |
+| Circle and Arc        | Developer-controlled operator, USDC, verified ProjectVault, scoped wallet authorization and durable execution recovery                            | CCTP code has no completed transfer proof; no extra integration credit claimed       |
+| Adoption              | Public demo and local pilot intake; two fresh controlled owners transferred 2.1 test USDC in three batches                                        | Zero verified business pilots; controlled tests are not traction                     |
+| Hosting               | Vercel frontend and healthy isolated VPS API/PostgreSQL                                                                                           | Owner-supplied domain, TLS, Vercel API rewrite and signed-in public checks           |
+| Submission            | Public source, evidence files, updated copy and recording script                                                                                  | Current video under three minutes on an accepted host; owner-submitted form          |
 
-| Area                  | Evidence a reviewer can inspect                                                                 | Remaining limitation                                                                                   |
-| --------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Receipt-driven agency | Worker wiring, PostgreSQL/retry/concurrency tests                                               | No new receipt-to-draft recording; public owner API not connected                                      |
-| Allocation judgment   | Stored facts, independent validation, baseline comparison and fallback shown with each proposal | Model testing has not established an allocation advantage; every payout batch needs an owner signature |
-| Payment notes         | Ten synthetic cases: baseline 7 correct, combined candidate 9, model output used in 4           | Small synthetic signal; six cases used fallback                                                        |
-| Arc execution         | Public payout and recovery transactions, Sourcify bytecode match                                | Controlled wallets and synthetic business scenario, not customer volume                                |
-| CCTP                  | Tested invoice-bound flow, live route checks, recovery and replay protection                    | Owner has no Base Sepolia USDC/ETH at last check; no completed transfer proof                          |
-| Adoption              | `/pilot` accepts a business case and exports consented feedback                                 | No business or quote verified; a review session is distinct from using the payment workflow            |
-| Hosting               | Vercel frontend; dedicated VPS staging and migration tooling                                    | Domain/HTTPS and signed-in cloud checks remain gates                                                   |
-| Submission            | Public repo, demo script and submission copy                                                    | Final video under three minutes on an accepted host and owner-submitted form still required            |
+Working judge assessment: **54/100** using 7/10 agentic sophistication (30%), 1/10 traction (30%), 7/10 Circle use (20%) and 8/10 innovation (20%). This is subjective. Strong engineering does not substitute for genuine usage, and no specific prize tier is guaranteed.
 
-The supplied scorecard's 6.5/1/6/8 scores produce 50.5/100 with the suggested weights. Retain this conservative working assessment until evidence changes. Tested bridge code does not earn the hypothetical transfer score; pilot intake does not establish traction. There is no official 55-point ceiling or guaranteed prize tier.
+## Evidence to link
 
-## Highest-value next evidence
+- `selfserve-testnet-proof.json`: controlled two-wallet payout evidence; deterministic fallback, not a business pilot.
+- `anthropic-hosted-note-proof.json`: hosted Haiku note analysis, no new payment.
+- `anthropic-evaluation.md`: regression results and allocation limitations, including the stricter reason validation.
+- `testnet-payout-proof.json`: earlier payout, remainder and lost-response recovery proof.
+- GitHub Actions: current checks must pass on the submitted revision.
 
-1. A consenting business supplies its actual invoice, partial receipt, reserve and contractor terms. Record its independent decision before showing Splitt, corrections afterward, time spent and quote permission. Your own business counts with that relationship disclosed. No outreach is sent automatically.
-2. Show an attributed receipt triggering a draft without clicking Propose. Capture model/fallback, facts, baseline, owner review, Circle settlement and project isolation. Earlier payout proof is not a newly recorded automatic flow.
-3. Complete Base-to-Arc funding if tokens arrive in time; otherwise describe it as implemented but unproven and omit it from the main demo.
-4. Publish the final recording under three minutes and submit before 18 October 2026 at 04:59 Lagos (17 October 23:59 Eastern). Do not wait for every optional integration.
+## Finish in this order
 
-Official rubric: https://tameion.thecanteenapp.com/. Meaningful agent decisions and genuine business usage each carry 30% suggested weight; effective Circle use and innovation each carry 20%. Judges retain discretion.
+1. Connect the owner's API domain to the existing Caddy proxy, then set Vercel's server-side API origin. Keep other VPS applications and their proxy routes intact.
+2. Verify wallet login, own-vault registration, receipt-triggered drafts and exact-signature payout behavior through the public website. Run mobile and keyboard checks. API/chain scripts do not count as browser QA.
+3. Run one consenting business through its actual invoice and agreed contractor terms. Record source, corrections, time to a useful plan and quote permission. Builder-owned businesses need that relationship disclosed; test USDC is not revenue.
+4. Record the current flow using `demo-script.md`. Identify controlled tests and fallback accurately. Publish under three minutes to an accepted host; the owner completes the form.
+
+No automatic outreach or submission is authorized. Do not add integrations at the expense of these gates. Official rubric: https://tameion.thecanteenapp.com/. Stated deadline: 17 October 23:59 Eastern, 18 October 04:59 Lagos.

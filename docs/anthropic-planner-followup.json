@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-10-17T08:31:55.888Z",
+  "source": "synthetic_fixture",
+  "requestedModel": "claude-haiku-5-5",
+  "model": "Deterministic baseline (provider fallback)",
+  "fallbackUsed": true,
+  "attempts": 2,
+  "correctionCount": 2,
+  "failureCodes": ["VALIDATION_REJECTED", "VALIDATION_REJECTED"],
+  "validationCodes": [["HIDDEN_SHORTFALL"], ["DEVIATION"]],
+  "validationPassed": true,
+  "matchesBaseline": true,
+  "limitation": "One synthetic allocation smoke check, at most two provider requests. No payment or business adoption. Matching the baseline is not evidence of improved allocation judgment."
+}

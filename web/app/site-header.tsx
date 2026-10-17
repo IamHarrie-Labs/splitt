@@ -5,10 +5,8 @@ import { useEffect, useRef, useState } from 'react';
 import { List, X } from '@phosphor-icons/react';
 import './site-header.css';
 const navigation = [
-  ['Overview', '/'],
-  ['Demo', '/demo'],
-  ['Testnet', '/start'],
-  ['Documentation', '/docs'],
+  ['Docs', '/docs'],
+  ['View demo', '/demo'],
 ] as const;
 export default function SiteHeader({
   demo = false,

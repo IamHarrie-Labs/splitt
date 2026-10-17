@@ -5,9 +5,9 @@ Configured model: Claude Haiku 5.5 (`claude-haiku-5-5`), with a rule-based fallb
 ## Payment-note regression results
 
 | Run | Literal matcher | Model plus fallback | Accepted Haiku responses | Safety cases rejected |
-| --- | --- | --- | --- | --- |
-| 1 | 7/10 | 10/10 | 5/10 | 5/5 |
-| 2 | 7/10 | 10/10 | 5/10 | 5/5 |
+| --- | --------------- | ------------------- | ------------------------ | --------------------- |
+| 1   | 7/10            | 10/10               | 5/10                     | 5/5                   |
+| 2   | 7/10            | 10/10               | 5/10                     | 5/5                   |
 
 Reports: `payment-note-evaluation-anthropic-1.json` and `payment-note-evaluation-anthropic-2.json`. Each run made ten bounded requests, with at most 500 output tokens per request and no SDK retries. The five invalid or ambiguous cases used fallback; they are not five successful model responses. The earlier Nemotron report remains separate and unchanged.
 
@@ -18,6 +18,10 @@ These are ten synthetic development regression cases, including the examples use
 ## Allocation remains a separate limitation
 
 `anthropic-planner-smoke.json` records one synthetic allocation check. Both model attempts were rejected by the validator. The resulting deterministic fallback passed validation and matched the baseline. This does not establish reliable Claude allocation planning or an advantage over the rules engine. Earlier on-chain payout proofs used the deterministic fallback; configuring Haiku does not change their provenance.
+
+Follow-up checks retain their separate reports rather than overwriting that result. `anthropic-planner-followup.json` diagnosed incorrect shortfall calculation and a missing baseline-deviation reason. Clarified instructions yielded accepted proposals in `anthropic-planner-prompt-check.json` and `anthropic-planner-review-check.json`; however, review found a false OVERDUE reason in the latter (a payment due today is not overdue). Those reports predate the stricter reason checks and are not evidence that all explanations were correct.
+
+The validator now rejects OVERDUE, BLOCKS_DELIVERY, PARTIAL_PERMITTED and WITHIN_DEFER_TERMS claims that contradict recorded dates, delivery status or payment terms. This checks those structured reason codes, not every sentence in a model explanation. `anthropic-planner-reason-check.json` records one schema rejection and one missing deviation reason leading to safe fallback. Review also found that correction requests lacked the prior candidate: retries now receive that candidate and schema issue paths without logging raw provider errors. `anthropic-planner-repair-check.json` records the final bounded check after that repair: both attempts failed validation, including factual reason mismatches, and the baseline was used. These inconsistent results do not demonstrate an allocation advantage. No further paid checks were made in this pass.
 
 ## Hosted controls and commands
 

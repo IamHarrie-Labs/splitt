@@ -20,7 +20,19 @@ curl --fail https://YOUR_API_DOMAIN/health
 
 If the VPS already has an HTTPS reverse proxy, omit `--profile tls` and route the API subdomain to `127.0.0.1:4400`. PostgreSQL has no published host port; the API's host port binds only to loopback. Caddy's persistent volume retains certificates. Container logs rotate. Docker restarts long-running services after reboot; database migrations must complete before the API starts. Run one worker for this vault; stop the local worker before activating the cloud worker.
 
-After health verification, set `SPLITT_API_URL=https://YOUR_API_DOMAIN` on Vercel and rebuild the web app. Check the `/api/auth/session` response through the web origin, signed owner login, chain-derived balances, and approved metadata registration. Only then disable `NEXT_PUBLIC_DEMO_ONLY` and redeploy. Owner signatures remain in the browser; the VPS cannot authorize payments itself. Fresh databases do not import local project metadata or queued jobs automatically. Inspect local pending jobs before migration; never copy or rebuild an unresolved intent blindly.
+After health verification, set `SPLITT_API_URL=https://YOUR_API_DOMAIN` on Vercel and rebuild the web app. Check the `/api/auth/session` response through the web origin, signed owner login, chain-derived balances, and approved metadata registration. Keep `NEXT_PUBLIC_DEMO_ONLY=true` for legacy/demo routing: `/start` uses the self-serve API independently. Owner signatures remain in the browser; the VPS cannot authorize payments itself. Fresh databases do not import local project metadata or queued jobs automatically. Inspect local pending jobs before migration; never copy or rebuild an unresolved intent blindly.
+
+## Domain handoff for this host
+
+Supply an API subdomain you control, then set its DNS A record to `38.49.210.22`. Avoid an AAAA record unless IPv6 on this VPS is separately confirmed. The existing system Caddy already owns ports 80/443. Add only a new site block after inspecting and privately backing up its current configuration:
+
+```caddy
+YOUR_API_DOMAIN {
+  reverse_proxy 127.0.0.1:4400
+}
+```
+
+This snippet belongs in the existing host proxy configuration; the repository's `Caddyfile` targets the optional container proxy and is not a replacement for the shared host configuration. Validate the merged configuration before reloading. Verify TLS, `/health` mode `selfserve-testnet`, `/selfserve/config` chain 5042002, anonymous vault access denial, and unrelated applications before changing Vercel. Inspect session cookies and CSRF using the actual frontend origin. Public endpoint checks alone do not verify wallet UI behavior or mobile usability. Do not print private environment files or place an owner signing key on the server.
 
 Before changes, back up PostgreSQL to a private file (it contains sessions and signed intents):
 

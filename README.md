@@ -28,7 +28,7 @@ Implemented:
 
 ## Run locally
 
-The configured server-side model is **Claude Haiku 5.5, with a rule-based fallback and validator**. Two post-fix payment-note regression runs scored 10/10 for the combined path versus 7/10 for literal matching, using five accepted model responses and five safety fallbacks each. These ten synthetic development cases do not establish production accuracy. The separate allocation smoke rejected both model attempts and used the deterministic fallback. [Evaluation details](docs/anthropic-evaluation.md). Hosted model calls have durable per-vault and global daily request limits.
+The configured server-side model is **Claude Haiku 5.5, with a rule-based fallback and validator**. Two post-fix payment-note regression runs scored 10/10 for the combined path versus 7/10 for literal matching, using five accepted model responses and five safety fallbacks each. These ten synthetic development cases do not establish production accuracy. Allocation smoke checks remain inconsistent; the final bounded check used the safe fallback. Structured payment reasons are also checked against recorded terms. [Evaluation details](docs/anthropic-evaluation.md). Hosted model calls have durable per-vault and global daily request limits.
 
 Arc Testnet integration setup: [testnet runbook](docs/testnet-runbook.md). `/testnet` exposes its connection state and, when configured, owner login, project metadata registration, allocation review and settlement status. Default fixture mode remains credential-free. [Submission draft](docs/submission.html) and [pilot plan](docs/pilot-plan.md) are prepared; neither represents a completed public submission or an onboarded business.
 

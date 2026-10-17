@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-10-17T08:32:34.561Z",
+  "source": "synthetic_fixture",
+  "requestedModel": "claude-haiku-5-5",
+  "model": "claude-haiku-5-5",
+  "fallbackUsed": false,
+  "attempts": 1,
+  "correctionCount": 0,
+  "failureCodes": [],
+  "validationCodes": [],
+  "validationPassed": true,
+  "matchesBaseline": false,
+  "limitation": "One synthetic allocation smoke check, at most two provider requests. No payment or business adoption. Matching the baseline is not evidence of improved allocation judgment."
+}

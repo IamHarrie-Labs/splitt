@@ -41,9 +41,9 @@
     protected.
   </p>
   <aside>
-    <strong>Submission draft — external evidence incomplete.</strong><br />Public repository,
-    final accepted video link and accurate pilot status must be reviewed before submission. Local
-    fixture activity is not traction.
+    <strong>Submission draft — external evidence incomplete.</strong><br />Public repository, final
+    accepted video link and accurate pilot status must be reviewed before submission. Local fixture
+    activity is not traction.
   </aside>
   <section>
     <h2>Project description</h2>
@@ -78,9 +78,9 @@
     <p>
       Source verification is independently confirmed by Sourcify with exact creation and runtime
       bytecode matches. The payout-and-remainder flow and lost-response recovery are proven.
-      Receipt-triggered drafts and payment-note evidence matching are implemented. CCTP invoice funding
-      is implemented and tested, but no completed cross-chain transfer is proven. Yield management
-      and production customer payments are not claimed.
+      Receipt-triggered drafts and payment-note evidence matching are implemented. CCTP invoice
+      funding is implemented and tested, but no completed cross-chain transfer is proven. Yield
+      management and production customer payments are not claimed.
     </p>
     <p>
       On 17 October, two fresh controlled wallets deployed their own vaults and completed three
@@ -88,15 +88,17 @@
       authorization followed by a fresh owner-reviewed proposal, remainder handling and cross-wallet
       access denial are recorded in <a href="selfserve-testnet-proof.json">the two-wallet proof</a>.
       The runs used the deterministic fallback. Final balances were 0.8 and 0.3 USDC. This is
-      controlled API/chain evidence; no business pilot or uninterrupted browser walkthrough is claimed.
+      controlled API/chain evidence; no business pilot or uninterrupted browser walkthrough is
+      claimed.
     </p>
     <p>
-      The configured model is Claude Haiku 5.5, with a rule-based fallback and validator.
-      After an amount-quotation parser fix, two runs on the same ten synthetic notes scored
-      10/10 for the combined path versus 7/10 for literal matching. Each run accepted five
-      model responses and rejected five safety cases through fallback. This is development
-      regression evidence, not production accuracy. A separate allocation smoke check rejected
-      both model proposals and used the safe baseline. See <a href="anthropic-evaluation.md">evaluation details</a>.
+      The configured model is Claude Haiku 5.5, with a rule-based fallback and validator. After an
+      amount-quotation parser fix, two runs on the same ten synthetic notes scored 10/10 for the
+      combined path versus 7/10 for literal matching. Each run accepted five model responses and
+      rejected five safety cases through fallback. This is development regression evidence, not
+      production accuracy. Allocation checks remain inconsistent, and the latest bounded check used
+      the safe baseline. Structured payment reasons are checked against recorded terms. See
+      <a href="anthropic-evaluation.md">evaluation details</a>.
     </p>
   </section>
   <section>
@@ -104,20 +106,34 @@
     <ul>
       <li>
         Public website: <a href="https://splitt-dun.vercel.app/">splitt-dun.vercel.app</a>;
-        <a href="https://splitt-dun.vercel.app/demo">interactive synthetic demo</a> (no wallet or funds moved)
+        <a href="https://splitt-dun.vercel.app/demo">interactive synthetic demo</a> (no wallet or
+        funds moved)
       </li>
       <li>
         Testnet workspace:
-        <a href="https://splitt-dun.vercel.app/start">wallet-owned testnet workspace</a> (API runs on the VPS;
-        public HTTPS connection awaits the supplied domain)
+        <a href="https://splitt-dun.vercel.app/start">wallet-owned testnet workspace</a> (API runs
+        on the VPS; public HTTPS connection awaits the supplied domain)
       </li>
-      <li>Public repository: <a href="https://github.com/IamHarrie-Labs/splitt">IamHarrie-Labs/splitt</a></li>
-      <li>Video: <a href="https://github.com/IamHarrie-Labs/splitt/releases/tag/v0.1.0-preview">published 2:40 walkthrough preview</a>; final recording must show receipt-triggered drafting and verified payouts and use an accepted video host.</li>
+      <li>
+        Public repository:
+        <a href="https://github.com/IamHarrie-Labs/splitt">IamHarrie-Labs/splitt</a>
+      </li>
+      <li>
+        Video:
+        <a href="https://github.com/IamHarrie-Labs/splitt/releases/tag/v0.1.0-preview"
+          >published 2:40 walkthrough preview</a
+        >; final recording must show receipt-triggered drafting and verified payouts and use an
+        accepted video host.
+      </li>
       <li>
         Deployed vault:
         <a href="https://explorer.testnet.arc.io/address/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6"
           >Arc Testnet vault</a
-        >. <a href="https://repo.sourcify.dev/5042002/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6">Sourcify exact-match source verification</a> confirmed; Arc explorer also confirms verified source code.
+        >.
+        <a href="https://repo.sourcify.dev/5042002/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6"
+          >Sourcify exact-match source verification</a
+        >
+        confirmed; Arc explorer also confirms verified source code.
       </li>
       <li>
         Verified Circle execution:
@@ -192,8 +208,10 @@ npm run build</pre>
   <section>
     <h2>Submission gate</h2>
     <p>
-      Review this draft against the latest evidence. The source, browser demo and earlier payout proof are public; the final Loom/YouTube/Vimeo video, cross-chain proof, pilot and public API connection remain pending. Replace pending fields only after verification. Submit using the organizer's current form after reviewing the final
-      entry.
+      Review this draft against the latest evidence. The source, browser demo and earlier payout
+      proof are public; the final Loom/YouTube/Vimeo video, cross-chain proof, pilot and public API
+      connection remain pending. Replace pending fields only after verification. Submit using the
+      organizer's current form after reviewing the final entry.
     </p>
   </section>
 </html>

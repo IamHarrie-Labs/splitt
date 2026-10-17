@@ -9,6 +9,19 @@ const setup = () => {
   return { project, facts, plan: baselinePlan(facts) };
 };
 describe('allocation safety', () => {
+  it.each([
+    ['OVERDUE', 0],
+    ['BLOCKS_DELIVERY', 1],
+    ['PARTIAL_PERMITTED', 0],
+    ['WITHIN_DEFER_TERMS', 1],
+  ] as const)('rejects a false %s reason even when amounts are legal', (reason, index) => {
+    const facts = buildFacts(fixtureProjects()[0], new Date('2026-10-03T12:00:00Z'));
+    const plan = baselinePlan(facts);
+    plan.items[index].reason_codes.push(reason);
+    expect(validatePlan(plan, facts, facts).errors.map((error) => error.code)).toContain(
+      'REASON_FACT_MISMATCH',
+    );
+  });
   it('allocates 700 and 200 while protecting the 300 reserve', () => {
     const { facts, plan } = setup();
     expect(plan.items.map((i) => i.amount_micro)).toEqual(['700000000', '200000000']);

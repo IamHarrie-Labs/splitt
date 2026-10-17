@@ -207,8 +207,9 @@ export default function Documentation() {
                 </a>{' '}
                 scored ten of ten twice after an amount-parser fix, with five accepted model
                 responses and five safety fallbacks per run. These are the same small development
-                cases, not a production accuracy estimate. A separate allocation check fell back
-                after both model proposals failed validation.
+                cases, not a production accuracy estimate. Allocation checks remain inconsistent;
+                the latest bounded check used the safe fallback. Structured payment reasons are
+                checked against recorded terms as well as payment amounts and limits.
               </p>
               <p>
                 An{' '}

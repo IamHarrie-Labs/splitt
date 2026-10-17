@@ -1,12 +1,17 @@
 {
-  "evaluatedAt": "2026-10-16T19:07:06.527Z",
+  "evaluatedAt": "2026-10-17T08:39:00.886Z",
   "source": "synthetic_fixture",
   "mode": "offline_literal_matcher",
+  "provider": null,
+  "run": null,
   "requestedModel": null,
   "caseCount": 10,
   "baselineFullyCorrect": 7,
   "candidateFullyCorrect": 7,
   "modelResponsesUsed": 0,
+  "modelRequestsAttempted": 0,
+  "validCasesFullyCorrect": 2,
+  "safetyCasesCorrect": 5,
   "results": [
     {
       "case": "literal remainder",
@@ -21,7 +26,9 @@
       "model": "Literal evidence matcher",
       "fallbackUsed": true,
       "issues": [],
-      "remainderQuote": "rest next week"
+      "remainderQuote": "rest next week",
+      "modelAttempted": false,
+      "modelIssues": []
     },
     {
       "case": "remaining milestone",
@@ -36,7 +43,9 @@
       "model": "Literal evidence matcher",
       "fallbackUsed": true,
       "issues": [],
-      "remainderQuote": null
+      "remainderQuote": null,
+      "modelAttempted": false,
+      "modelIssues": []
     },
     {
       "case": "conditional client statement",
@@ -51,7 +60,9 @@
       "model": "Literal evidence matcher",
       "fallbackUsed": true,
       "issues": [],
-      "remainderQuote": null
+      "remainderQuote": null,
+      "modelAttempted": false,
+      "modelIssues": []
     },
     {
       "case": "next installment",
@@ -66,7 +77,9 @@
       "model": "Literal evidence matcher",
       "fallbackUsed": true,
       "issues": [],
-      "remainderQuote": null
+      "remainderQuote": null,
+      "modelAttempted": false,
+      "modelIssues": []
     },
     {
       "case": "no remainder statement",
@@ -81,7 +94,9 @@
       "model": "Literal evidence matcher",
       "fallbackUsed": true,
       "issues": [],
-      "remainderQuote": null
+      "remainderQuote": null,
+      "modelAttempted": false,
+      "modelIssues": []
     },
     {
       "case": "wrong amount",
@@ -98,7 +113,9 @@
       "issues": [
         "RECEIPT_AMOUNT_MISMATCH"
       ],
-      "remainderQuote": "rest next week"
+      "remainderQuote": "rest next week",
+      "modelAttempted": false,
+      "modelIssues": []
     },
     {
       "case": "wrong payer",
@@ -115,7 +132,9 @@
       "issues": [
         "PAYER_MISMATCH"
       ],
-      "remainderQuote": null
+      "remainderQuote": null,
+      "modelAttempted": false,
+      "modelIssues": []
     },
     {
       "case": "ambiguous references",
@@ -133,7 +152,9 @@
         "AMBIGUOUS_INVOICE",
         "KNOWN_INVOICE_REQUIRED"
       ],
-      "remainderQuote": null
+      "remainderQuote": null,
+      "modelAttempted": false,
+      "modelIssues": []
     },
     {
       "case": "missing invoice with injected instruction",
@@ -151,7 +172,9 @@
         "INVOICE_REFERENCE_MISSING",
         "KNOWN_INVOICE_REQUIRED"
       ],
-      "remainderQuote": null
+      "remainderQuote": null,
+      "modelAttempted": false,
+      "modelIssues": []
     },
     {
       "case": "reference prefix must not match",
@@ -169,7 +192,9 @@
         "INVOICE_REFERENCE_MISSING",
         "KNOWN_INVOICE_REQUIRED"
       ],
-      "remainderQuote": null
+      "remainderQuote": null,
+      "modelAttempted": false,
+      "modelIssues": []
     }
   ],
   "note": "Synthetic evidence-matching evaluation, not business traction or allocation-quality improvement. Client remainder statements remain unverified. No payment, attribution or external message was sent."

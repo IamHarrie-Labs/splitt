@@ -1,0 +1,27 @@
+{
+  "checkedAt": "2026-10-17T08:36:47.921Z",
+  "origin": "https://splitt-dun.vercel.app",
+  "publicApiChecksPassed": false,
+  "checks": [
+    {
+      "name": "Self-serve API health",
+      "path": "/health",
+      "status": 404,
+      "passed": false
+    },
+    {
+      "name": "Arc configuration",
+      "path": "/selfserve/config",
+      "status": 404,
+      "passed": false
+    },
+    {
+      "name": "Anonymous vault access denied",
+      "path": "/selfserve/vaults",
+      "status": 404,
+      "passed": false
+    }
+  ],
+  "browserQaCompleted": false,
+  "limitation": "Read-only HTTP API checks only. No wallet login, browser, mobile, payment or business-pilot verification."
+}

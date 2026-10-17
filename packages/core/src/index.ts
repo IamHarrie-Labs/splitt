@@ -295,6 +295,15 @@ export function validatePlan(
     const amount = BigInt(item.amount_micro);
     const remaining = BigInt(c.maximum) - BigInt(c.paid);
     if (
+      (item.reason_codes.includes('OVERDUE') && c.dueDate >= current.today) ||
+      (item.reason_codes.includes('BLOCKS_DELIVERY') && !c.blocksDelivery) ||
+      (item.reason_codes.includes('PARTIAL_PERMITTED') &&
+        (!c.partialAllowed || item.action !== 'pay' || amount <= 0n || amount >= remaining)) ||
+      (item.reason_codes.includes('WITHIN_DEFER_TERMS') &&
+        (item.action !== 'defer' || !c.deferUntil || c.deferUntil < current.today))
+    )
+      fail('REASON_FACT_MISMATCH', 'A claimed payment reason contradicts the recorded terms.');
+    if (
       item.fact_refs.some(
         (ref) =>
           !current.facts.some((f) => f.id === ref && (!f.commitmentId || f.commitmentId === c.id)),

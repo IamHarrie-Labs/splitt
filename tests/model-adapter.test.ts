@@ -93,8 +93,14 @@ describe('model adapter safety', () => {
     expect(result.fallbackUsed).toBe(true);
     expect(result.output).toEqual(baselinePlan(facts()));
     expect(result.failureCodes).toEqual(['VALIDATION_REJECTED', 'VALIDATION_REJECTED']);
+    expect(result.validationCodes).toHaveLength(2);
+    expect(result.validationCodes?.[0]).toContain('COMMITMENT_CAP');
+    expect(JSON.stringify(result.validationCodes)).not.toContain('private-provider');
     expect(mocks.create).toHaveBeenCalledTimes(2);
     expect(JSON.parse(mocks.create.mock.calls[1][0].messages[0].content).correction).not.toBe('');
+    expect(JSON.parse(mocks.create.mock.calls[1][0].messages[0].content).previousProposal).toEqual(
+      invalid,
+    );
   });
   it('keeps provider error bodies out of diagnostics', async () => {
     vi.stubEnv('ANTHROPIC_API_KEY', 'test-only-anthropic');
