@@ -24,7 +24,11 @@ After health verification, set `SPLITT_API_URL=https://YOUR_API_DOMAIN` on Verce
 
 ## Domain handoff for this host
 
-The owner supplied `usesplitt.xyz` on 17 October. The prepared API host is `api.usesplitt.xyz`; its isolated site block is `api.usesplitt.xyz.Caddyfile`. At the initial check, independent Cloudflare and Google resolvers returned NXDOMAIN, so registration/delegation and the API A record must become resolvable before TLS activation. The staged configuration passed Caddy validation alongside existing sites, using the running service's environment privately (existing routes rely on environment substitutions). The live proxy was not reloaded. Keep the existing Vercel website and API rewrite unchanged until HTTPS passes. A prepared configuration is not an active public deployment.
+The owner supplied `usesplitt.xyz` on 17 October. The API host is `api.usesplitt.xyz`; its isolated site block is `api.usesplitt.xyz.Caddyfile`. Vercel's authoritative DNS answers with `38.49.210.22`, but public resolvers and direct .xyz registry queries still returned NXDOMAIN at the latest check. Vercel also reported that the purchase was too recent to determine contact-verification status.
+
+The dedicated site is now installed at `/etc/caddy/sites/splitt-api.Caddyfile`. Existing proxy settings were backed up privately before validation and reload using the running service's environment (existing routes rely on environment substitutions). Caddy remained active; an explicit local hostname check returned HTTP 308 to the intended HTTPS host, Splitt health passed and neighboring containers remained running. Automatic certificate management is enabled, but public TLS is not verified while registration/delegation remains unpublished. Keep the existing Vercel website and API rewrite unchanged until HTTPS passes. See `api-domain-status.json`.
+
+If the frontend is later made canonical at `https://usesplitt.xyz`, also align the API's `WEB_ORIGIN`, SIWE origin and old-host redirects before signed-in public testing. The currently configured origin remains `https://splitt-dun.vercel.app`; attaching a custom domain to Vercel alone does not update authentication policy.
 
 Supply an API subdomain you control, then set its DNS A record to `38.49.210.22`. Avoid an AAAA record unless IPv6 on this VPS is separately confirmed. The existing system Caddy already owns ports 80/443. Add only a new site block after inspecting and privately backing up its current configuration:
 

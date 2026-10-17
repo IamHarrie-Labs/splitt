@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-10-17T10:08:16.6280440Z",
+  "domain": "usesplitt.xyz",
+  "apiHost": "api.usesplitt.xyz",
+  "authoritativeApiAddress": "38.49.210.22",
+  "publicDnsStatus": "NXDOMAIN",
+  "registryDelegationPublished": false,
+  "vercelPurchaseTooRecentForContactVerification": true,
+  "caddyVirtualHostActivated": true,
+  "existingProxyBackupSavedPrivately": true,
+  "proxyConfigurationValidated": true,
+  "localHttpHostStatus": 308,
+  "localHttpRedirect": "https://api.usesplitt.xyz/health",
+  "backendHealthPassed": true,
+  "neighboringContainersRunning": true,
+  "publicTlsVerified": false,
+  "frontendApiRewriteChanged": false,
+  "limitation": "Local proxy and backend checks only. Public HTTPS, authenticated website and browser/mobile behavior remain unverified until DNS is published."
+}
