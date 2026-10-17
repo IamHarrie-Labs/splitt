@@ -36,4 +36,4 @@ npx tsx --env-file=.env --env-file=server/.secrets/anthropic.env scripts/evaluat
 npx tsx --env-file=.env --env-file=server/.secrets/anthropic.env scripts/check-anthropic-planner.ts --live --allow-paid
 ```
 
-Anthropic mode requires explicit paid-call acknowledgement. The Vercel Gateway evaluator retains its zero-priced-model check. Default offline evaluation does not call a provider. Public API HTTPS and browser/mobile verification remain separate launch work.
+Anthropic mode requires explicit paid-call acknowledgement. The Vercel Gateway evaluator retains its zero-priced-model check. Default offline evaluation does not call a provider. A later public run is recorded in `public-onboarding-proof.json`: Haiku produced a valid automatic allocation that the owner approved and Circle settled. This is one controlled case, not a held-out reliability benchmark or business adoption. Public HTTPS and signed HTTP checks now pass on the custom domain; browser wallet-signing and physical-device verification remain separate work.

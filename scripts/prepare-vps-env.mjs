@@ -20,8 +20,8 @@ if (required.some((key) => !values[key]))
 const allowed = [...required, 'ARC_RPC_URL'];
 const config = {
   POSTGRES_PASSWORD: randomBytes(32).toString('hex'),
-  SPLITT_API_DOMAIN: 'pending.invalid',
-  WEB_ORIGIN: 'https://splitt-dun.vercel.app',
+  SPLITT_API_DOMAIN: 'api.usesplitt.xyz',
+  WEB_ORIGIN: 'https://www.usesplitt.xyz',
   BASE_SEPOLIA_RPC_URL: 'https://sepolia.base.org',
   ...Object.fromEntries(allowed.filter((key) => values[key]).map((key) => [key, values[key]])),
 };
