@@ -6,7 +6,7 @@ import { List, X } from '@phosphor-icons/react';
 import './site-header.css';
 const navigation = [
   ['Docs', '/docs'],
-  ['View demo', '/demo'],
+  ['Launch app', '/start'],
 ] as const;
 export default function SiteHeader({
   demo = false,

@@ -1,6 +1,8 @@
 # Splitt on a VPS
 
-The API and PostgreSQL are deployed in an isolated service on the existing VPS. On 17 October the API was upgraded to `selfserve-testnet` and reported healthy. Its port remains loopback-only; public HTTPS still awaits the supplied domain. This deployment uses only Arc Testnet.
+The API and PostgreSQL are deployed in an isolated service on the existing VPS. On 17 October the API was upgraded to `selfserve-testnet` and reported healthy. Its Docker port remains loopback-only; system Caddy exposes the authenticated API through HTTPS. This deployment uses only Arc Testnet.
+
+Public launch uses `https://splitt-api.38-49-210-22.sslip.io` temporarily while the purchased domain is not delegated in public DNS. Its separate site is `/etc/caddy/sites/splitt-api-temporary.Caddyfile`; the `api.usesplitt.xyz` site remains configured for a later switch. Vercel's production `SPLITT_API_URL` points to the verified temporary HTTPS endpoint, and `WEB_ORIGIN` remains `https://splitt-dun.vercel.app`. Public API and signed access checks passed. Do not switch the API origin to the purchased domain until its TLS and public access checks pass. This temporary DNS service is an external dependency, not a guarantee of production availability.
 
 16 October staging: the PrepAI VPS is reachable with its existing SSH key; other applications and Caddy already own their ports. Splitt uses a separate `/opt/splitt` directory, project-local checksum-verified Compose binary and port 4400 on loopback. Do not start the optional Caddy profile on this host. The owner will supply a domain. The other saved VPS reported a changed host identity; its known_hosts entry was left untouched.
 

@@ -1,0 +1,40 @@
+{
+  "checkedAt": "2026-10-17T12:30:30.242Z",
+  "origin": "https://splitt-dun.vercel.app",
+  "publicHttpsApiConnected": true,
+  "anonymousDenied": true,
+  "foreignOriginDenied": true,
+  "crossWalletDenied": true,
+  "results": [
+    {
+      "source": "controlled_test",
+      "wallet": "0x387565237CacE460b9BeA78F74DAC3c26246F347",
+      "vault": "0x5c6a73d2626a94978364f5d6a3f00fda42148186",
+      "secureSession": true,
+      "replayDenied": true,
+      "csrfRequired": true,
+      "balanceMicro": "800000",
+      "confirmedBatches": 2
+    },
+    {
+      "source": "controlled_test",
+      "wallet": "0xE6fBA1b21a6Ed911F8d4C7C2612ab20F9BC1F65A",
+      "vault": "0x202a98767c9260f327e3e1905df9eede7a4b591c",
+      "secureSession": true,
+      "replayDenied": true,
+      "csrfRequired": true,
+      "balanceMicro": "300000",
+      "confirmedBatches": 1
+    },
+    {
+      "source": "fresh_unfunded_authentication_test",
+      "emptyVaultList": true,
+      "secureSession": true,
+      "replayDenied": true
+    }
+  ],
+  "newPaymentSent": false,
+  "privateKeysStayedLocal": true,
+  "browserQaCompleted": false,
+  "limitation": "Real signed HTTP authentication through the public frontend API using two controlled owners and one fresh unfunded account. Existing payout history only; not a browser walkthrough, new payment or business adoption."
+}

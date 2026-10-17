@@ -28,7 +28,7 @@ A separate payment-note reader uses Claude Haiku 5.5 to extract quoted invoice, 
 
 On 17 October, two fresh controlled wallets each owned a separate vault. Three Circle-executed payout batches transferred 2.1 test USDC in total. The API/chain proof covers receipt-triggered drafts, remainder handling, fresh authorization after an earlier signature expired, and denial of access across wallets. Final project balances were 0.8 and 0.3 test USDC. These runs used deterministic fallback and are engineering evidence, not business adoption or an uninterrupted browser demonstration. See `selfserve-testnet-proof.json`.
 
-The isolated API and worker are healthy on the VPS. The public `/start` frontend is deployed, but its public API connection still requires the owner's domain and HTTPS setup. Do not describe public self-serve onboarding as operational until that gate and signed-in browser checks pass.
+The isolated API and worker are healthy on the VPS and connected to the public Vercel frontend over verified HTTPS using a temporary API hostname while the purchased domain registers. Signed HTTP checks covered two controlled owners and a fresh unfunded account, secure sessions, replay/CSRF rejection and cross-wallet access denial (`public-access-proof.json`). These are API checks, not a completed browser/mobile walkthrough or business adoption.
 
 ## Traction
 

@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
   createPublicClient,
@@ -21,6 +21,8 @@ import type { LiveState } from '../../../server/src/live/repository';
 import type { BatchApproval } from '../../../server/src/store';
 import SiteHeader from '../site-header';
 import SiteFooter from '../site-footer';
+import { WorkspaceApiError, walletRequestRejected, workspaceRequest } from './requests';
+import { assertPayoutMatchesReview } from './payout-review';
 import './start.css';
 
 const arc = defineChain({
@@ -53,7 +55,17 @@ type Config = {
   };
 };
 type Vault = { vault: Address; owner: Address; deployment_tx: Hex; classification: string };
-type Workspace = LiveState & { owner: Address; vault: Address; operator: Address };
+type Workspace = LiveState & {
+  owner: Address;
+  vault: Address;
+  operator: Address;
+  sponsorship?: {
+    remainingWalletSlots: number;
+    remainingWalletGasWei: string;
+    serviceAvailable: boolean;
+    resetsAt: string;
+  };
+};
 type Metadata = Pick<
   Project,
   'id' | 'onchainId' | 'name' | 'client' | 'clientWallet' | 'invoiceRef' | 'invoiceTotal'
@@ -92,24 +104,36 @@ export default function SelfServe() {
     [review, setReview] = useState<{ id: string; approval: BatchApproval }>(),
     [clock, setClock] = useState(Date.now());
   const [pendingKeys, setPendingKeys] = useState<string[]>([]);
+  const [connectionAttempt, setConnectionAttempt] = useState(0);
+  const reviewPanel = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (review) reviewPanel.current?.focus();
+  }, [review]);
   async function api<T>(path: string, body?: unknown, token = csrf): Promise<T> {
-    const response = await fetch(`/api${path}`, {
-      credentials: 'same-origin',
-      headers: { 'content-type': 'application/json', 'x-splitt-csrf': token },
-      ...(body === undefined ? {} : { method: 'POST', body: JSON.stringify(body) }),
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message ?? 'Could not reach the testnet workspace.');
-    return data;
+    return workspaceRequest<T>(path, body, token);
   }
   async function run(fn: () => Promise<void>) {
     setBusy(true);
     setError('');
+    setStatus('Updating your workspace…');
     try {
       await fn();
     } catch (e) {
+      if (e instanceof WorkspaceApiError && e.status === 401) {
+        setWallet(undefined);
+        setCsrf('');
+        setVault(undefined);
+        setWorkspace(undefined);
+        setSetup(undefined);
+        setReview(undefined);
+      }
+      setStatus('');
       setError(
-        e instanceof Error ? e.message : 'Request failed. Check the transaction before retrying.',
+        walletRequestRejected(e)
+          ? 'Wallet request cancelled. Continue when you’re ready.'
+          : e instanceof Error
+            ? e.message
+            : 'Request failed. Check the transaction before retrying.',
       );
     } finally {
       setBusy(false);
@@ -130,6 +154,8 @@ export default function SelfServe() {
   }
   useEffect(() => {
     let active = true;
+    setChecking(true);
+    setError('');
     void api<Config>('/selfserve/config')
       .then(async (cfg) => {
         if (!active) return;
@@ -143,9 +169,7 @@ export default function SelfServe() {
       })
       .catch(() => {
         if (active)
-          setError(
-            'The public testnet workspace is not connected yet. The demo is available while deployment is completed.',
-          );
+          setError('We couldn’t load your workspace. Check your connection and try again.');
       })
       .finally(() => {
         if (active) setChecking(false);
@@ -153,7 +177,7 @@ export default function SelfServe() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [connectionAttempt]);
   useEffect(() => {
     if (!vault) return;
     setPendingKeys(
@@ -212,9 +236,18 @@ export default function SelfServe() {
     if (!vault || !csrf || busy) return;
     const timer = setInterval(
       () =>
-        void refresh().catch(() =>
-          setError('Could not refresh settlement. Check the connection before signing.'),
-        ),
+        void refresh().catch((failure) => {
+          if (failure instanceof WorkspaceApiError && failure.status === 401) {
+            setWallet(undefined);
+            setCsrf('');
+            setVault(undefined);
+            setWorkspace(undefined);
+            setSetup(undefined);
+            setReview(undefined);
+            setStatus('');
+            setError(failure.message);
+          } else setError('Could not refresh settlement. Check the connection before signing.');
+        }),
       8000,
     );
     return () => clearInterval(timer);
@@ -224,6 +257,14 @@ export default function SelfServe() {
     return () => clearInterval(timer);
   }, []);
   async function browserWallet() {
+    try {
+      localStorage.setItem('splitt:storage-check', 'ok');
+      localStorage.removeItem('splitt:storage-check');
+    } catch {
+      throw new Error(
+        'Enable browser storage before continuing. Splitt needs it to recover pending transactions safely.',
+      );
+    }
     const provider = (window as Window & { ethereum?: EIP1193Provider }).ethereum;
     if (!provider) throw new Error('Open Splitt in a browser with MetaMask or Rabby installed.');
     const client = createWalletClient({ chain: arc, transport: custom(provider) });
@@ -249,6 +290,7 @@ export default function SelfServe() {
     return { client, account };
   }
   async function connect() {
+    setStatus('Choose your wallet and approve the Arc Testnet connection.');
     const { client, account } = await browserWallet();
     const challenge = await api<{ nonce: string; message: string }>('/auth/challenge', {
       address: account,
@@ -292,9 +334,10 @@ export default function SelfServe() {
     if (!hash) {
       localStorage.setItem(key, 'awaiting-wallet');
       try {
+        setStatus('Review this transaction in your wallet.');
         hash = await client.sendTransaction({ account, to, data, value: 0n });
       } catch (e) {
-        if ((e as { code?: number }).code === 4001) localStorage.removeItem(key);
+        if (walletRequestRejected(e)) localStorage.removeItem(key);
         throw e;
       }
       localStorage.setItem(key, hash);
@@ -448,7 +491,14 @@ export default function SelfServe() {
           </section>
         ) : !config ? (
           <section className="selfserve-section">
+            <h2>Let’s reconnect</h2>
             <p role="alert">{error}</p>
+            <button
+              className="button primary"
+              onClick={() => setConnectionAttempt((value) => value + 1)}
+            >
+              Try again
+            </button>
             <Link href="/demo">Try the allocation demo</Link>
           </section>
         ) : (
@@ -459,7 +509,7 @@ export default function SelfServe() {
               </p>
             )}
             <p className="selfserve-status" role="status">
-              {busy ? 'Working. Review the details in your wallet…' : status}
+              {status}
             </p>
             <section className="selfserve-section selfserve-wallet">
               <div>
@@ -468,6 +518,7 @@ export default function SelfServe() {
                   {wallet ??
                     'Use MetaMask or Rabby on Arc Testnet. Sign-in does not authorize a payment.'}
                 </p>
+                {!wallet && <p>On a phone, open Splitt in your wallet’s built-in browser.</p>}
               </div>
               <button
                 className="button secondary"
@@ -925,17 +976,28 @@ export default function SelfServe() {
                             .map((plan) => (
                               <article className="selfserve-plan" key={plan.id}>
                                 <h3>
-                                  {plan.status === 'awaiting_owner'
-                                    ? 'Ready for review'
-                                    : plan.status === 'no_action'
-                                      ? 'No payout available'
-                                      : plan.status}
+                                  {workspace.jobs.some(
+                                    (job) => job.id === plan.id && job.state === 'failed',
+                                  )
+                                    ? 'Not paid'
+                                    : plan.status === 'awaiting_owner'
+                                      ? 'Ready for review'
+                                      : plan.status === 'no_action'
+                                        ? 'No payout available'
+                                        : plan.status === 'done'
+                                          ? 'Paid'
+                                          : plan.status === 'unresolved'
+                                            ? 'Confirming payment'
+                                            : 'Needs a fresh review'}
                                 </h3>
                                 <p>
-                                  {plan.fallbackUsed
-                                    ? 'Deterministic allocation.'
-                                    : 'Model proposal checked by the validator.'}{' '}
-                                  No payout is sent until you approve.
+                                  {plan.status === 'done'
+                                    ? 'Payout confirmed on Arc Testnet.'
+                                    : plan.status === 'awaiting_owner'
+                                      ? 'Review the recipients and amounts before approving.'
+                                      : plan.status === 'unresolved'
+                                        ? 'Check settlement below before taking another action.'
+                                        : 'Checked against your project balance and agreed payment terms.'}
                                 </p>
                                 {plan.output.items.map((item) => (
                                   <div className="selfserve-payment" key={item.commitment_id}>
@@ -976,27 +1038,41 @@ export default function SelfServe() {
                                     )}
                                   </pre>
                                 </details>
-                                <button
-                                  className="button primary"
-                                  disabled={busy || plan.status !== 'awaiting_owner'}
-                                  onClick={() =>
-                                    void run(async () => {
-                                      const prepared = await api<{ approval: BatchApproval }>(
-                                        `${path}/plans/${plan.id}/prepare`,
-                                        {},
-                                      );
-                                      setReview({ id: plan.id, approval: prepared.approval });
-                                    })
-                                  }
-                                >
-                                  Review payout
-                                </button>
+                                {plan.status === 'awaiting_owner' && (
+                                  <button
+                                    id={`review-payout-${plan.id}`}
+                                    className="button primary"
+                                    disabled={busy || plan.status !== 'awaiting_owner'}
+                                    onClick={() =>
+                                      void run(async () => {
+                                        const prepared = await api<{ approval: BatchApproval }>(
+                                          `${path}/plans/${plan.id}/prepare`,
+                                          {},
+                                        );
+                                        assertPayoutMatchesReview(
+                                          prepared.approval,
+                                          vault.vault,
+                                          project,
+                                          plan,
+                                        );
+                                        setReview({ id: plan.id, approval: prepared.approval });
+                                      })
+                                    }
+                                  >
+                                    Review payout
+                                  </button>
+                                )}
                               </article>
                             ))}
                         </section>
                         {review && (
-                          <section className="selfserve-section selfserve-confirmation">
-                            <h2>Confirm exact payout</h2>
+                          <section
+                            className="selfserve-section selfserve-confirmation"
+                            ref={reviewPanel}
+                            tabIndex={-1}
+                            aria-labelledby="payout-review-heading"
+                          >
+                            <h2 id="payout-review-heading">Confirm exact payout</h2>
                             {review.approval.items.map((item) => (
                               <p key={item.executionId}>
                                 {
@@ -1010,6 +1086,13 @@ export default function SelfServe() {
                               Your signature binds these payments to this vault, project version and
                               expiry. Circle sponsors execution within preview limits.
                             </p>
+                            <p>
+                              Approval expires at{' '}
+                              {new Date(
+                                Number(review.approval.message.deadline) * 1000,
+                              ).toLocaleTimeString()}
+                              .
+                            </p>
                             <button
                               disabled={busy}
                               className="button primary"
@@ -1017,17 +1100,15 @@ export default function SelfServe() {
                                 void run(async () => {
                                   const { client, account } = await browserWallet(),
                                     a = review.approval;
-                                  if (
-                                    a.domain.chainId !== 5042002 ||
-                                    a.domain.name !== 'Splitt' ||
-                                    a.domain.verifyingContract.toLowerCase() !==
-                                      vault.vault.toLowerCase() ||
-                                    a.message.projectId !== project.onchainId ||
-                                    a.message.projectVersion !== String(project.version)
-                                  )
+                                  const reviewedPlan = workspace?.plans.find(
+                                    (plan) => plan.id === review.id,
+                                  );
+                                  if (!reviewedPlan)
                                     throw new Error(
-                                      'Payout domain or project changed. Refresh and review again.',
+                                      'This plan is no longer available. Refresh and review again.',
                                     );
+                                  assertPayoutMatchesReview(a, vault.vault, project, reviewedPlan);
+                                  setStatus('Review and sign the exact payout in your wallet.');
                                   const signature = await client.signTypedData({
                                     account,
                                     domain: a.domain,
@@ -1053,7 +1134,11 @@ export default function SelfServe() {
                             <button
                               className="button secondary"
                               disabled={busy}
-                              onClick={() => setReview(undefined)}
+                              onClick={() => {
+                                const id = review.id;
+                                setReview(undefined);
+                                document.getElementById(`review-payout-${id}`)?.focus();
+                              }}
                             >
                               Cancel
                             </button>
@@ -1061,10 +1146,37 @@ export default function SelfServe() {
                         )}
                         <section className="selfserve-section">
                           <h2>Settlement</h2>
+                          {workspace?.sponsorship && (
+                            <p>
+                              Gas allowance remaining today:{' '}
+                              {formatUSDC(
+                                (
+                                  BigInt(workspace.sponsorship.remainingWalletGasWei) /
+                                  1000000000000n
+                                ).toString(),
+                              )}{' '}
+                              USDC. {workspace.sponsorship.remainingWalletSlots} payout slots
+                              remain. Fees vary, and earlier attempts can use the allowance. Daily
+                              allowances reset at{' '}
+                              {new Date(workspace.sponsorship.resetsAt).toLocaleString()}.
+                              {!workspace.sponsorship.serviceAvailable &&
+                                ' Shared sponsorship is currently unavailable.'}
+                            </p>
+                          )}
                           {!workspace?.jobs.length && <p>No payouts queued yet.</p>}
                           {workspace?.jobs.map((job) => (
                             <p key={job.id}>
-                              {job.state}
+                              {
+                                {
+                                  queued: 'Queued',
+                                  submitting: 'Submitting',
+                                  pending: 'Confirming',
+                                  confirmed: 'Paid',
+                                  failed: 'Not paid',
+                                  expired: 'Approval expired',
+                                  invariant_violation: 'Needs review',
+                                }[job.state]
+                              }
                               {job.txHash && (
                                 <>
                                   {' '}
@@ -1081,6 +1193,28 @@ export default function SelfServe() {
                               {job.lastError && <> · {job.lastError}</>}
                             </p>
                           ))}
+                          {workspace?.jobs.some((job) =>
+                            ['failed', 'expired'].includes(job.state),
+                          ) &&
+                            !workspace.jobs.some(
+                              (job) => !['confirmed', 'failed', 'expired'].includes(job.state),
+                            ) && (
+                              <button
+                                className="button secondary"
+                                disabled={busy}
+                                onClick={() =>
+                                  void run(async () => {
+                                    await api(`${path}/projects/${project.id}/replan`, {});
+                                    await refresh();
+                                    setStatus(
+                                      'A fresh draft is ready. Review it before signing. Sponsorship limits still apply.',
+                                    );
+                                  })
+                                }
+                              >
+                                Create a fresh draft
+                              </button>
+                            )}
                           <p>
                             Preview limits: three sponsored batches and up to 0.25 USDC in reserved
                             gas per wallet per UTC day. A shared global cap also applies. These

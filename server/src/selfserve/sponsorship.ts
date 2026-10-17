@@ -32,6 +32,28 @@ export class SponsorshipBudget {
       maxPriorityFeePerGas: prior.priority_fee,
     };
   }
+  async status(owner: Address, now = new Date()) {
+    const day = now.toISOString().slice(0, 10);
+    const rows = (
+      await this.db.query<{ owner: string; day: string; budget_wei: string }>(
+        'SELECT owner,day::text,budget_wei::text FROM selfserve_gas_reservations',
+      )
+    ).rows;
+    const today = rows.filter((row) => row.day === day);
+    const wallet = today.filter((row) => row.owner === owner.toLowerCase());
+    const sum = (entries: typeof rows) =>
+      entries.reduce((total, row) => total + BigInt(row.budget_wei), 0n);
+    const positive = (amount: bigint) => String(amount > 0n ? amount : 0n);
+    return {
+      remainingWalletSlots: Math.max(0, SELF_SERVE.walletDailyBatches - wallet.length),
+      remainingWalletGasWei: positive(BigInt(SELF_SERVE.walletDailyGas) - sum(wallet)),
+      serviceAvailable:
+        today.length < SELF_SERVE.globalDailyBatches &&
+        sum(today) < BigInt(SELF_SERVE.globalDailyGas) &&
+        sum(rows) < BigInt(SELF_SERVE.lifetimeGas),
+      resetsAt: new Date(Date.parse(day + 'T00:00:00Z') + 86400000).toISOString(),
+    };
+  }
   async reserve(owner: Address, vault: Address, jobId: string, quote: GasQuote, now = new Date()) {
     const requested = cost(quote),
       day = now.toISOString().slice(0, 10);

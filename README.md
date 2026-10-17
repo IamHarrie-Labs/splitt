@@ -2,13 +2,13 @@
 
 A project payment workspace for agencies. When a client pays part of an invoice, Splitt proposes which approved contractors can be paid, protects the project reserve, and explains what remains unpaid.
 
-[Public website](https://splitt-dun.vercel.app) · [Interactive synthetic demo](https://splitt-dun.vercel.app/demo) · [Source repository](https://github.com/IamHarrie-Labs/splitt). The authenticated API/worker runs on an isolated VPS service. Public API access awaits the supplied domain and HTTPS; the hosted demo cannot move funds.
+[Public website](https://splitt-dun.vercel.app) · [Launch testnet app](https://splitt-dun.vercel.app/start) · [Interactive synthetic demo](https://splitt-dun.vercel.app/demo) · [Source repository](https://github.com/IamHarrie-Labs/splitt). The authenticated API/worker runs on an isolated VPS service connected to the frontend over HTTPS. The separate demo cannot move funds.
 
 [2:40 walkthrough preview and captions](https://github.com/IamHarrie-Labs/splitt/releases/tag/v0.1.0-preview). This captured-UI preview predates publication; its closing localhost URL is superseded by the public demo above. It predates the on-chain payout proof below; final model/pilot evidence remains pending.
 
 ## Current build
 
-The new `/start` flow supports wallet-owned Arc Testnet vaults, automatic receipt-triggered drafts and owner-signed Circle payouts. It requires the self-serve API runtime and remains unavailable publicly until HTTPS is connected. [Scope, sponsorship caps and deployment instructions](docs/selfserve-testnet.md). Controlled proof wallets and public testnet activity are counted separately; neither establishes business adoption.
+The `/start` flow supports wallet-owned Arc Testnet vaults, automatic receipt-triggered drafts and owner-signed Circle payouts within preview limits. Public API health, signed authentication, secure cookies, replay/CSRF rejection and wallet isolation are verified through the frontend. [Public access evidence](docs/public-access-proof.json). The API temporarily uses a verified SSLip hostname while `usesplitt.xyz` registration remains unpublished. [Scope, sponsorship caps and deployment instructions](docs/selfserve-testnet.md). Controlled proof wallets and public testnet activity are counted separately; neither establishes business adoption.
 
 On 17 October, two fresh controlled wallets deployed separate vaults and completed three Circle-executed payouts totalling 2.1 test USDC. The worker drafted automatically from receipts, paid only the remaining 0.3 USDC after a remainder deposit, and preserved final project balances of 0.8 and 0.3 USDC. Cross-wallet workspace requests were denied. An unexecuted authorization expired during a provider fee spike; chain-time reconciliation retired it and the original receipt produced a fresh owner-reviewed proposal. [Two-wallet transaction evidence and limitations](docs/selfserve-testnet-proof.json). These runs used the deterministic fallback; they do not establish model superiority, a browser walkthrough or business adoption.
 
@@ -32,7 +32,7 @@ The configured server-side model is **Claude Haiku 5.5, with a rule-based fallba
 
 Arc Testnet integration setup: [testnet runbook](docs/testnet-runbook.md). `/testnet` exposes its connection state and, when configured, owner login, project metadata registration, allocation review and settlement status. Default fixture mode remains credential-free. [Submission draft](docs/submission.html) and [pilot plan](docs/pilot-plan.md) are prepared; neither represents a completed public submission or an onboarded business.
 
-The landing page is at `/`. Choose **Open demo** to enter `/demo`, which needs no wallet or API. The local full fixture workspace remains `/workspace`; when the connected API runs in live mode, that workspace redirects to the authenticated `/testnet` page. See [publication runbook](docs/publication-runbook.md) for Vercel web setup and the separate persistent API host.
+The landing page is at `/`. Choose **Open Splitt** for `/start`, or use the footer's **Demo** link for `/demo`, which needs no wallet or API. The local full fixture workspace remains `/workspace`; `/testnet` is the earlier single-owner flow. Public users should use `/start`. See [publication runbook](docs/publication-runbook.md) for Vercel web setup and the separate persistent API host.
 
 Node.js 22 or newer. No wallet, database or API key is needed for fixture mode.
 

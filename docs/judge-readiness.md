@@ -2,6 +2,8 @@
 
 This is an evidence assessment, not an organizer score or a prediction of placement.
 
+Public launch update: verified HTTPS now connects the Vercel frontend to the VPS through a temporary API hostname while the purchased domain registers. `public-access-proof.json` records signed sessions for two controlled owners and one fresh unfunded account, with replay/CSRF and cross-wallet denial. `public-payment-policy-proof.json` records a real testnet deposit and automatic Haiku draft whose payout was correctly stopped by the wallet's nearly exhausted gas allowance. A fresh-vault public payment check is in progress; it must not be described as a successful payout until its final report exists. Browser/mobile interaction verification and real business adoption remain incomplete.
+
 | Area                  | Verified evidence                                                                                                                                 | Remaining gap                                                                        |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | Receipt-driven drafts | Hosted single worker; two controlled vaults; three confirmed Circle payout batches; receipt/remainder and expired-authorization recovery          | Public HTTPS and an uninterrupted browser recording                                  |

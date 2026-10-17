@@ -183,6 +183,20 @@ describe('canonical vault registration and isolation', () => {
   });
 });
 describe('durable gas sponsorship limits', () => {
+  it('reports the wallet allowance and UTC reset without exposing another owner reservations', async () => {
+    const now = new Date('2026-10-17T12:00:00Z');
+    await budget.reserve(owner.address, vault, 'status-one', quote, now);
+    const status = await budget.status(owner.address, now);
+    expect(status.remainingWalletSlots).toBe(2);
+    expect(BigInt(status.remainingWalletGasWei)).toBe(
+      BigInt(SELF_SERVE.walletDailyGas) - BigInt(quote.gasLimit) * BigInt(quote.maxFeePerGas),
+    );
+    expect(status.resetsAt).toBe('2026-10-18T00:00:00.000Z');
+    expect((await budget.status(other.address, now)).remainingWalletSlots).toBe(3);
+    expect(
+      (await budget.status(owner.address, new Date('2026-10-18T00:00:00Z'))).remainingWalletGasWei,
+    ).toBe(SELF_SERVE.walletDailyGas);
+  });
   it('reserves both old and replacement fees and replaces a concurrent rejection only once', async () => {
     await budget.reserve(owner.address, vault, 'fee-job', quote);
     const next = { ...quote, maxFeePerGas: '64000000000', maxPriorityFeePerGas: '60000000000' };

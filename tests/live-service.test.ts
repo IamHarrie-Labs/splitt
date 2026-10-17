@@ -34,6 +34,23 @@ beforeEach(() => {
 });
 afterEach(() => vi.useRealTimers());
 describe('Arc owner authorization and remainder flow', () => {
+  it('recovers the same signed intent after a lost response without creating a payment', async () => {
+    const plan = await service.plan('northstar');
+    const { approval } = await service.prepare(plan.id);
+    const signature = await owner.signTypedData(approvalTypedData(approval));
+    const original = await service.enqueue(plan.id, { signature });
+    project.balance = '1';
+    vi.setSystemTime(new Date('2026-10-03T13:00:00Z'));
+    expect(await service.enqueue(plan.id, { signature })).toEqual(original);
+    expect(state.jobs).toHaveLength(1);
+    const outsider = privateKeyToAccount(generatePrivateKey());
+    await expect(
+      service.enqueue(plan.id, {
+        signature: await outsider.signTypedData(approvalTypedData(approval)),
+      }),
+    ).rejects.toThrow('signature invalid');
+    expect(state.jobs).toHaveLength(1);
+  });
   it('prepares a real Splitt-domain approval with exact ordered calldata', async () => {
     const plan = await service.plan('northstar');
     const { approval } = await service.prepare(plan.id);

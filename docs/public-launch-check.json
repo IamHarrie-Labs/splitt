@@ -1,25 +1,25 @@
 {
-  "checkedAt": "2026-10-17T08:36:47.921Z",
+  "checkedAt": "2026-10-17T12:28:18.156Z",
   "origin": "https://splitt-dun.vercel.app",
-  "publicApiChecksPassed": false,
+  "publicApiChecksPassed": true,
   "checks": [
     {
       "name": "Self-serve API health",
       "path": "/health",
-      "status": 404,
-      "passed": false
+      "status": 200,
+      "passed": true
     },
     {
       "name": "Arc configuration",
       "path": "/selfserve/config",
-      "status": 404,
-      "passed": false
+      "status": 200,
+      "passed": true
     },
     {
       "name": "Anonymous vault access denied",
       "path": "/selfserve/vaults",
-      "status": 404,
-      "passed": false
+      "status": 401,
+      "passed": true
     }
   ],
   "browserQaCompleted": false,

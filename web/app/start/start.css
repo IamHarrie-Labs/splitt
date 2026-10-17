@@ -96,7 +96,8 @@
   background: var(--surface);
   border: 1px solid var(--muted);
   border-radius: 6px;
-  font: inherit;
+  font-size: 16px;
+  line-height: 1.5;
 }
 .selfserve-main .selfserve-check {
   display: flex;

@@ -19,6 +19,7 @@ export default function SiteFooter({
       <div className="sf-inner">
         <nav aria-label="Footer navigation">
           <Link href="/docs">Documentation</Link>
+          <Link href="/demo">Demo</Link>
           <a href={REPO} target="_blank" rel="noopener noreferrer">
             Source code<span className="sr-only"> (opens in a new tab)</span>
           </a>

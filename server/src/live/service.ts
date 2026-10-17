@@ -252,8 +252,8 @@ export class TestnetService {
     const signature = signatureSchema.parse(
       z.object({ signature: signatureSchema }).strict().parse(input).signature,
     ) as Hex;
-    const plan =
-      (await this.repo.snapshot()).plans.find((p) => p.id === id) ?? fail('Plan not found.', 404);
+    const stored = await this.repo.snapshot();
+    const plan = stored.plans.find((p) => p.id === id) ?? fail('Plan not found.', 404);
     const approval = plan.approval ?? fail('Review the batch first.');
     if (
       approval.domain.name !== 'Splitt' ||
@@ -261,6 +261,20 @@ export class TestnetService {
       approval.domain.verifyingContract.toLowerCase() !== this.vault.toLowerCase()
     )
       fail('Wrong signing domain.');
+    const existing = stored.jobs.find((job) => job.id === id);
+    if (existing) {
+      // A lost HTTP response must recover the original intent, even if its chain
+      // state or deadline has since changed. Never replace its signature/calldata.
+      if (
+        !(await verifyTypedData({
+          ...approvalTypedData(existing.approval),
+          address: this.owner,
+          signature,
+        }))
+      )
+        fail('Owner signature invalid.', 403);
+      return existing;
+    }
     const snapshot = await this.fresh(plan.projectId);
     if (
       !validatePlan(plan.output, plan.facts, snapshot.facts, plan.baseline).ok ||

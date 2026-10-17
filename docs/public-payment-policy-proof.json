@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-10-17T12:41:19.989Z",
+  "source": "controlled_test",
+  "origin": "https://splitt-dun.vercel.app",
+  "vault": "0x202a98767c9260f327e3e1905df9eede7a4b591c",
+  "depositHash": "0x8528823255a335b579256dc8bcf0d0f4f09ee3798bd0402c807268db1817ae8e",
+  "depositAmountMicro": "800000",
+  "automaticDraftModel": "claude-haiku-5-5",
+  "fallbackUsed": false,
+  "planId": "b6c6b28e-1040-4669-b90f-3361cc85ae87",
+  "payoutState": "failed",
+  "policyReason": "Sponsored gas limit reached. Your funds remain in your vault.",
+  "reservedWalletGasWei": "245512918355757412",
+  "walletDailyGasLimitWei": "250000000000000000",
+  "newPayoutSent": false,
+  "onchainProjectBalanceMicro": "1100000",
+  "reserveMicro": "300000",
+  "limitation": "Controlled public API deposit and model draft. Sponsorship cap prevented payout; this is evidence of enforcement, not a successful payout or business adoption."
+}

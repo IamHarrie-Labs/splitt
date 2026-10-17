@@ -157,7 +157,17 @@ export async function buildSelfServeApp(
         return provider.submit(callData, id, circleFee(quote));
       },
     };
-    return { record, repo, chain, service, provider: limited, busy: false };
+    return {
+      record,
+      repo,
+      chain,
+      service,
+      provider: limited,
+      busy: false,
+      nextPollAt: 0,
+      lastUserActivity: 0,
+      failures: 0,
+    };
   }
   async function context(record: RegisteredVault) {
     let ctx = contexts.get(record.vault);
@@ -171,7 +181,9 @@ export async function buildSelfServeApp(
     if (!wallet) throw policyError('Sign in first.', 401);
     const record = await registry.owned(vault, wallet);
     await registry.verify(record);
-    return context(record);
+    const ctx = await context(record);
+    ctx.lastUserActivity = Date.now();
+    return ctx;
   }
   const mutation = { config: { rateLimit: { max: 6, timeWindow: '1 minute' } } };
   app.get('/selfserve/vaults', (req) => registry.list(req.splittWallet));
@@ -242,6 +254,7 @@ export async function buildSelfServeApp(
       operator,
       chainId: SELF_SERVE.chainId,
       classification: ctx.record.classification,
+      sponsorship: await budget.status(ctx.record.owner),
     };
   });
   app.post<{ Params: Params }>('/selfserve/vaults/:vault/projects', mutation, async (req) => {
@@ -266,7 +279,7 @@ export async function buildSelfServeApp(
     mutation,
     async (req) => {
       const ctx = await owned(req.params.vault, req.splittWallet);
-      await tickVault(ctx.record);
+      await tickVault(ctx.record, true);
       return { checked: true };
     },
   );
@@ -307,15 +320,24 @@ export async function buildSelfServeApp(
       return ctx.service.enqueue(req.params.id, req.body);
     },
   );
-  async function tickVault(record: RegisteredVault) {
+  async function tickVault(record: RegisteredVault, force = false) {
     const ctx = await context(record);
-    if (ctx.busy) return;
+    if (ctx.busy || (!force && Date.now() < ctx.nextPollAt)) return;
     ctx.busy = true;
     try {
       await indexReceipts(ctx.repo, ctx.chain);
       await workerTick(ctx.repo, ctx.chain, ctx.provider);
       await draftReceipts(ctx.service);
+      const state = await ctx.repo.snapshot();
+      const pending = state.jobs.some(
+        (job) => !['confirmed', 'failed', 'expired', 'invariant_violation'].includes(job.state),
+      );
+      ctx.failures = 0;
+      ctx.nextPollAt =
+        Date.now() + (pending ? 5000 : Date.now() - ctx.lastUserActivity < 60000 ? 10000 : 60000);
     } catch (error) {
+      ctx.failures++;
+      ctx.nextPollAt = Date.now() + Math.min(60000, 5000 * 2 ** Math.min(ctx.failures, 4));
       app.log.warn(
         errorLocation(error),
         'Self-serve workspace refresh pending. No new payment authorized.',
@@ -338,7 +360,7 @@ export async function buildSelfServeApp(
         (_, i) => all[(cursor + i) % all.length],
       );
       cursor = (cursor + batch.length) % all.length;
-      await Promise.allSettled(batch.map(tickVault));
+      await Promise.allSettled(batch.map((record) => tickVault(record)));
     } finally {
       busy = false;
     }

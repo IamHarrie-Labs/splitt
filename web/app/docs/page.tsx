@@ -217,8 +217,11 @@ export default function Documentation() {
                   authenticated VPS check
                 </a>{' '}
                 also used Haiku to match a synthetic note to an existing testnet receipt. Balances
-                and payout jobs stayed unchanged. This verifies hosted note analysis; public API
-                access still awaits HTTPS.
+                and payout jobs stayed unchanged. This verifies hosted note analysis. A later{' '}
+                <a href="https://github.com/IamHarrie-Labs/splitt/blob/master/docs/public-access-proof.json">
+                  public access check
+                </a>{' '}
+                verified signed sessions and wallet isolation through the deployed website.
               </p>
               <p>
                 In the owner workspace, each proposal exposes its triggering receipts, model or
@@ -247,8 +250,9 @@ export default function Documentation() {
               <p>
                 The preview supports invoices up to 10 USDC and batches up to 5 USDC. Your wallet
                 pays setup and deposit fees; sponsored payouts have wallet and service limits. The
-                API runs on a VPS, with public HTTPS awaiting the supplied domain. Until connected,
-                the workspace shows its availability status. The allocation demo remains available.
+                API runs on a VPS and connects through the website over HTTPS. Use the Vercel
+                website while the purchased domain finishes registration. The allocation demo
+                remains available without a wallet.
               </p>
               <p>
                 Each wallet has a private workspace. Builder-controlled tests and unverified public
