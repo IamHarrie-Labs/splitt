@@ -96,6 +96,27 @@
   font-size: 13px;
   font-weight: 500;
 }
+.splitt-hero-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-top: 32px;
+}
+.splitt-hero-actions .splitt-primary-link {
+  margin-top: 0;
+}
+.splitt-demo-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 5px;
+}
 /* Editorial payment statement: a single composition with unequal card roles. */
 .landing {
   --section-space: 128px;
@@ -598,6 +619,9 @@
   .splitt-primary-link:hover {
     background: var(--ink-lift);
   }
+  .splitt-demo-link:hover {
+    color: var(--accent);
+  }
   .cash-contractor:hover {
     transform: translateY(-4px);
   }
@@ -613,6 +637,9 @@
     transition:
       background-color 150ms ease,
       transform 150ms var(--ease-out);
+  }
+  .splitt-demo-link {
+    transition: color 150ms ease;
   }
   .splitt-primary-link:active {
     transform: scale(0.97);

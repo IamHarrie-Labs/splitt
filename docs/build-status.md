@@ -1,10 +1,10 @@
 # Splitt build status
 
-## Current release work — 16 October 2026
+## Current release — 17 October 2026
 
-Validation: 125 tests passed across 14 suites, including 14 contract tests, 25 CCTP tests and 6 workspace-migration checks. The production Next.js build passed. Browser/mobile visual testing remains unavailable in this session.
+Validation: 185 automated tests passed in GitHub Actions. Strict type checking and the production Next.js build passed. Public Chromium checks covered 375×812, 390×844, 768×1024 and 1280×900 layouts, keyboard navigation and the complete simulated demo. Physical phones and browser-wallet signing remain separate gaps.
 
-The dated entries below are historical. Current implemented work includes receipt-triggered drafts, payment-note evidence checks, pilot intake, invoice-bound CCTP funding and owner decision evidence. Arc payout/remainder and lost-response recovery are proven in `testnet-payout-proof.json`. CCTP is tested but has no completed transfer proof; the source owner wallet needs Base Sepolia USDC and ETH. No real pilot or customer volume is verified. API hosting is being staged on an isolated VPS; domain/HTTPS and public connection remain pending. See `judge-readiness.md` and `cctp-runbook.md` for claim boundaries.
+The dated entries below are historical. Current implemented work includes receipt-triggered drafts, payment-note evidence checks, pilot intake, invoice-bound CCTP funding and owner decision evidence. Arc payout/remainder and lost-response recovery are proven in `testnet-payout-proof.json`. A later public run in `public-onboarding-proof.json` records a new wallet-owned vault, automatic Haiku draft and confirmed Circle payout through the deployed website/API path. Signed access and wallet isolation are recorded in `public-access-proof.json`. CCTP is tested but has no completed transfer proof. No real pilot or customer volume is verified. See `judge-readiness.md` and `cctp-runbook.md` for claim boundaries.
 
 ## Latest update — 16 October 2026
 

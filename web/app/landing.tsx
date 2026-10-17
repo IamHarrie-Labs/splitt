@@ -92,9 +92,14 @@ export default function Landing() {
               Manage contractor payments from partial client receipts, with a separate balance and
               reserve for each project.
             </p>
-            <Link href="/start" className="splitt-primary-link">
-              Open Splitt
-            </Link>
+            <div className="splitt-hero-actions">
+              <Link href="/start" className="splitt-primary-link">
+                Open Splitt
+              </Link>
+              <Link href="/demo" className="splitt-demo-link">
+                Preview the payment flow
+              </Link>
+            </div>
           </div>
         </div>
       </section>

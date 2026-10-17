@@ -4,7 +4,7 @@ A project payment workspace for agencies. When a client pays part of an invoice,
 
 [Public website](https://www.usesplitt.xyz) · [Launch testnet app](https://www.usesplitt.xyz/start) · [Interactive synthetic demo](https://www.usesplitt.xyz/demo) · [Source repository](https://github.com/IamHarrie-Labs/splitt). The authenticated API/worker runs on an isolated VPS service connected to the frontend over HTTPS. The separate demo cannot move funds.
 
-[2:40 walkthrough preview and captions](https://github.com/IamHarrie-Labs/splitt/releases/tag/v0.1.0-preview). This captured-UI preview predates publication; its closing localhost URL is superseded by the public demo above. It predates the on-chain payout proof below; final model/pilot evidence remains pending.
+[2:40 walkthrough preview and captions](https://github.com/IamHarrie-Labs/splitt/releases/tag/v0.1.0-preview). This captured-UI preview predates publication; its closing localhost URL is superseded by the public demo above. It also predates the public on-chain and hosted-model proof below. A final current recording and verified business pilot remain pending.
 
 ## Current build
 
@@ -14,7 +14,7 @@ The [public onboarding proof](docs/public-onboarding-proof.json) records a new c
 
 On 17 October, two fresh controlled wallets deployed separate vaults and completed three Circle-executed payouts totalling 2.1 test USDC. The worker drafted automatically from receipts, paid only the remaining 0.3 USDC after a remainder deposit, and preserved final project balances of 0.8 and 0.3 USDC. Cross-wallet workspace requests were denied. An unexecuted authorization expired during a provider fee spike; chain-time reconciliation retired it and the original receipt produced a fresh owner-reviewed proposal. [Two-wallet transaction evidence and limitations](docs/selfserve-testnet-proof.json). These runs used the deterministic fallback; they do not establish model superiority, a browser walkthrough or business adoption.
 
-The public `/demo` runs the deterministic allocation engine in the browser with synthetic data. The authenticated `/testnet` workspace connects to Arc balances, a PostgreSQL queue and Circle execution. The vault is deployed at `0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6`; [Sourcify confirms exact creation/runtime bytecode matches](https://repo.sourcify.dev/5042002/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6). A real Circle contract query is confirmed, with zero transferred value. **Contractor payouts executed on Arc Testnet on 15 October 2026** (scaled demo amounts, controlled test wallets): [first batch 0.7 + 0.2 USDC](https://explorer.testnet.arc.io/tx/0x938ea7d6370c06d25daf6c73493e5c43f304abf9938563b7bd934325edaebdc5), [0.8 USDC remainder deposit](https://explorer.testnet.arc.io/tx/0xde2ce4f47108ab118ef30b7dd835b7da7dae60ed7b83504ead5011acddd35c6d), [final 0.3 USDC payout](https://explorer.testnet.arc.io/tx/0x098fa70efda77e5f22396521bce7d5ccdeb3bbbaab8997e9ae8551a0ceb32881). Northstar ends at 0.8 USDC with its reserve intact; Fieldwork's separate 1 USDC was untouched. A deliberately lost provider response was resumed as the same job with the same calldata, with no duplicate payment. Evidence: [testnet-payout-proof.json](docs/testnet-payout-proof.json). Live evaluation accepted 5/10 Nemotron outputs and 0/10 Poolside outputs; fallback kept all final plans valid. [Model reliability remains a release gap](docs/model-evaluation.md). Real pilot adoption remains pending. Fixture amounts do not count as adoption.
+The public `/demo` runs the deterministic allocation engine in the browser with synthetic data. The authenticated `/testnet` workspace connects to Arc balances, a PostgreSQL queue and Circle execution. The vault is deployed at `0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6`; [Sourcify confirms exact creation/runtime bytecode matches](https://repo.sourcify.dev/5042002/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6). **Contractor payouts executed on Arc Testnet on 15 October 2026** (scaled demo amounts, controlled test wallets): [first batch 0.7 + 0.2 USDC](https://explorer.testnet.arc.io/tx/0x938ea7d6370c06d25daf6c73493e5c43f304abf9938563b7bd934325edaebdc5), [0.8 USDC remainder deposit](https://explorer.testnet.arc.io/tx/0xde2ce4f47108ab118ef30b7dd835b7da7dae60ed7b83504ead5011acddd35c6d), [final 0.3 USDC payout](https://explorer.testnet.arc.io/tx/0x098fa70efda77e5f22396521bce7d5ccdeb3bbbaab8997e9ae8551a0ceb32881). Northstar ends at 0.8 USDC with its reserve intact; Fieldwork's separate 1 USDC was untouched. A deliberately lost provider response resumed as the same job with the same calldata, with no duplicate payment. Evidence: [testnet-payout-proof.json](docs/testnet-payout-proof.json). Current Claude Haiku evidence and its limitations are summarized below; earlier provider experiments remain in [model-evaluation.md](docs/model-evaluation.md) as development history. Real pilot adoption remains pending. Fixture amounts do not count as adoption.
 
 Implemented:
 
@@ -34,7 +34,7 @@ The configured server-side model is **Claude Haiku 5.5, with a rule-based fallba
 
 Arc Testnet integration setup: [testnet runbook](docs/testnet-runbook.md). `/testnet` exposes its connection state and, when configured, owner login, project metadata registration, allocation review and settlement status. Default fixture mode remains credential-free. [Submission draft](docs/submission.html) and [pilot plan](docs/pilot-plan.md) are prepared; neither represents a completed public submission or an onboarded business.
 
-The landing page is at `/`. Choose **Open Splitt** for `/start`, or use the footer's **Demo** link for `/demo`, which needs no wallet or API. The local full fixture workspace remains `/workspace`; `/testnet` is the earlier single-owner flow. Public users should use `/start`. See [publication runbook](docs/publication-runbook.md) for Vercel web setup and the separate persistent API host.
+The landing page is at `/`. Choose **Open Splitt** for `/start`, or use the adjacent **Preview the payment flow** link for `/demo`, which needs no wallet or API. The local full fixture workspace remains `/workspace`; `/testnet` is the earlier single-owner flow. Public users should use `/start`. See [publication runbook](docs/publication-runbook.md) for Vercel web setup and the separate persistent API host.
 
 Node.js 22 or newer. No wallet, database or API key is needed for fixture mode.
 
@@ -87,7 +87,7 @@ npm run db:migrate
 
 Copy `.env.example` to `.env`, set `SPLITT_STORAGE=postgres`, `DATABASE_URL` and your public `OWNER_ADDRESS`, then run `npm run db:migrate` and restart the app. The migration command reads the root `.env`. A fresh database receives sample projects once. Existing file-demo history is not imported. Database workspaces require owner sign-in and cannot reset the audit trail.
 
-Migrations and repository workflows are tested on PGlite and a native PostgreSQL 17.10 server, including the real TCP driver, row locking, rollback, signed owner sessions and restart persistence. See [Postgres evidence](docs/postgres-verification.json). `npm run db:start` manages the isolated local cluster when configured. One owner is supported; cloud hosting needs its own managed database.
+Migrations and repository workflows are tested on PGlite and a native PostgreSQL 17.10 server, including the real TCP driver, row locking, rollback, signed owner sessions and restart persistence. See [Postgres evidence](docs/postgres-verification.json). `npm run db:start` manages the isolated local cluster when configured. The legacy workspace supports one configured owner; the hosted self-serve preview isolates multiple wallet-owned vaults in PostgreSQL.
 
 ## Owner login and batch signing
 
@@ -115,8 +115,8 @@ flowchart LR
 ## Remaining release gates
 
 1. ~~Execute the Circle payout, remainder and recovery proof.~~ Done 15 October 2026; see docs/testnet-payout-proof.json.
-2. Deploy the API and PostgreSQL on the owner's VPS; verify HTTPS, signed owner access and worker restart recovery. See [VPS deployment](docs/vps-deployment.md).
-3. Establish reliable real-model behavior and report validation/fallback rates honestly.
+2. ~~Deploy the API and PostgreSQL on the owner's VPS; verify HTTPS, signed owner access and wallet isolation.~~ Done 17 October 2026; see [public access evidence](docs/public-access-proof.json).
+3. ~~Run the configured model through validation and publish acceptance/fallback results.~~ Done for the small development regression set; no production-accuracy or allocation-superiority claim is made. See [evaluation details](docs/anthropic-evaluation.md).
 4. Onboard one consenting business with real invoice and contractor facts; synthetic scenarios stay excluded from adoption.
 5. Refresh the video with final evidence, upload to Loom/YouTube/Vimeo and complete the organizer's form. [Submission copy](docs/submission-copy.md) is ready for the owner.
 
@@ -134,4 +134,4 @@ MIT license. Product spec: [docs/project-spec.md](docs/project-spec.md). Progres
 
 The Arc worker now queues validated allocation drafts from attributed receipts, with durable receipt IDs, expiring leases, bounded retry and in-app owner notifications. It cannot sign or create payout jobs. Payment-note analysis quotes evidence and compares it against indexed payer, invoice and amount data; it never attributes or spends funds. `/pilot` accepts a business's own anonymized case and exports unverified participant feedback without claiming adoption or payment volume. See [the upgrade release](docs/agent-upgrade-release.md) and [new note-reader evaluation](docs/payment-note-evaluation-live.json).
 
-Run `npm run notes:eval` for the offline synthetic comparison. `--live` requires an explicitly configured gateway credential and `PAYMENT_NOTE_MODEL`; the evaluation refuses a model whose currently published input/output pricing is nonzero. These ten development cases do not establish production accuracy. Public API hosting and a verified real-business pilot remain pending.
+Run `npm run notes:eval` for the offline synthetic comparison. `--live` requires an explicitly configured gateway credential and `PAYMENT_NOTE_MODEL`; the evaluation refuses a model whose currently published input/output pricing is nonzero. These ten development cases do not establish production accuracy. Public API hosting is complete; a verified real-business pilot remains pending.

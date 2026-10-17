@@ -113,8 +113,12 @@ export default function Documentation() {
               </p>
               <p>
                 Automation stops at the draft. It cannot sign or submit a payment. The new draft
-                worker has automated concurrency, restart and stale-state tests; its hosted
-                end-to-end run remains pending the API deployment.
+                worker has automated concurrency, restart and stale-state tests. A{' '}
+                <a href="https://github.com/IamHarrie-Labs/splitt/blob/master/docs/public-onboarding-proof.json">
+                  public end-to-end run
+                </a>{' '}
+                recorded a 0.8 test-USDC receipt, an automatic Haiku draft and a confirmed 0.3
+                test-USDC Circle payout after owner approval.
               </p>
             </section>
             <section id="payment-notes">
@@ -134,9 +138,10 @@ export default function Documentation() {
               </p>
               <p>
                 The note reader has a separate model setting and a literal evidence fallback. In ten
-                synthetic evaluation cases, the tested model-plus-fallback path was fully correct in
-                nine, compared with seven for the literal matcher. Four cases used model output.
-                These results do not establish accuracy on customer data.
+                synthetic development cases, two post-fix runs scored ten of ten for the combined
+                path versus seven of ten for literal matching. Five model responses were accepted
+                and five safety cases used the fallback in each run. These repeated development
+                cases are regression evidence, not a held-out accuracy estimate or customer proof.
               </p>
             </section>
             <section id="pilot">
@@ -192,16 +197,7 @@ export default function Documentation() {
                 funding verification.
               </p>
               <p>
-                The{' '}
-                <a href="https://github.com/IamHarrie-Labs/splitt/blob/master/docs/payment-note-evaluation-live.json">
-                  payment-note experiment
-                </a>{' '}
-                uses ten synthetic examples. Model output was used in four; the combined model and
-                fallback path corrected two cases missed by literal matching. Allocation model
-                testing has not established a benefit over the deterministic planner.
-              </p>
-              <p>
-                A later{' '}
+                The current{' '}
                 <a href="https://github.com/IamHarrie-Labs/splitt/blob/master/docs/anthropic-evaluation.md">
                   Claude Haiku 5.5 regression check
                 </a>{' '}
@@ -286,9 +282,11 @@ export default function Documentation() {
                 payment. Recipients were test wallets.
               </p>
               <p>
-                The authenticated API and worker are not publicly hosted yet. The{' '}
-                <Link href="/testnet">testnet workspace</Link> shows connection status and requires
-                the configured owner wallet when enabled. It is not a mainnet payment service.
+                The authenticated API and worker are live at{' '}
+                <a href="https://api.usesplitt.xyz/health">api.usesplitt.xyz</a> and connected to the{' '}
+                <Link href="/start">self-serve workspace</Link>. Signed access checks cover three
+                controlled owners, replay and CSRF rejection, and cross-wallet isolation. This is a
+                capped Arc Testnet preview, not a mainnet payment service.
               </p>
               <p>
                 Allocation model evaluations do not establish an improvement over the baseline. No

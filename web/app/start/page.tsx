@@ -500,8 +500,20 @@ export default function SelfServe() {
           <span className="selfserve-network">Testnet USDC only</span>
         </header>
         {checking ? (
-          <section className="selfserve-section" aria-busy="true">
-            <p role="status">Connecting to the testnet workspace…</p>
+          <section className="selfserve-section selfserve-loading" aria-busy="true">
+            <div>
+              <h2>Opening the testnet workspace</h2>
+              <p role="status">
+                Checking the public API and any existing wallet session. An idle server can take a
+                few seconds to respond.
+              </p>
+              <Link href="/demo">Preview the payment flow while you wait</Link>
+            </div>
+            <div className="selfserve-loading-lines" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </div>
           </section>
         ) : !config ? (
           <section className="selfserve-section">

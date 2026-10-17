@@ -14,18 +14,18 @@ This records implementation and evidence, not a guaranteed judge score.
 
 See `payment-note-evaluation-live.json`. Ten synthetic cases: literal matcher 7/10 fully correct; tested model plus safe fallback 9/10; model output used in 4 cases. The model's current input/output price was checked as zero before evaluation. No private customer material, payment or external message was sent. This is a small development dataset, not evidence of production accuracy or allocation-model superiority.
 
-## Outstanding evidence and external work
+## Follow-up status
 
-- No participant or VPS connection was supplied in this request. A verified business pilot and public owner API deployment remain pending.
-- Run a real indexed receipt through the new worker on the deployed API, review the resulting draft and sign only after checking the exact batch. Record hashes and recovery evidence separately from the existing proof.
-- A stable server model credential is required on the VPS. The short-lived local project OIDC token used for evaluation is not a production credential strategy.
-- Existing Arc, USDC, Circle wallet and verified vault integrations remain the proven Circle usage. CCTP, Gateway, Paymaster and USYC are not added or claimed. Integrations should solve the receipt problem and pass their own end-to-end gate; stacking logos does not establish quality.
+- At the time of this release, no participant or VPS connection had been supplied. Public API deployment was completed on 17 October and is recorded in `public-access-proof.json`; a verified business pilot remains pending.
+- The deployed worker processed a public controlled receipt, created an automatic Haiku draft and completed an owner-reviewed Circle payout. The hashes and limitations are recorded in `public-onboarding-proof.json`.
+- Claude Haiku 5.5 is configured on the VPS with durable per-vault and global request limits. The current small regression result is recorded in `anthropic-evaluation.md`; it is not a production-accuracy benchmark.
+- Arc, USDC, Circle wallet and verified vault integrations remain the proven Circle usage. CCTP is implemented and tested but has no completed transfer proof. Gateway, Paymaster and USYC are not claimed.
 - Record and host the new agent-story video under three minutes. The earlier draft video is not footage of these new features.
 - The user submits the hackathon form. Do not invent pilot counts, volume, a quote or a score.
 
-## Review limits
+## Review limits at release time
 
-Browser interaction and mobile visual QA have not been completed because browser automation remains unavailable. Source review, accessibility references, type checking, production compilation and automated behavior tests are separate checks.
+Browser interaction and mobile visual QA were unavailable when this release was written. Public Chromium checks were completed on 17 October and are recorded in `browser-qa.md`; physical-device and browser-wallet signing checks remain pending.
 
 ## Validation results
 
