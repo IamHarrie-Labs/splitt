@@ -140,11 +140,15 @@ export default function SelfServe() {
     }
   }
   const path = vault ? `/selfserve/vaults/${vault.vault}` : '';
-  async function refresh(target = vault, token = csrf) {
-    if (target)
-      setWorkspace(
-        await api<Workspace>(`/selfserve/vaults/${target.vault}/workspace`, undefined, token),
+  async function refresh(target = vault, token = csrf, accept = () => true) {
+    if (target) {
+      const next = await api<Workspace>(
+        `/selfserve/vaults/${target.vault}/workspace`,
+        undefined,
+        token,
       );
+      if (accept()) setWorkspace(next);
+    }
   }
   async function loadVaults(token: string) {
     const list = await api<Vault[]>('/selfserve/vaults', undefined, token);
@@ -234,9 +238,14 @@ export default function SelfServe() {
   }, [vault, wallet]);
   useEffect(() => {
     if (!vault || !csrf || busy) return;
-    const timer = setInterval(
-      () =>
-        void refresh().catch((failure) => {
+    let active = true,
+      refreshing = false;
+    const timer = setInterval(() => {
+      if (refreshing) return;
+      refreshing = true;
+      void refresh(vault, csrf, () => active)
+        .catch((failure) => {
+          if (!active) return;
           if (failure instanceof WorkspaceApiError && failure.status === 401) {
             setWallet(undefined);
             setCsrf('');
@@ -247,10 +256,15 @@ export default function SelfServe() {
             setStatus('');
             setError(failure.message);
           } else setError('Could not refresh settlement. Check the connection before signing.');
-        }),
-      8000,
-    );
-    return () => clearInterval(timer);
+        })
+        .finally(() => {
+          refreshing = false;
+        });
+    }, 15000);
+    return () => {
+      active = false;
+      clearInterval(timer);
+    };
   }, [vault, csrf, busy]);
   useEffect(() => {
     const timer = setInterval(() => setClock(Date.now()), 1000);

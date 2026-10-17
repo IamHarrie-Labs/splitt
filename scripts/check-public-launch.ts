@@ -1,7 +1,7 @@
 import { writeFile } from 'node:fs/promises';
 
 // Read-only API checks; this script does not operate a browser or sign transactions.
-const origin = 'https://splitt-dun.vercel.app';
+const origin = 'https://www.usesplitt.xyz';
 const checks: { name: string; path: string; status: number | null; passed: boolean }[] = [];
 async function check(name: string, path: string, expected: (status: number, data: any) => boolean) {
   try {

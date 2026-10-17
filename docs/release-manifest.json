@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-10-17T12:53:12.376Z",
+  "checkedAt": "2026-10-17T13:04:11.428Z",
   "secretScanPassed": true,
-  "fileCount": 249,
+  "fileCount": 251,
   "files": [
     ".dockerignore",
     ".env.example",
@@ -61,8 +61,10 @@
     "docs/public-access-proof.json",
     "docs/public-demo-mobile.png",
     "docs/public-launch-check.json",
+    "docs/public-onboarding-proof.json",
     "docs/public-payment-policy-proof.json",
     "docs/publication-runbook.md",
+    "docs/qa/onboarding-mobile.png",
     "docs/release-manifest.json",
     "docs/selfserve-deployment-proof.json",
     "docs/selfserve-proof-plan.json",

@@ -21,7 +21,7 @@ import { vaultCreation } from '../packages/core/src/selfserve.js';
 
 if (process.env.SPLITT_PUBLIC_PAYMENT_PROOF !== 'controlled-arc-testnet')
   throw new Error('Explicit controlled Arc Testnet proof mode required.');
-const origin = 'https://splitt-dun.vercel.app',
+const origin = 'https://www.usesplitt.xyz',
   base = origin + '/api';
 const fresh = process.argv.includes('--fresh-vault');
 let vault = '0x202a98767c9260f327e3e1905df9eede7a4b591c' as Address;
@@ -371,7 +371,7 @@ try {
     privateKeysStayedLocal: true,
     browserQaCompleted: false,
     limitation:
-      'Controlled API and on-chain remainder payout through the public Vercel frontend rewrite. Not browser interaction footage, a real business pilot or mainnet funds.',
+      'Controlled API and on-chain payout through the public frontend rewrite. Not browser interaction footage, a real business pilot or mainnet funds.',
   };
   await writeFile(
     new URL(

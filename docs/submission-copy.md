@@ -28,7 +28,7 @@ A separate payment-note reader uses Claude Haiku 5.5 to extract quoted invoice, 
 
 On 17 October, two fresh controlled wallets each owned a separate vault. Three Circle-executed payout batches transferred 2.1 test USDC in total. The API/chain proof covers receipt-triggered drafts, remainder handling, fresh authorization after an earlier signature expired, and denial of access across wallets. Final project balances were 0.8 and 0.3 test USDC. These runs used deterministic fallback and are engineering evidence, not business adoption or an uninterrupted browser demonstration. See `selfserve-testnet-proof.json`.
 
-The isolated API and worker are healthy on the VPS and connected to the public Vercel frontend over verified HTTPS using a temporary API hostname while the purchased domain registers. Signed HTTP checks covered two controlled owners and a fresh unfunded account, secure sessions, replay/CSRF rejection and cross-wallet access denial (`public-access-proof.json`). These are API checks, not a completed browser/mobile walkthrough or business adoption.
+The isolated API and worker are healthy on the VPS and connected over verified HTTPS to the canonical website at `https://www.usesplitt.xyz`. Signed HTTP checks covered three controlled owners and a fresh unfunded account, secure sessions, replay/CSRF rejection and cross-wallet access denial (`public-access-proof.json`). A fresh vault then completed public project setup, recipient activation, a 0.8 test-USDC deposit, an automatic Haiku draft and a Circle-executed 0.3-USDC payout, retaining 0.5 USDC with a 0.3 reserve. See `public-onboarding-proof.json`. These API/chain checks are not a completed browser wallet-signing walkthrough or business adoption. An earlier controlled attempt correctly stopped at the wallet's existing gas allowance; its funds remain in its vault (`public-payment-policy-proof.json`).
 
 ## Traction
 
@@ -39,8 +39,8 @@ No real business pilot is onboarded yet. Real customer payment volume is zero. T
 ## Public source and demo
 
 - Source: https://github.com/IamHarrie-Labs/splitt
-- Hosted demo: https://splitt-dun.vercel.app/demo
-- Participant case review: https://splitt-dun.vercel.app/pilot
+- Hosted demo: https://www.usesplitt.xyz/demo
+- Participant case review: https://www.usesplitt.xyz/pilot
 - Verified vault: https://explorer.testnet.arc.io/address/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6
 - Independent exact bytecode match: https://repo.sourcify.dev/5042002/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6
 

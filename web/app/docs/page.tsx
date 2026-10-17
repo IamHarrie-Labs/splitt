@@ -251,8 +251,8 @@ export default function Documentation() {
                 The preview supports invoices up to 10 USDC and batches up to 5 USDC. Your wallet
                 pays setup and deposit fees; sponsored payouts have wallet and service limits. The
                 API runs on a VPS and connects through the website over HTTPS. Use the Vercel
-                website while the purchased domain finishes registration. The allocation demo
-                remains available without a wallet.
+                website at www.usesplitt.xyz. The allocation demo remains available without a
+                wallet.
               </p>
               <p>
                 Each wallet has a private workspace. Builder-controlled tests and unverified public

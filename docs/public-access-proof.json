@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-17T12:30:30.242Z",
-  "origin": "https://splitt-dun.vercel.app",
+  "checkedAt": "2026-10-17T13:00:16.440Z",
+  "origin": "https://www.usesplitt.xyz",
   "publicHttpsApiConnected": true,
   "anonymousDenied": true,
   "foreignOriginDenied": true,
@@ -23,7 +23,17 @@
       "secureSession": true,
       "replayDenied": true,
       "csrfRequired": true,
-      "balanceMicro": "300000",
+      "balanceMicro": "1100000",
+      "confirmedBatches": 1
+    },
+    {
+      "source": "controlled_test",
+      "wallet": "0x8bE0633d4fd1E8828338d4BC779dDb7dd2121fD1",
+      "vault": "0xfd1a345dd24d0f09b36a8d40f3b3893f3b652b22",
+      "secureSession": true,
+      "replayDenied": true,
+      "csrfRequired": true,
+      "balanceMicro": "500000",
       "confirmedBatches": 1
     },
     {
@@ -36,5 +46,5 @@
   "newPaymentSent": false,
   "privateKeysStayedLocal": true,
   "browserQaCompleted": false,
-  "limitation": "Real signed HTTP authentication through the public frontend API using two controlled owners and one fresh unfunded account. Existing payout history only; not a browser walkthrough, new payment or business adoption."
+  "limitation": "Real signed HTTP authentication through the public frontend API using three controlled owners and one fresh unfunded account. Existing payout history only; not a browser walkthrough, new payment or business adoption."
 }

@@ -6,7 +6,7 @@ import type { LiveState } from '../server/src/live/repository.js';
 
 if (process.env.SPLITT_PUBLIC_PROOF !== 'arc-testnet')
   throw new Error('Explicit arc-testnet public proof mode required.');
-const origin = 'https://splitt-dun.vercel.app',
+const origin = 'https://www.usesplitt.xyz',
   base = origin + '/api';
 const stored = JSON.parse(
   await readFile(
@@ -15,6 +15,10 @@ const stored = JSON.parse(
   ),
 ) as { privateKey: Hex }[];
 const accounts = stored.slice(0, 2).map((wallet) => privateKeyToAccount(wallet.privateKey));
+const builder = JSON.parse(
+  await readFile(new URL('../server/.secrets/owner-wallet.json', import.meta.url), 'utf8'),
+) as { privateKey: Hex };
+accounts.push(privateKeyToAccount(builder.privateKey));
 accounts.push(privateKeyToAccount(generatePrivateKey())); // Unfunded fresh account; authentication only.
 async function request(path: string, body?: unknown, cookie = '', csrf = '', from = origin) {
   const response = await fetch(base + path, {
@@ -82,7 +86,7 @@ try {
     const list = await request('/selfserve/vaults', undefined, session.cookie);
     if (!list.response.ok || !Array.isArray(list.data))
       throw new Error('Authenticated vault list failed.');
-    if (index === 2) {
+    if (index === accounts.length - 1) {
       if (list.data.length !== 0) throw new Error('Fresh account sees another wallet vault.');
       results.push({
         source: 'fresh_unfunded_authentication_test',
@@ -145,7 +149,7 @@ try {
     privateKeysStayedLocal: true,
     browserQaCompleted: false,
     limitation:
-      'Real signed HTTP authentication through the public frontend API using two controlled owners and one fresh unfunded account. Existing payout history only; not a browser walkthrough, new payment or business adoption.',
+      'Real signed HTTP authentication through the public frontend API using three controlled owners and one fresh unfunded account. Existing payout history only; not a browser walkthrough, new payment or business adoption.',
   };
   await writeFile(
     new URL('../docs/public-access-proof.json', import.meta.url),

@@ -11,6 +11,7 @@ import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
 import './globals.css';
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.usesplitt.xyz'),
   title: 'Splitt | Project payment workspace',
   description:
     'Allocate partial client payments across approved contractor obligations while protecting each project’s reserve.',
