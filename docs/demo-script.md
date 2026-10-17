@@ -14,3 +14,9 @@ Target: 2 minutes 40 seconds. Record the current application. This script is not
 | 2:20–2:40 | Pilot evidence and closing | Show a real consenting participant's feedback only if available. Otherwise show the intake and state that verified pilot adoption is still pending. End on repository and deployed URL. |
 
 Before recording, run the checks, confirm the API/network state and remove secret-bearing tabs. Keep the final video under three minutes. Publish to a host accepted by the form; the user fills and submits the form.
+
+## Self-serve recording sequence
+
+Use `/start` once the public HTTPS API is connected. Prepare two controlled wallets and wait for recipient activation before recording. Show the first wallet's owned vault and approved obligations; identify this as a controlled test using testnet USDC. Deposit a partial receipt and leave the allocation screen open while the worker creates the draft. Do not click replan. Review recipients, reserve and the model/fallback label before signing. Show the confirmed explorer transaction. Deposit the remainder, then show that only the unpaid obligation is proposed. Switch to the second wallet and show its separate vault and unchanged project balance.
+
+The new proof script exercises API and chain behavior; it does not operate the browser or create footage. If the model is not configured, describe the automatic validated draft as using the deterministic baseline. Close with the actual status: controlled test wallets are verified engineering evidence; consenting business pilots remain pending until real facts and feedback are available.

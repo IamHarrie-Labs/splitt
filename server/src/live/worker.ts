@@ -43,10 +43,12 @@ export async function indexReceipts(
 }
 export async function workerTick(
   repo: LiveRepository,
-  chain: Pick<ArcGateway, 'verify' | 'executed' | 'simulate' | 'receipt'>,
+  chain: Pick<ArcGateway, 'verify' | 'executed' | 'simulate' | 'receipt'> &
+    Partial<Pick<ArcGateway, 'authorizationExpired'>>,
   operator: Operator,
   now = Date.now(),
 ) {
+  if (!(await repo.snapshot()).jobs.some((j) => !terminal(j) && j.leaseUntil <= now)) return;
   await chain.verify();
   const leaseToken = randomUUID();
   const job = await repo.transaction((state) => {
@@ -75,6 +77,20 @@ export async function workerTick(
     if (resolution === 'confirmed' || resolution === 'invariant_violation') {
       await save((j) => {
         j.state = resolution;
+      });
+      return;
+    }
+    if (
+      job.attempted &&
+      chain.authorizationExpired &&
+      (await chain.authorizationExpired(job.approval))
+    ) {
+      // Chain time is past the signed deadline. Recheck flags after that read:
+      // an earlier execution wins; otherwise this signature can no longer pay.
+      const finalFlags = await chain.executed(job.approval.items.map((i) => i.executionId));
+      const final = resolveBatch(finalFlags, 'UNKNOWN');
+      await save((j) => {
+        j.state = final === 'unresolved' ? 'expired' : final;
       });
       return;
     }

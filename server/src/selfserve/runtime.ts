@@ -12,9 +12,23 @@ import { arcGateway } from '../live/chain.js';
 import { TestnetService, metadataSchema } from '../live/service.js';
 import { workerTick, indexReceipts, OperatorPolicyError, type Operator } from '../live/worker.js';
 import { draftReceipts } from '../agent/receipt-drafts.js';
-import { circleOperator } from '../circle/operator.js';
+import { circleOperator, CircleFeeRejectedError } from '../circle/operator.js';
 import { VaultRegistry, policyError, type RegisteredVault } from './registry.js';
 import { SponsorshipBudget, circleFee } from './sponsorship.js';
+
+function errorLocation(error: unknown) {
+  const causes: string[] = [];
+  let current = error as Error & { cause?: unknown; functionName?: string; details?: string };
+  const method = current.functionName;
+  let rpcLimit: string | undefined;
+  for (let i = 0; current && i < 6; i++) {
+    causes.push(current.name);
+    if (current.name === 'RpcRequestError' && /limit|rate|too many/i.test(current.details ?? ''))
+      rpcLimit = current.details?.replace(/https?:\/\/\S+/g, '[RPC]').slice(0, 180);
+    current = current.cause as typeof current;
+  }
+  return { errorType: (error as Error).name, method, causes, rpcLimit };
+}
 
 export async function buildSelfServeApp(
   db: Database,
@@ -41,6 +55,11 @@ export async function buildSelfServeApp(
   });
   app.setErrorHandler((error, _req, reply) => {
     const e = error as Error & { statusCode?: number };
+    if (!e.statusCode && !(error instanceof ZodError))
+      app.log.error(
+        errorLocation(error),
+        'Self-serve request failed; details omitted to protect credentials.',
+      );
     reply.code(error instanceof ZodError ? 400 : (e.statusCode ?? 500)).send({
       message:
         error instanceof ZodError
@@ -97,18 +116,37 @@ export async function buildSelfServeApp(
         // Once provider submission may have happened, retry the original reserved fees.
         // A fresh estimate could fail after execution and hide an accepted transaction.
         const prior = await budget.existing(record.owner, record.vault, id);
-        if (prior) return provider.submit(callData, id, circleFee(prior));
+        if (prior) {
+          try {
+            return await provider.submit(callData, id, circleFee(prior));
+          } catch (error) {
+            if (!(error instanceof CircleFeeRejectedError)) throw error;
+            const estimate = await provider.estimate(callData);
+            const replacement = await budget.replaceRejectedFee(
+              record.owner,
+              record.vault,
+              id,
+              prior,
+              { ...estimate, gasLimit: prior.gasLimit },
+            );
+            return provider.submit(callData, id, circleFee(replacement));
+          }
+        }
         const gas = await registry.client.estimateGas({
           account: operator,
           to: record.vault,
           data: callData,
           value: 0n,
         });
-        const fees = await registry.client.estimateFeesPerGas();
+        const fees = await provider.estimate(callData);
         const quote = await budget.reserve(record.owner, record.vault, id, {
-          gasLimit: String((gas * 120n + 99n) / 100n),
-          maxFeePerGas: String(fees.maxFeePerGas),
-          maxPriorityFeePerGas: String(fees.maxPriorityFeePerGas),
+          gasLimit: String(
+            (gas * 120n + 99n) / 100n > BigInt(fees.gasLimit)
+              ? (gas * 120n + 99n) / 100n
+              : BigInt(fees.gasLimit),
+          ),
+          maxFeePerGas: fees.maxFeePerGas,
+          maxPriorityFeePerGas: fees.maxPriorityFeePerGas,
         });
         return provider.submit(callData, id, circleFee(quote));
       },
@@ -239,12 +277,14 @@ export async function buildSelfServeApp(
     if (ctx.busy) return;
     ctx.busy = true;
     try {
-      await registry.verify(record);
       await indexReceipts(ctx.repo, ctx.chain);
       await workerTick(ctx.repo, ctx.chain, ctx.provider);
       await draftReceipts(ctx.service);
-    } catch {
-      app.log.warn('Self-serve workspace refresh pending. No new payment authorized.');
+    } catch (error) {
+      app.log.warn(
+        errorLocation(error),
+        'Self-serve workspace refresh pending. No new payment authorized.',
+      );
     } finally {
       ctx.busy = false;
     }

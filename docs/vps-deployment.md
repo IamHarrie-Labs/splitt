@@ -1,8 +1,10 @@
 # Splitt on a VPS
 
-Prepared configuration, not a completed deployment. Inspect the host's operating system, disk space, existing containers, ports and reverse proxy before changing it. Preserve existing applications. This deployment uses only Arc Testnet.
+The API and PostgreSQL are deployed in an isolated service on the existing VPS. On 17 October the API was upgraded to `selfserve-testnet` and reported healthy. Its port remains loopback-only; public HTTPS still awaits the supplied domain. This deployment uses only Arc Testnet.
 
 16 October staging: the PrepAI VPS is reachable with its existing SSH key; other applications and Caddy already own their ports. Splitt uses a separate `/opt/splitt` directory, project-local checksum-verified Compose binary and port 4400 on loopback. Do not start the optional Caddy profile on this host. The owner will supply a domain. The other saved VPS reported a changed host identity; its known_hosts entry was left untouched.
+
+The self-serve upgrade backed up PostgreSQL privately before replacing only `splitt-api-1`. Existing PrepAI, Docent and Upside containers remained running. The original API image and settings were retained for rollback. The owner key and fresh proof-wallet keys stay on the local machine; only the Circle testnet operator credentials are hosted. `SPLITT_CONTROLLED_OWNERS` identifies the builder and both proof wallets before registration.
 
 `scripts/prepare-vps-env.mjs` creates an exclusive, ignored minimal operator configuration from existing local testnet settings. It never includes the owner signing key or a short-lived model token. `scripts/migrate-workspace.ts` exports only financial workspace state after refusing unfinished jobs and imports into an empty, matching vault scope after integrity checks. It does not migrate authentication sessions. Keep export files private; they include execution history and signatures. Stop the local worker before exporting and before starting the VPS worker.
 

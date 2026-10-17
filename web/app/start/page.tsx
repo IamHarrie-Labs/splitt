@@ -14,8 +14,9 @@ import {
   type Hex,
   type EIP1193Provider,
 } from 'viem';
+import { parseSiweMessage } from 'viem/siwe';
 import { authorizationTypes, formatUSDC, idHash, parseUSDC, type Project } from '@splitt/core';
-import { constructorAbi, SELF_SERVE, vaultCreation } from '../../../packages/core/src/selfserve';
+import { SELF_SERVE, vaultCreation } from '../../../packages/core/src/selfserve';
 import type { LiveState } from '../../../server/src/live/repository';
 import type { BatchApproval } from '../../../server/src/store';
 import SiteHeader from '../site-header';
@@ -27,6 +28,9 @@ const arc = defineChain({
   name: 'Arc Testnet',
   nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
   rpcUrls: { default: { http: ['https://rpc.testnet.arc.io'] } },
+  blockExplorers: {
+    default: { name: 'Arc Testnet Explorer', url: 'https://explorer.testnet.arc.io' },
+  },
 });
 const reader = createPublicClient({ chain: arc, transport: http() });
 const setupAbi = parseAbi([
@@ -227,8 +231,21 @@ export default function SelfServe() {
     if (!account) throw new Error('Select a wallet.');
     if (wallet && account.toLowerCase() !== wallet.toLowerCase())
       throw new Error('Switch to the signed-in wallet or sign out first.');
-    if ((await client.getChainId()) !== 5042002)
-      throw new Error('Switch your wallet to Arc Testnet.');
+    if ((await client.getChainId()) !== 5042002) {
+      try {
+        await client.switchChain({ id: arc.id });
+      } catch (error) {
+        let cause = error as { code?: number; cause?: unknown };
+        let missing = false;
+        for (let i = 0; cause && i < 6; i++) {
+          if (cause.code === 4902) missing = true;
+          cause = cause.cause as typeof cause;
+        }
+        if (!missing) throw error;
+        await client.addChain({ chain: arc });
+        await client.switchChain({ id: arc.id });
+      }
+    }
     return { client, account };
   }
   async function connect() {
@@ -236,6 +253,15 @@ export default function SelfServe() {
     const challenge = await api<{ nonce: string; message: string }>('/auth/challenge', {
       address: account,
     });
+    const message = parseSiweMessage(challenge.message);
+    if (
+      message.domain !== window.location.host ||
+      message.uri !== window.location.origin ||
+      message.chainId !== arc.id ||
+      message.nonce !== challenge.nonce ||
+      message.address?.toLowerCase() !== account.toLowerCase()
+    )
+      throw new Error('The sign-in request does not match this website and wallet.');
     const result = await api<{ csrf: string }>('/auth/verify', {
       nonce: challenge.nonce,
       signature: await client.signMessage({ account, message: challenge.message }),
@@ -976,7 +1002,7 @@ export default function SelfServe() {
                             </p>
                           ))}
                           <p>
-                            Preview limits: three sponsored batches and up to 0.05 USDC in reserved
+                            Preview limits: three sponsored batches and up to 0.25 USDC in reserved
                             gas per wallet per UTC day. A shared global cap also applies. These
                             limits affect sponsorship; your wallet continues to own the vault.
                           </p>

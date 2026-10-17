@@ -183,6 +183,35 @@ describe('canonical vault registration and isolation', () => {
   });
 });
 describe('durable gas sponsorship limits', () => {
+  it('reserves both old and replacement fees and replaces a concurrent rejection only once', async () => {
+    await budget.reserve(owner.address, vault, 'fee-job', quote);
+    const next = { ...quote, maxFeePerGas: '64000000000', maxPriorityFeePerGas: '60000000000' };
+    const results = await Promise.all([
+      budget.replaceRejectedFee(owner.address, vault, 'fee-job', quote, next),
+      budget.replaceRejectedFee(owner.address, vault, 'fee-job', quote, next),
+    ]);
+    expect(results).toEqual([next, next]);
+    expect(await budget.existing(owner.address, vault, 'fee-job')).toEqual(next);
+    const rows = (
+      await db.query<{ budget_wei: string }>(
+        'SELECT budget_wei::text FROM selfserve_gas_reservations',
+      )
+    ).rows;
+    expect(rows).toHaveLength(2);
+    expect(rows.reduce((total, r) => total + BigInt(r.budget_wei), 0n)).toBe(6500000000000000n);
+  });
+  it('keeps the original reservation when a rejected fee cannot fit the remaining budget', async () => {
+    await budget.reserve(owner.address, vault, 'fee-job', quote);
+    await expect(
+      budget.replaceRejectedFee(owner.address, vault, 'fee-job', quote, {
+        ...quote,
+        maxFeePerGas: '3000000000000',
+        maxPriorityFeePerGas: '2000000000000',
+      }),
+    ).rejects.toThrow('remaining sponsorship budget');
+    expect(await budget.existing(owner.address, vault, 'fee-job')).toEqual(quote);
+    expect((await db.query('SELECT * FROM selfserve_gas_reservations')).rows).toHaveLength(1);
+  });
   it('reserves before sending and returns the same fee cap on retries without counting twice', async () => {
     const first = await budget.reserve(owner.address, vault, 'job', quote);
     const again = await budget.reserve(owner.address, vault, 'job', {
@@ -215,14 +244,14 @@ describe('durable gas sponsorship limits', () => {
   it('enforces per-wallet gas, aggregate gas and lifetime limits even across different wallets', async () => {
     const expensive = {
       gasLimit: '500000',
-      maxFeePerGas: '100000000000',
+      maxFeePerGas: '500000000000',
       maxPriorityFeePerGas: '0',
     };
     await budget.reserve(owner.address, vault, 'one', expensive);
     await expect(budget.reserve(owner.address, vault, 'two', quote)).rejects.toThrow(
       'limit reached',
     );
-    for (let i = 1; i < 20; i++)
+    for (let i = 1; i < 4; i++)
       await budget.reserve(
         `0x${i.toString(16).padStart(40, '0')}` as Address,
         vault,

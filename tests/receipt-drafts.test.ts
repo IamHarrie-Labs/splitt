@@ -61,6 +61,28 @@ beforeEach(() => {
   service = new TestnetService(repo, chain, address, address, planner);
 });
 describe('receipt-driven draft worker', () => {
+  it('re-drafts the original receipt after confirmed authorization expiry and requires fresh owner review', async () => {
+    await draftReceipts(service, 1000);
+    const first = state.plans[0];
+    const { approval } = await service.prepare(first.id);
+    state.plans[0].status = 'unresolved';
+    state.jobs.push({
+      id: first.id,
+      projectId: first.projectId,
+      approval,
+      callData: '0x',
+      state: 'expired',
+      attempted: true,
+      leaseUntil: 0,
+      attempts: 1,
+    });
+    await draftReceipts(service, 2000);
+    expect(state.plans).toHaveLength(2);
+    expect(state.receiptDrafts?.[0].planId).not.toBe(first.id);
+    expect(state.plans[1].status).toBe('awaiting_owner');
+    expect(state.jobs).toHaveLength(1);
+    expect(state.jobs[0].state).toBe('expired');
+  });
   it('records a valid no-payout decision once when the receipt cannot exceed the reserve', async () => {
     state.projects[0].balance = state.projects[0].reserve;
     await draftReceipts(service, 1000);

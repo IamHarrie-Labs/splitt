@@ -12,6 +12,7 @@ import {
 import type { Project } from '@splitt/core';
 import type { BatchApproval } from '../store.js';
 import type { ChainEvent } from './repository.js';
+import { arcRpcFetch } from './rpc.js';
 export const ARC_ID = 5042002;
 export const USDC = '0x3600000000000000000000000000000000000000' as const;
 export const vaultAbi = parseAbi([
@@ -58,8 +59,11 @@ export function arcGateway(vault: Address, owner: Address, operator: Address) {
   const client = createPublicClient({
     chain: arc,
     transport: http(process.env.ARC_RPC_URL ?? arc.rpcUrls.default.http[0], {
+      batch: { wait: 20, batchSize: 4 },
+      fetchFn: arcRpcFetch,
       timeout: 15000,
       retryCount: 1,
+      retryDelay: 1000,
     }),
   });
   const read = <T extends 'owner' | 'operator' | 'usdc' | 'paused'>(name: T) =>
@@ -133,7 +137,9 @@ export function arcGateway(vault: Address, owner: Address, operator: Address) {
       return result;
     },
     async project(metadata: Project) {
-      const blockNumber = await client.getBlockNumber();
+      // Setup may have confirmed since the indexer's last head read. Never validate
+      // new metadata or owner approvals against viem's cached block number.
+      const blockNumber = await client.getBlockNumber({ cacheTime: 0 });
       const block = await client.getBlock({ blockNumber });
       const [p, paused, spent] = await Promise.all([
         client.readContract({
@@ -200,6 +206,10 @@ export function arcGateway(vault: Address, owner: Address, operator: Address) {
           }),
         ),
       );
+    },
+    async authorizationExpired(approval: BatchApproval) {
+      const block = await client.getBlock({ blockTag: 'latest' });
+      return block.timestamp > BigInt(approval.message.deadline);
     },
     async simulate(approval: BatchApproval) {
       if (!approval.signature) throw new Error('Signature required.');

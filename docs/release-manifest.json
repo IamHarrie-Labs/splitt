@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-10-17T06:56:15.523Z",
+  "checkedAt": "2026-10-17T07:31:30.628Z",
   "secretScanPassed": true,
-  "fileCount": 219,
+  "fileCount": 222,
   "files": [
     ".dockerignore",
     ".env.example",
@@ -141,6 +141,7 @@
     "server/src/live/chain.ts",
     "server/src/live/migration.ts",
     "server/src/live/repository.ts",
+    "server/src/live/rpc.ts",
     "server/src/live/runtime.ts",
     "server/src/live/service.ts",
     "server/src/live/worker.ts",
@@ -153,6 +154,7 @@
     "tests/auth-approval.test.ts",
     "tests/cctp-gateway.test.ts",
     "tests/cctp.test.ts",
+    "tests/circle-fees.test.ts",
     "tests/live-service.test.ts",
     "tests/live-worker.test.ts",
     "tests/model-adapter.test.ts",
@@ -161,6 +163,7 @@
     "tests/planner.test.ts",
     "tests/postgres.test.ts",
     "tests/receipt-drafts.test.ts",
+    "tests/rpc-pacing.test.ts",
     "tests/selfserve-api.test.ts",
     "tests/selfserve.test.ts",
     "tests/vault.test.ts",

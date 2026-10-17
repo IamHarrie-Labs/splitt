@@ -11,7 +11,7 @@ export const SELF_SERVE = {
   maxBatch: '5000000',
   walletDailyBatches: 3,
   globalDailyBatches: 30,
-  walletDailyGas: '50000000000000000',
+  walletDailyGas: '250000000000000000',
   globalDailyGas: '1000000000000000000',
   lifetimeGas: '10000000000000000000',
 } as const;

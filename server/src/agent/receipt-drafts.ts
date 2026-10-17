@@ -6,6 +6,20 @@ export async function draftReceipts(service: TestnetService, now = Date.now()) {
   const token = randomUUID();
   const task = await service.repo.transaction((s) => {
     const tasks = (s.receiptDrafts ??= []);
+    for (const task of tasks) {
+      if (
+        task.state === 'done' &&
+        task.planId &&
+        s.jobs.some((j) => j.id === task.planId && j.state === 'expired')
+      ) {
+        // An expired signature cannot execute. Re-draft from the original
+        // receipt and current facts; every replacement still needs owner review.
+        task.state = 'pending';
+        task.attempts = 0;
+        task.leaseUntil = 0;
+        delete task.planId;
+      }
+    }
     const known = new Set(tasks.map((t) => t.id));
     for (const event of s.events) {
       if (

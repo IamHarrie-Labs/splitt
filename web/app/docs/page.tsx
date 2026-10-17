@@ -27,6 +27,7 @@ export default function Documentation() {
             <a href="#evidence">Verification evidence</a>
             <a href="#pilot">Business pilot</a>
             <a href="#testnet">Testnet and status</a>
+            <a href="#selfserve">Your own vault</a>
           </nav>
           <div className="documentation-content">
             <section id="workflow">
@@ -203,6 +204,27 @@ export default function Documentation() {
                 In the owner workspace, each proposal exposes its triggering receipts, model or
                 fallback, baseline comparison and recorded facts. A pilot intake or test wallet
                 transfer does not establish business adoption.
+              </p>
+            </section>
+            <section id="selfserve">
+              <h2>Your own vault</h2>
+              <p>
+                <Link href="/start">The self-serve workspace</Link> connects MetaMask or Rabby to
+                Arc Testnet. Your wallet deploys and owns its vault. Create one project with up to
+                two contractors, wait three minutes for recipient activation, then deposit test
+                USDC. The worker drafts from the payment receipt; you review and sign before Circle
+                executes.
+              </p>
+              <p>
+                The preview supports invoices up to 10 USDC and batches up to 5 USDC. Your wallet
+                pays setup and deposit fees; sponsored payouts have wallet and service limits. The
+                API runs on a VPS, with public HTTPS awaiting the supplied domain. Until connected,
+                the workspace shows its availability status. The allocation demo remains available.
+              </p>
+              <p>
+                Each wallet has a private workspace. Builder-controlled tests and unverified public
+                testnet activity are reported separately; neither counts as a verified business
+                pilot.
               </p>
             </section>
             <section id="testnet">

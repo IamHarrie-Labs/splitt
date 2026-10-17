@@ -92,7 +92,13 @@ async function transact(
   console.log(JSON.stringify({ step: key, hash: signed.hash }));
   return receipt;
 }
-async function request(path: string, body?: unknown, cookie = '', csrf = '') {
+async function request(
+  path: string,
+  body?: unknown,
+  cookie = '',
+  csrf = '',
+  attempt = 0,
+): Promise<{ data: any; response: Response }> {
   const response = await fetch(base + path, {
     headers: {
       origin,
@@ -104,6 +110,10 @@ async function request(path: string, body?: unknown, cookie = '', csrf = '') {
     signal: AbortSignal.timeout(30000),
   });
   const data = await response.json();
+  if (body === undefined && [429, 500, 503].includes(response.status) && attempt < 3) {
+    await new Promise((resolve) => setTimeout(resolve, 3000 * (attempt + 1)));
+    return request(path, body, cookie, csrf, attempt + 1);
+  }
   if (!response.ok)
     throw new Error(
       `Proof API ${path} returned ${response.status}: ${data.message ?? 'request rejected'}`,
@@ -278,7 +288,8 @@ if (mode === 'setup') {
           (t) => t.id.includes(deposited.transactionHash) && t.state === 'done',
         );
         plan = task && workspace.plans.find((p) => p.id === task.planId);
-        if (plan) break;
+        if (plan && workspace.jobs.find((j) => j.id === plan!.id)?.state !== 'expired') break;
+        plan = undefined;
         await new Promise((r) => setTimeout(r, 5000));
       }
       if (
@@ -313,6 +324,15 @@ if (mode === 'setup') {
       }
       if (job?.state !== 'confirmed' || !job.txHash)
         throw new Error('Payout unresolved. Resume the existing job and journal.');
+      const paidReceipt = await client.getTransactionReceipt({ hash: job.txHash as Hex });
+      if (
+        paidReceipt.status !== 'success' ||
+        paidReceipt.to?.toLowerCase() !== vault.toLowerCase() ||
+        paidReceipt.from.toLowerCase() !== config.operator.toLowerCase()
+      )
+        throw new Error(
+          'The payout receipt does not match the registered vault and Circle operator.',
+        );
       journal.evidence[tag] = {
         vault,
         owner: account.address,
@@ -371,6 +391,8 @@ if (mode === 'setup') {
     maximumInitialFundingUsdc: '6',
     finalProjectBalances: finalBalances,
     crossWalletAccessDenied: true,
+    setupIntervention:
+      'The first vault metadata was registered through the same deployed TestnetService during diagnosis of API failures. The second vault used the authenticated HTTP registration flow. This report is API/chain evidence, not an uninterrupted browser walkthrough.',
     evidence: journal.evidence,
     limitation:
       'API and chain execution proof through a private SSH tunnel. Not a browser interaction recording, public HTTPS proof or business adoption.',

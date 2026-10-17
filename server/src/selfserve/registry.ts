@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { addressSchema } from '@splitt/core';
 import { SELF_SERVE, vaultCreation } from '../../../packages/core/src/selfserve.js';
 import { arc, arcGateway } from '../live/chain.js';
+import { arcRpcFetch } from '../live/rpc.js';
 import type { Database } from '../db/driver.js';
 import { LivePostgresRepository, type LiveRepository, type LiveState } from '../live/repository.js';
 export const registrationInput = z
@@ -41,8 +42,11 @@ export class VaultRegistry {
   client = createPublicClient({
     chain: arc,
     transport: http(process.env.ARC_RPC_URL ?? arc.rpcUrls.default.http[0], {
+      batch: { wait: 20, batchSize: 4 },
+      fetchFn: arcRpcFetch,
       timeout: 15000,
-      retryCount: 0,
+      retryCount: 1,
+      retryDelay: 1000,
     }),
   });
   constructor(

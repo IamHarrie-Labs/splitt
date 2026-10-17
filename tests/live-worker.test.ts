@@ -63,6 +63,38 @@ const provider = () => ({
   status: vi.fn(async () => ({ state: 'COMPLETE' })),
 });
 describe('durable Arc execution worker', () => {
+  it('expires an attempted authorization only after chain time and fresh flags prove it cannot pay', async () => {
+    await repo.transaction((s) => {
+      s.jobs[0].attempted = true;
+    });
+    const chain = { ...gateway(), authorizationExpired: vi.fn(async () => true) },
+      circle = provider();
+    await workerTick(repo, chain, circle, now);
+    expect((await repo.snapshot()).jobs[0].state).toBe('expired');
+    expect(chain.executed).toHaveBeenCalledTimes(2);
+    expect(circle.submit).not.toHaveBeenCalled();
+  });
+  it('preserves a payout that executed while expiry was being checked', async () => {
+    await repo.transaction((s) => {
+      s.jobs[0].attempted = true;
+    });
+    const chain = { ...gateway(), authorizationExpired: vi.fn(async () => true) },
+      circle = provider();
+    chain.executed.mockResolvedValueOnce([false, false]).mockResolvedValueOnce([true, true]);
+    await workerTick(repo, chain, circle, now);
+    expect((await repo.snapshot()).jobs[0].state).toBe('confirmed');
+    expect(circle.submit).not.toHaveBeenCalled();
+  });
+  it('does not spend RPC requests verifying an idle workspace', async () => {
+    await repo.transaction((s) => {
+      s.jobs = [];
+    });
+    const chain = gateway(),
+      circle = provider();
+    await workerTick(repo, chain, circle, now);
+    expect(chain.verify).not.toHaveBeenCalled();
+    expect(circle.submit).not.toHaveBeenCalled();
+  });
   it('persists intent before submitting and reopens without changing the batch key', async () => {
     const chain = gateway(),
       circle = provider();
