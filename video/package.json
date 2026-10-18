@@ -2,7 +2,8 @@
   "name": "splitt-demo-video",
   "private": true,
   "scripts": {
-    "render": "remotion render src/index.tsx SplittDemo out/splitt-hackathon-demo-final.mp4 --codec=h264 --crf=18 --concurrency=2 --color-space=bt709",
+    "score": "python3 ../scripts/generate-video-score.py",
+    "render": "remotion render src/index.tsx SplittFilm out/splitt-film.mp4 --codec=h264 --crf=20 --x264-preset=slow --color-space=bt709",
     "preview": "remotion studio src/index.tsx"
   },
   "dependencies": {

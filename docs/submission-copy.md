@@ -46,7 +46,7 @@ No real business pilot is onboarded yet. Real customer payment volume is zero. T
 
 ## Video field
 
-The organizer requests a Loom, YouTube or Vimeo link under three minutes. The updated 2:40 composition and narration include the final public payout evidence and honest zero-pilot status, but `video/out/splitt-hackathon-demo-final.mp4` still needs to be rendered and inspected. Upload the reviewed MP4 to an accepted video host. A GitHub file or release URL alone does not satisfy that field.
+The organizer requests a Loom, YouTube or Vimeo link under three minutes. The 96-second film (`video/out/splitt-film.mp4`) includes the real Arc Testnet payout hashes and the honest zero-pilot status. Upload the reviewed MP4 to an accepted video host. A GitHub file or release URL alone does not satisfy that field.
 
 ## Owner-provided fields
 

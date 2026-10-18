@@ -60,7 +60,7 @@ The original V1 vault is [`0x724c…c6c6`](https://explorer.testnet.arc.io/addre
 - [Two-wallet isolation and recovery proof](docs/selfserve-testnet-proof.json)
 - [Public authentication proof](docs/public-access-proof.json)
 
-The final 2:40 walkthrough is rendered at `video/out/splitt-hackathon-demo-final.mp4` with a companion [caption file](video/public/captions.srt). Representative frames were visually inspected. Upload the MP4 to Loom, YouTube or Vimeo before putting it in a submission form.
+The 96-second film is built from [`video/`](video/README.md) and renders to `video/out/splitt-film.mp4`. It is a motion-design piece with an original generated score. Illustrative scenes are badged, and only the evidence scene shows real Arc Testnet transactions. Upload the MP4 to Loom, YouTube or Vimeo before putting it in a submission form.
 
 ## Run locally
 
