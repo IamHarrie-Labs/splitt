@@ -27,6 +27,9 @@ The testnet operator, wallet ID, database and vault must never be promoted into 
 from the deployed testnet contract and uses EIP-712 domain version `2`. The candidate makes the
 recipient activation delay immutable and prevents owner withdrawals through a project reserve.
 Those choices are covered by focused tests, but they still require independent review.
+Owner signatures are checked with ERC-1271 for contract owners and ECDSA for EOAs, so a
+multisig owner can authorize payments. [`mainnet-launch-plan.md`](mainnet-launch-plan.md)
+orders the remaining engineering and external work.
 
 Run `npm run mainnet:artifact` after any contract or dependency change. It writes
 `docs/mainnet-candidate.json` with the exact compiler version, settings, source hash, creation-code

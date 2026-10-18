@@ -6,6 +6,7 @@ export function compile(includeRuntime = false) {
     'contracts/src/ProjectVault.sol',
     'contracts/src/ProjectVaultV2.sol',
     'contracts/test/MockUSDC.sol',
+    'contracts/test/MockMultisigOwner.sol',
   ];
   const input = {
     language: 'Solidity',

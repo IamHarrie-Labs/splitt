@@ -34,9 +34,11 @@ let token: Address;
 let vaultAbi: any;
 let tokenAbi: any;
 let snapshot: string;
+let deploy: (file: string, name: string, args: unknown[]) => Promise<Address>;
+let artifacts: any;
 
 beforeAll(async () => {
-  const artifacts = compile();
+  artifacts = compile();
   vaultAbi = artifacts['contracts/src/ProjectVaultV2.sol'].ProjectVaultV2.abi;
   tokenAbi = artifacts['contracts/test/MockUSDC.sol'].MockUSDC.abi;
   provider = ganache.provider({
@@ -51,7 +53,7 @@ beforeAll(async () => {
     ({ secretKey }) =>
       createWalletClient({ account: privateKeyToAccount(secretKey as Hex), chain, transport }),
   );
-  const deploy = async (file: string, name: string, args: unknown[]) => {
+  deploy = async (file: string, name: string, args: unknown[]) => {
     const artifact = artifacts[file][name];
     const hash = await wallets[0].deployContract({
       account: wallets[0].account!,
@@ -134,7 +136,7 @@ async function expectRevert(index: number, functionName: string, args: unknown[]
   expect(decodeErrorResult({ abi: vaultAbi, data: data! }).errorName).toBe(name);
 }
 
-async function approval(item: ExecutionItem, plan: string) {
+async function approval(item: ExecutionItem, plan: string, signer = 0) {
   const block = await publicClient.getBlock();
   const message = {
     planId: idHash(plan),
@@ -144,8 +146,8 @@ async function approval(item: ExecutionItem, plan: string) {
     deadline: block.timestamp + 600n,
     itemsHash: itemsHash([item]),
   };
-  const signature = await wallets[0].signTypedData({
-    account: wallets[0].account!,
+  const signature = await wallets[signer].signTypedData({
+    account: wallets[signer].account!,
     domain: { name: 'Splitt', version: '2', chainId: chain.id, verifyingContract: vault },
     types: authorizationTypes,
     primaryType: 'PlanAuthorization',
@@ -227,5 +229,30 @@ describe('ProjectVaultV2 mainnet candidate', () => {
     await write(3, 'acceptOwnership', []);
     expect(await read('owner', [])).toBe(nextOwner);
     expect(await read('pendingOwner', [])).toBe('0x0000000000000000000000000000000000000000');
+  });
+
+  it('accepts plans signed through an ERC-1271 multisig owner', async () => {
+    const multisig = await deploy('contracts/test/MockMultisigOwner.sol', 'MockMultisigOwner', [
+      wallets[3].account!.address,
+    ]);
+    const multisigAbi = artifacts['contracts/test/MockMultisigOwner.sol'].MockMultisigOwner.abi;
+    await write(0, 'transferOwnership', [multisig]);
+    const hash = await wallets[3].writeContract({
+      account: wallets[3].account!,
+      chain,
+      address: multisig,
+      abi: multisigAbi,
+      functionName: 'execute',
+      args: [vault, encodeFunctionData({ abi: vaultAbi, functionName: 'acceptOwnership' })],
+    });
+    expect((await publicClient.waitForTransactionReceipt({ hash })).status).toBe('success');
+    expect((await read('owner', [])).toLowerCase()).toBe(multisig.toLowerCase());
+    await provider.request({ method: 'evm_increaseTime', params: [301] });
+    await provider.request({ method: 'evm_mine', params: [] });
+    const item = { executionId: idHash('multisig-payment'), commitmentId, amount: 40n * unit };
+    await expectRevert(1, 'payBatch', await approval(item, 'multisig-plan', 0), 'InvalidSignature');
+    await expectRevert(1, 'payBatch', await approval(item, 'multisig-plan', 4), 'InvalidSignature');
+    await write(1, 'payBatch', await approval(item, 'multisig-plan', 3));
+    expect(await read('balanceOf', [wallets[2].account!.address], true)).toBe(40n * unit);
   });
 });

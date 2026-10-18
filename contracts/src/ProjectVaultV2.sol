@@ -9,6 +9,7 @@ import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {EIP712} from "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import {IERC1271} from "@openzeppelin/contracts/interfaces/IERC1271.sol";
 
 /// @notice Mainnet candidate for isolated project accounting and owner-authorized USDC payouts.
 /// @dev This candidate is deliberately incompatible with the testnet deployment and must not be
@@ -114,9 +115,23 @@ contract ProjectVaultV2 is Ownable2Step, Pausable, ReentrancyGuard, EIP712 {
     function authorizationDigest(Authorization calldata a, Item[] calldata items) public view returns (bytes32) {
         return _hashTypedDataV4(keccak256(abi.encode(AUTH_TYPEHASH, a.planId, a.planHash, a.projectId, a.projectVersion, a.deadline, keccak256(abi.encode(items)))));
     }
+    /// @dev ERC-1271 as well as ECDSA, so a multisig or smart-account owner can authorize plans.
+    ///      Inlined rather than SignatureChecker, whose OpenZeppelin 5.4 build needs Cancun's mcopy.
+    function _ownerSigned(bytes32 digest, bytes calldata signature) internal view returns (bool) {
+        address o = owner();
+        if (o.code.length == 0) {
+            (address recovered, ECDSA.RecoverError err, ) = ECDSA.tryRecover(digest, signature);
+            return err == ECDSA.RecoverError.NoError && recovered == o;
+        }
+        try IERC1271(o).isValidSignature(digest, signature) returns (bytes4 magic) {
+            return magic == IERC1271.isValidSignature.selector;
+        } catch {
+            return false;
+        }
+    }
     function payBatch(Authorization calldata a, bytes calldata ownerSignature, Item[] calldata items) external nonReentrant whenNotPaused {
         if (msg.sender != operator) revert NotOperator();
-        if (ECDSA.recover(authorizationDigest(a, items), ownerSignature) != owner()) revert InvalidSignature();
+        if (!_ownerSigned(authorizationDigest(a, items), ownerSignature)) revert InvalidSignature();
         if (block.timestamp > a.deadline) revert ExpiredAuthorization();
         if (a.planId == bytes32(0) || items.length == 0 || items.length > MAX_BATCH) revert InvalidBatch();
         if (executedPlan[a.planId]) revert Replay();
