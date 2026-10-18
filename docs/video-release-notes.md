@@ -4,8 +4,9 @@ The prepared walkthrough is 2:40, 1080p and narrated locally. It shows the synth
 
 The video labels synthetic screens and controlled tests. It states that verified business pilots remain zero. It contains no private keys, account screens or customer data.
 
-- Planned render: `video/out/splitt-hackathon-demo-final.mp4`
+- Final render: `video/out/splitt-hackathon-demo-final.mp4` (160 seconds, 1920×1080 H.264, stereo AAC)
 - Captions: `video/public/captions.srt`
+- Visual QA: representative frames at 5, 45, 85 and 145 seconds are saved in `docs/qa/video-final/`.
 - Website: https://www.usesplitt.xyz
 - Live testnet app: https://www.usesplitt.xyz/start
 - Wallet-free demo: https://www.usesplitt.xyz/demo

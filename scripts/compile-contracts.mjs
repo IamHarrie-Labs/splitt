@@ -2,7 +2,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import solc from 'solc';
 export function compile() {
-  const files = ['contracts/src/ProjectVault.sol', 'contracts/test/MockUSDC.sol'];
+  const files = [
+    'contracts/src/ProjectVault.sol',
+    'contracts/src/ProjectVaultV2.sol',
+    'contracts/test/MockUSDC.sol',
+  ];
   const input = {
     language: 'Solidity',
     sources: Object.fromEntries(
@@ -41,5 +45,5 @@ export function compile() {
 }
 if (process.argv[1]?.endsWith('compile-contracts.mjs')) {
   compile();
-  console.log('Solidity 0.8.28: vault and mock compiled successfully.');
+  console.log('Solidity 0.8.28: testnet vault, mainnet candidate and mock compiled successfully.');
 }

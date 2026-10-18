@@ -20,6 +20,8 @@ export default function SiteFooter({
         <nav aria-label="Footer navigation">
           <Link href="/docs">Documentation</Link>
           <Link href="/demo">Demo</Link>
+          <Link href="/terms">Terms</Link>
+          <Link href="/privacy">Privacy</Link>
           <a href={REPO} target="_blank" rel="noopener noreferrer">
             Source code<span className="sr-only"> (opens in a new tab)</span>
           </a>

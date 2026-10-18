@@ -484,7 +484,9 @@ export default function SelfServe() {
   }
   const project = workspace?.projects[0],
     activation = project ? Math.max(0, ...project.commitments.map((c) => c.activeAfter)) * 1000 : 0,
-    waiting = Math.max(0, Math.ceil((activation - clock) / 1000));
+    waiting = Math.max(0, Math.ceil((activation - clock) / 1000)),
+    reviewTotal = review?.approval.items.reduce((sum, item) => sum + BigInt(item.amount), 0n) ?? 0n,
+    reviewBalanceAfter = project ? BigInt(project.balance) - reviewTotal : 0n;
   return (
     <>
       <SiteHeader />
@@ -1099,18 +1101,34 @@ export default function SelfServe() {
                             aria-labelledby="payout-review-heading"
                           >
                             <h2 id="payout-review-heading">Confirm exact payout</h2>
-                            {review.approval.items.map((item) => (
-                              <p key={item.executionId}>
-                                {
-                                  project.commitments.find((c) => c.onchainId === item.commitmentId)
-                                    ?.payee
-                                }{' '}
-                                · {formatUSDC(item.amount)} USDC
-                              </p>
-                            ))}
+                            <div className="selfserve-signing-summary">
+                              <p><span>Network</span><strong>Arc Testnet · 5042002</strong></p>
+                              <p><span>Vault</span><strong className="selfserve-address">{vault.vault}</strong></p>
+                              <p><span>Total payout</span><strong>{formatUSDC(String(reviewTotal))} USDC</strong></p>
+                              <p><span>Balance after payout</span><strong>{formatUSDC(String(reviewBalanceAfter))} USDC</strong></p>
+                              <p><span>Protected reserve</span><strong>{formatUSDC(project.reserve)} USDC</strong></p>
+                              <p><span>Splitt fee</span><strong>0 USDC in preview</strong></p>
+                            </div>
+                            <div className="selfserve-recipient-review">
+                              <h3>Recipients</h3>
+                              {review.approval.items.map((item) => {
+                                const commitment = project.commitments.find(
+                                  (candidate) => candidate.onchainId === item.commitmentId,
+                                );
+                                return (
+                                  <p key={item.executionId}>
+                                    <span>
+                                      <strong>{commitment?.name ?? 'Contractor'}</strong>
+                                      <small className="selfserve-address">{commitment?.payee}</small>
+                                    </span>
+                                    <strong>{formatUSDC(item.amount)} USDC</strong>
+                                  </p>
+                                );
+                              })}
+                            </div>
                             <p>
                               Your signature binds these payments to this vault, project version and
-                              expiry. Circle sponsors execution within preview limits.
+                              expiry. Circle sponsors the network fee within preview limits.
                             </p>
                             <p>
                               Approval expires at{' '}

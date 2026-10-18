@@ -123,7 +123,7 @@ function Scene({ scene, index }: { scene: (typeof scenes)[number]; index: number
         <span style={{ fontFamily: 'Grotesk', fontSize: 38, color: deep, letterSpacing: -1 }}>
           splitt.
         </span>
-        <span>Hackathon walkthrough · 17 October 2026</span>
+        <span>Hackathon walkthrough · 18 October 2026</span>
       </div>
       <h1
         style={{
@@ -323,7 +323,7 @@ function Scene({ scene, index }: { scene: (typeof scenes)[number]; index: number
           >
             <p style={{ fontSize: 23, color: muted, margin: '0 0 18px' }}>Release evidence</p>
             <p style={{ fontFamily: 'Grotesk', fontSize: 35, lineHeight: 1.5, margin: 0 }}>
-              185 passing tests
+              189 passing tests
               <br />
               Verified contract
               <br />

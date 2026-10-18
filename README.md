@@ -18,7 +18,7 @@ The hosted testnet release has verified:
 - four Circle-executed payout batches totalling 2.4 test USDC;
 - receipt-triggered drafts, remainder handling and chain-based recovery;
 - signed sessions, CSRF and replay rejection, and isolation between wallets;
-- 185 automated tests, strict TypeScript checks and a production Next.js build.
+- 189 automated tests, strict TypeScript checks and a production Next.js build.
 
 These are controlled engineering tests. Verified businesses and customer payment volume remain zero.
 
@@ -46,7 +46,7 @@ flowchart LR
 - **Web:** Next.js 16, wallet connection, setup, review, signing and recovery.
 - **API:** Fastify, SIWE sessions, CSRF protection, per-wallet authorization and rate limits.
 - **State:** PostgreSQL queues, event cursors, execution journals and isolated vault workspaces.
-- **Contracts:** Solidity 0.8.28, OpenZeppelin 5.2, project accounting, delayed recipients, caps, replay protection and atomic batches.
+- **Contracts:** Solidity 0.8.28, OpenZeppelin 5.4, project accounting, delayed recipients, caps, replay protection and atomic batches.
 - **Execution:** Circle developer-controlled operator with durable idempotency and on-chain reconciliation.
 
 ## Evidence
@@ -60,7 +60,7 @@ The original verified vault is [`0x724c…c6c6`](https://explorer.testnet.arc.io
 - [Two-wallet isolation and recovery proof](docs/selfserve-testnet-proof.json)
 - [Public authentication proof](docs/public-access-proof.json)
 
-The updated 2:40 walkthrough source has a companion [caption file](video/public/captions.srt). Render `video/out/splitt-hackathon-demo-final.mp4`, inspect it, then upload it to Loom, YouTube or Vimeo before putting it in a submission form.
+The final 2:40 walkthrough is rendered at `video/out/splitt-hackathon-demo-final.mp4` with a companion [caption file](video/public/captions.srt). Representative frames were visually inspected. Upload the MP4 to Loom, YouTube or Vimeo before putting it in a submission form.
 
 ## Run locally
 
@@ -91,7 +91,7 @@ npm run release:check
 
 Arc Mainnet is available, but Splitt is not being presented as production-ready. The current contract is unaudited and the running service is intentionally locked to Arc Testnet chain `5042002` and Circle `ARC-TESTNET` wallets.
 
-Mainnet requires a reviewed contract candidate, Arc Foundry fork tests, a separate Circle `ARC` operator, a multisig or policy-controlled owner, a production database and restore drill, monitoring, legal/support copy and a capped real-business pilot. The complete gate and release order are in [mainnet readiness](docs/mainnet-readiness.md). No mainnet deployment command is included until those controls are complete.
+The separate `ProjectVaultV2` mainnet candidate makes the recipient delay immutable and enforces the reserve against owner withdrawals. Mainnet still requires an independent audit, Arc Foundry fork tests, a separate Circle `ARC` operator, a multisig or policy-controlled owner, a production database and restore drill, monitoring, legal/support copy and a capped real-business pilot. The complete gate and release order are in [mainnet readiness](docs/mainnet-readiness.md). No mainnet deployment command is included until those controls are complete.
 
 ## Security model
 
@@ -102,7 +102,7 @@ Mainnet requires a reviewed contract candidate, Arc Foundry fork tests, a separa
 - Policy changes make earlier signatures stale.
 - The owner can pause payments or remove the operator.
 
-The owner can currently withdraw below the project reserve. That is intentional in the testnet design: the reserve constrains delegated operator spending, while the owner retains custody. It must be reviewed and described explicitly before mainnet.
+The deployed testnet contract lets the owner withdraw below the reserve. That behavior remains documented for compatibility. The V2 mainnet candidate treats the reserve as a hard constraint for operator payouts and owner withdrawals.
 
 ## Project guides
 
@@ -110,6 +110,7 @@ The owner can currently withdraw below the project reserve. That is intentional 
 - [Build status](docs/build-status.md)
 - [Judge-ready evidence map](docs/judge-readiness.md)
 - [Mainnet readiness](docs/mainnet-readiness.md)
+- [Security review](docs/security-review-2026-10-18.md)
 - [VPS deployment](docs/vps-deployment.md)
 - [Hackathon submission copy](docs/submission-copy.md)
 

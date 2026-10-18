@@ -23,13 +23,17 @@ The testnet operator, wallet ID, database and vault must never be promoted into 
 
 ## Recommended contract hardening
 
-Before audit, review these design decisions with the auditor:
+`contracts/src/ProjectVaultV2.sol` is the mainnet review candidate. It is deliberately separate
+from the deployed testnet contract and uses EIP-712 domain version `2`. The candidate makes the
+recipient activation delay immutable and prevents owner withdrawals through a project reserve.
+Those choices are covered by focused tests, but they still require independent review.
 
-1. Replace the mutable global payee delay with a minimum delay that cannot be reduced after deployment, or place reductions behind a timelock.
-2. Use a multisig owner and exercise pause, operator revocation, ownership transfer and recovery in a fork rehearsal.
-3. Decide whether owner withdrawals may cross the project reserve. The current behavior allows this deliberately; mainnet copy must describe it precisely or the contract must enforce a stronger rule.
-4. Add invariant and fuzz coverage for `totalAccounted`, unattributed funds, all batch permutations and Arc's blocklist behavior.
-5. Compile and replay with Arc Foundry against a mainnet fork. The existing Ganache suite and Paris-target build are testnet engineering evidence, not an Arc Mainnet audit.
+Before audit, review these remaining design decisions with the auditor:
+
+1. Use a multisig owner and exercise pause, operator revocation, ownership transfer and recovery in a fork rehearsal.
+2. Confirm that a reserve is a hard custody constraint in every production workflow; V2 enforces it for operator payouts and owner withdrawals.
+3. Extend invariant and fuzz coverage for `totalAccounted`, unattributed funds, all batch permutations and Arc's blocklist behavior.
+4. Compile and replay with Arc Foundry against a mainnet fork. The existing Ganache suite and Paris-target build are engineering evidence, not an Arc Mainnet audit.
 
 ## Product workflow before mainnet
 
