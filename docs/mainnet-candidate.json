@@ -1,0 +1,98 @@
+{
+  "contract": "ProjectVaultV2",
+  "source": "contracts/src/ProjectVaultV2.sol",
+  "compiler": "0.8.28+commit.7893614a.Emscripten.clang",
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "viaIR": true,
+    "evmVersion": "paris"
+  },
+  "eip712": {
+    "name": "Splitt",
+    "version": "2"
+  },
+  "sourceHash": "0xd6ce5486868a156e66534182180f28797e8bca5fe639b558e7548a5c42d9faff",
+  "creationCodeHash": "0x1a5e5012aee2236e5de9c1bd86f9a405a3fd983c703b69e3f1f50cec099cbc64",
+  "runtimeTemplateHash": "0x4ab5cf35e1b340396e7ac90cfab6d20273cfdbde7094289a1c2e60c64942a039",
+  "immutableReferences": {
+    "1453": [
+      {
+        "length": 32,
+        "start": 1143
+      },
+      {
+        "length": 32,
+        "start": 3427
+      },
+      {
+        "length": 32,
+        "start": 5765
+      },
+      {
+        "length": 32,
+        "start": 6164
+      },
+      {
+        "length": 32,
+        "start": 6577
+      }
+    ],
+    "1455": [
+      {
+        "length": 32,
+        "start": 412
+      },
+      {
+        "length": 32,
+        "start": 2799
+      }
+    ],
+    "4159": [
+      {
+        "length": 32,
+        "start": 7413
+      }
+    ],
+    "4161": [
+      {
+        "length": 32,
+        "start": 7602
+      }
+    ],
+    "4163": [
+      {
+        "length": 32,
+        "start": 7359
+      }
+    ],
+    "4165": [
+      {
+        "length": 32,
+        "start": 7492
+      }
+    ],
+    "4167": [
+      {
+        "length": 32,
+        "start": 7530
+      }
+    ],
+    "4170": [
+      {
+        "length": 32,
+        "start": 4151
+      }
+    ],
+    "4173": [
+      {
+        "length": 32,
+        "start": 4192
+      }
+    ]
+  },
+  "deploymentStatus": "blocked_pending_audit_and_production_controls",
+  "note": "Runtime changes when constructor immutables are embedded. Lock the audited deployed runtime hash separately before release."
+}

@@ -28,6 +28,12 @@ from the deployed testnet contract and uses EIP-712 domain version `2`. The cand
 recipient activation delay immutable and prevents owner withdrawals through a project reserve.
 Those choices are covered by focused tests, but they still require independent review.
 
+Run `npm run mainnet:artifact` after any contract or dependency change. It writes
+`docs/mainnet-candidate.json` with the exact compiler version, settings, source hash, creation-code
+hash and runtime-template hash. The template contains immutable placeholders; the final deployed
+runtime hash must be recorded and compared by `npm run mainnet:check` after constructor values are
+embedded. This manifest improves reproducibility but is not an audit.
+
 Before audit, review these remaining design decisions with the auditor:
 
 1. Use a multisig owner and exercise pause, operator revocation, ownership transfer and recovery in a fork rehearsal.

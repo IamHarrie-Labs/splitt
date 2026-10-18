@@ -51,7 +51,7 @@ flowchart LR
 
 ## Evidence
 
-The original verified vault is [`0x724c…c6c6`](https://explorer.testnet.arc.io/address/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6). Sourcify reports exact creation and runtime bytecode matches.
+The original V1 vault is [`0x724c…c6c6`](https://explorer.testnet.arc.io/address/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6). Sourcify reports exact creation and runtime matches for its historical build. Public self-serve deployment uses a pinned V1 creation artifact. Run `npm run vault:bytecode:check` to compare both artifacts with their reviewed hashes and the current on-chain runtime. `ProjectVaultV2` is a separate, undeployed mainnet candidate; the current dependency tree is not presented as the historical V1 build.
 
 - [First contractor batch: 0.7 + 0.2 USDC](https://explorer.testnet.arc.io/tx/0x938ea7d6370c06d25daf6c73493e5c43f304abf9938563b7bd934325edaebdc5)
 - [Remainder deposit: 0.8 USDC](https://explorer.testnet.arc.io/tx/0xde2ce4f47108ab118ef30b7dd835b7da7dae60ed7b83504ead5011acddd35c6d)

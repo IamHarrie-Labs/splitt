@@ -17,8 +17,8 @@ export default function Terms() {
         <h2>Testnet service</h2>
         <p>
           Splitt is currently an experimental Arc Testnet application. Use only testnet tokens. They
-          have no monetary value. Splitt is not offered for production payments, custody, investment,
-          lending, tax, accounting or legal advice.
+          have no monetary value. Splitt is not offered for production payments, custody,
+          investment, lending, tax, accounting or legal advice.
         </p>
         <h2>Your wallet and transactions</h2>
         <p>
@@ -39,8 +39,14 @@ export default function Terms() {
         </p>
         <h2>Support</h2>
         <p>
-          Report a reproducible problem through the public GitHub repository. These preview terms
-          must be replaced with reviewed production terms before a mainnet service launches.
+          Report a reproducible, non-sensitive problem through the{' '}
+          <a href="https://github.com/IamHarrie-Labs/splitt/issues">public GitHub repository</a>.
+          Report security issues privately through{' '}
+          <a href="https://github.com/IamHarrie-Labs/splitt/security/advisories/new">
+            GitHub Security Advisories
+          </a>
+          . These preview terms must be replaced with reviewed production terms before a mainnet
+          service launches.
         </p>
       </main>
       <SiteFooter />

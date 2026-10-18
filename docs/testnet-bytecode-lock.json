@@ -1,0 +1,12 @@
+{
+  "verifiedDeployment": {
+    "chainId": 5042002,
+    "vault": "0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6",
+    "runtimeCodeHash": "0x184f3f7020982f65738c34766ee3a84e2be702cfac46b539b3389821d95cbbca"
+  },
+  "selfServeManifest": {
+    "compiler": "0.8.28",
+    "creationCodeHash": "0x0e3542751f475b97948649ff717f8772075aa80fb7d88b336c63be3a9e31d12e"
+  },
+  "scope": "Locks the historical V1 deployment artifacts. It does not certify ProjectVaultV2 or make a mainnet claim."
+}

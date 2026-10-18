@@ -118,11 +118,14 @@ async function expectRevert(index: number, functionName: string, args: unknown[]
   try {
     await provider.request({
       method: 'eth_call',
-      params: [{
-        from: wallets[index].account!.address,
-        to: vault,
-        data: encodeFunctionData({ abi: vaultAbi, functionName, args }),
-      }, 'latest'],
+      params: [
+        {
+          from: wallets[index].account!.address,
+          to: vault,
+          data: encodeFunctionData({ abi: vaultAbi, functionName, args }),
+        },
+        'latest',
+      ],
     });
   } catch (error) {
     data = (error as { data: Hex }).data;
@@ -155,7 +158,9 @@ async function approval(item: ExecutionItem, plan: string) {
 describe('ProjectVaultV2 mainnet candidate', () => {
   it('uses an immutable nonzero payee delay', async () => {
     expect(await read('minimumPayeeChangeDelay', [])).toBe(300n);
-    expect(vaultAbi.some((entry: { name?: string }) => entry.name === 'setPayeeChangeDelay')).toBe(false);
+    expect(vaultAbi.some((entry: { name?: string }) => entry.name === 'setPayeeChangeDelay')).toBe(
+      false,
+    );
   });
 
   it('prevents the owner from withdrawing through the protected reserve', async () => {
@@ -192,5 +197,35 @@ describe('ProjectVaultV2 mainnet candidate', () => {
       expect(await read('totalAccounted', [])).toBe(await read('balanceOf', [vault], true));
       expect((await read('projects', [projectId]))[0]).toBeGreaterThanOrEqual(300n * unit);
     }
+  });
+
+  it('stops operator payouts while paused and resumes only after the owner unpauses', async () => {
+    await provider.request({ method: 'evm_increaseTime', params: [301] });
+    await provider.request({ method: 'evm_mine', params: [] });
+    const item = { executionId: idHash('paused-payment'), commitmentId, amount: 25n * unit };
+    const args = await approval(item, 'paused-plan');
+    await write(0, 'pause', []);
+    await expectRevert(1, 'payBatch', args, 'EnforcedPause');
+    await write(0, 'unpause', []);
+    await write(1, 'payBatch', args);
+    expect(await read('balanceOf', [wallets[2].account!.address], true)).toBe(25n * unit);
+  });
+
+  it('lets the owner revoke the operator without changing custody', async () => {
+    await write(0, 'setOperator', ['0x0000000000000000000000000000000000000000']);
+    expect(await read('operator', [])).toBe('0x0000000000000000000000000000000000000000');
+    expect(await read('totalAccounted', [])).toBe(1_200n * unit);
+    const item = { executionId: idHash('revoked-payment'), commitmentId, amount: 25n * unit };
+    await expectRevert(1, 'payBatch', await approval(item, 'revoked-plan'), 'NotOperator');
+  });
+
+  it('requires the next owner to accept a two-step ownership transfer', async () => {
+    const nextOwner = wallets[3].account!.address;
+    await write(0, 'transferOwnership', [nextOwner]);
+    expect(await read('owner', [])).toBe(wallets[0].account!.address);
+    expect(await read('pendingOwner', [])).toBe(nextOwner);
+    await write(3, 'acceptOwnership', []);
+    expect(await read('owner', [])).toBe(nextOwner);
+    expect(await read('pendingOwner', [])).toBe('0x0000000000000000000000000000000000000000');
   });
 });

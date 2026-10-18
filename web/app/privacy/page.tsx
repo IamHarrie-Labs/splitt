@@ -17,9 +17,9 @@ export default function Privacy() {
         <h2>Information processed</h2>
         <p>
           The live preview processes public wallet addresses, wallet-signed login messages, project
-          details you submit, testnet transaction records and technical request data needed to secure
-          and operate the service. The pilot calculator runs in your browser and exports only when you
-          choose to download a file.
+          details you submit, testnet transaction records and technical request data needed to
+          secure and operate the service. The pilot calculator runs in your browser and exports only
+          when you choose to download a file.
         </p>
         <h2>Why it is used</h2>
         <p>
@@ -30,8 +30,8 @@ export default function Privacy() {
         <h2>AI processing</h2>
         <p>
           A configured server-side model may read payment-note text to suggest a matching receipt.
-          Deterministic validation and fallback remain in control. Do not submit secrets or sensitive
-          personal information in payment notes.
+          Deterministic validation and fallback remain in control. Do not submit secrets or
+          sensitive personal information in payment notes.
         </p>
         <h2>Public blockchain data</h2>
         <p>
@@ -40,9 +40,20 @@ export default function Privacy() {
         </p>
         <h2>Security and retention</h2>
         <p>
-          Sessions use secure cookies and signed challenges. Operational records are retained while
-          needed for testnet reconciliation, fraud prevention and debugging. Production retention,
-          deletion and contact procedures require legal review before mainnet launch.
+          Sessions use secure cookies and signed challenges. During the public testnet preview,
+          workspace and operational records are retained for the life of the preview so transactions
+          can be reconciled and abuse investigated; there is currently no automatic deletion
+          schedule. Public blockchain records are permanent. A fixed production retention and
+          deletion policy requires legal review before mainnet launch.
+        </p>
+        <h2>Questions and security reports</h2>
+        <p>
+          Report a sensitive security issue privately through{' '}
+          <a href="https://github.com/IamHarrie-Labs/splitt/security/advisories/new">
+            GitHub Security Advisories
+          </a>
+          . Use the public repository only for non-sensitive product or documentation issues. Never
+          include a private key, recovery phrase or confidential business data.
         </p>
       </main>
       <SiteFooter />

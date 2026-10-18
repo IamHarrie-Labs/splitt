@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import solc from 'solc';
-export function compile() {
+export function compile(includeRuntime = false) {
   const files = [
     'contracts/src/ProjectVault.sol',
     'contracts/src/ProjectVaultV2.sol',
@@ -16,7 +16,19 @@ export function compile() {
       optimizer: { enabled: true, runs: 200 },
       viaIR: true,
       evmVersion: 'paris',
-      outputSelection: { '*': { '*': ['abi', 'evm.bytecode.object'] } },
+      outputSelection: {
+        '*': {
+          '*': includeRuntime
+            ? [
+                'abi',
+                'metadata',
+                'evm.bytecode.object',
+                'evm.deployedBytecode.object',
+                'evm.deployedBytecode.immutableReferences',
+              ]
+            : ['abi', 'evm.bytecode.object'],
+        },
+      },
     },
   };
   const importedSources = {};
@@ -36,7 +48,10 @@ export function compile() {
   const errors = (output.errors ?? []).filter((error) => error.severity === 'error');
   if (errors.length) throw new Error(errors.map((error) => error.formattedMessage).join('\n'));
   fs.mkdirSync('artifacts', { recursive: true });
-  fs.writeFileSync('artifacts/verification-input.json', JSON.stringify({ ...input, sources: { ...input.sources, ...importedSources } }, null, 2));
+  fs.writeFileSync(
+    'artifacts/verification-input.json',
+    JSON.stringify({ ...input, sources: { ...input.sources, ...importedSources } }, null, 2),
+  );
   for (const contracts of Object.values(output.contracts))
     for (const [name, artifact] of Object.entries(contracts))
       if (artifact.evm.bytecode.object)

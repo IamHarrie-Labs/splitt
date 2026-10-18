@@ -539,6 +539,58 @@ export default function SelfServe() {
             <p className="selfserve-status" role="status">
               {status}
             </p>
+            <section
+              className="selfserve-section selfserve-onboarding"
+              aria-labelledby="before-you-begin"
+            >
+              <div className="selfserve-section-heading">
+                <div>
+                  <h2 id="before-you-begin">Before you begin</h2>
+                  <p>
+                    Allow about five minutes for a first test. Every transaction stays in your
+                    wallet for review.
+                  </p>
+                </div>
+                <a href={config.faucet} target="_blank" rel="noreferrer">
+                  Get free test USDC
+                </a>
+              </div>
+              <ol className="selfserve-steps">
+                <li>
+                  <strong>Open a wallet browser.</strong>
+                  <span>
+                    Use MetaMask or Rabby. On a phone, open this page inside the wallet app.
+                  </span>
+                </li>
+                <li>
+                  <strong>Fund the wallet.</strong>
+                  <span>
+                    Use Circle’s faucet for Arc Testnet USDC, which also pays Arc testnet fees.
+                  </span>
+                </li>
+                <li>
+                  <strong>Create your vault.</strong>
+                  <span>Your wallet deploys and owns an isolated ProjectVault contract.</span>
+                </li>
+                <li>
+                  <strong>Add the project.</strong>
+                  <span>
+                    Add up to two recipients, then allow three minutes for the safety delay.
+                  </span>
+                </li>
+                <li>
+                  <strong>Review the payout.</strong>
+                  <span>
+                    Deposit test USDC, inspect the automatic draft and sign the exact batch.
+                  </span>
+                </li>
+              </ol>
+              <p className="selfserve-help">
+                No wallet yet? <Link href="/demo">Use the wallet-free demo</Link>. If a transaction
+                stalls, see the <Link href="/docs#troubleshooting">troubleshooting guide</Link>{' '}
+                before sending it again.
+              </p>
+            </section>
             <section className="selfserve-section selfserve-wallet">
               <div>
                 <h2>{wallet ? 'Connected wallet' : 'Connect your wallet'}</h2>
@@ -563,7 +615,7 @@ export default function SelfServe() {
                     <h2>Create your vault</h2>
                     <p>
                       Get free Arc Testnet USDC from{' '}
-                      <a href="https://faucet.circle.com" target="_blank" rel="noreferrer">
+                      <a href={config.faucet} target="_blank" rel="noreferrer">
                         Circle’s faucet
                       </a>{' '}
                       first. Your wallet pays deployment and setup fees. Splitt’s Circle wallet
@@ -1102,12 +1154,30 @@ export default function SelfServe() {
                           >
                             <h2 id="payout-review-heading">Confirm exact payout</h2>
                             <div className="selfserve-signing-summary">
-                              <p><span>Network</span><strong>Arc Testnet · 5042002</strong></p>
-                              <p><span>Vault</span><strong className="selfserve-address">{vault.vault}</strong></p>
-                              <p><span>Total payout</span><strong>{formatUSDC(String(reviewTotal))} USDC</strong></p>
-                              <p><span>Balance after payout</span><strong>{formatUSDC(String(reviewBalanceAfter))} USDC</strong></p>
-                              <p><span>Protected reserve</span><strong>{formatUSDC(project.reserve)} USDC</strong></p>
-                              <p><span>Splitt fee</span><strong>0 USDC in preview</strong></p>
+                              <p>
+                                <span>Network</span>
+                                <strong>Arc Testnet · 5042002</strong>
+                              </p>
+                              <p>
+                                <span>Vault</span>
+                                <strong className="selfserve-address">{vault.vault}</strong>
+                              </p>
+                              <p>
+                                <span>Total payout</span>
+                                <strong>{formatUSDC(String(reviewTotal))} USDC</strong>
+                              </p>
+                              <p>
+                                <span>Balance after payout</span>
+                                <strong>{formatUSDC(String(reviewBalanceAfter))} USDC</strong>
+                              </p>
+                              <p>
+                                <span>Protected reserve</span>
+                                <strong>{formatUSDC(project.reserve)} USDC</strong>
+                              </p>
+                              <p>
+                                <span>Splitt fee</span>
+                                <strong>0 USDC in preview</strong>
+                              </p>
                             </div>
                             <div className="selfserve-recipient-review">
                               <h3>Recipients</h3>
@@ -1119,7 +1189,9 @@ export default function SelfServe() {
                                   <p key={item.executionId}>
                                     <span>
                                       <strong>{commitment?.name ?? 'Contractor'}</strong>
-                                      <small className="selfserve-address">{commitment?.payee}</small>
+                                      <small className="selfserve-address">
+                                        {commitment?.payee}
+                                      </small>
                                     </span>
                                     <strong>{formatUSDC(item.amount)} USDC</strong>
                                   </p>

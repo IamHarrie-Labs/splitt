@@ -16,6 +16,7 @@
     "contracts:compile": "node scripts/compile-contracts.mjs",
     "db:migrate": "tsx --env-file-if-exists=.env server/src/db/migrate.ts",
     "arc:check": "tsx scripts/check-arc.ts",
+    "vault:bytecode:check": "node scripts/check-testnet-vault-bytecode.mjs",
     "wallet:create": "tsx scripts/create-owner-wallet.ts",
     "circle:wallet": "tsx --env-file-if-exists=.env scripts/create-circle-wallet.ts",
     "vault:deploy": "tsx --env-file-if-exists=.env scripts/deploy-vault.ts",
@@ -36,7 +37,8 @@
     "planner:eval": "tsx --env-file-if-exists=.env scripts/evaluate-planner.ts",
     "release:check": "node scripts/check-publication.mjs",
     "notes:eval": "tsx --env-file-if-exists=.env scripts/evaluate-payment-notes.ts",
-    "mainnet:check": "tsx --env-file-if-exists=.env scripts/check-mainnet-readiness.ts"
+    "mainnet:check": "tsx --env-file-if-exists=.env scripts/check-mainnet-readiness.ts",
+    "mainnet:artifact": "node scripts/build-mainnet-candidate.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",

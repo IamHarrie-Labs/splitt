@@ -17,6 +17,7 @@ export default function Documentation() {
         </header>
         <div className="documentation-layout">
           <nav aria-label="Documentation sections">
+            <a href="#quickstart">Quickstart</a>
             <a href="#workflow">Payment workflow</a>
             <a href="#limits">Balances and limits</a>
             <a href="#approval">Owner approval</a>
@@ -28,8 +29,42 @@ export default function Documentation() {
             <a href="#pilot">Business pilot</a>
             <a href="#testnet">Testnet and status</a>
             <a href="#selfserve">Your own vault</a>
+            <a href="#troubleshooting">Troubleshooting</a>
           </nav>
           <div className="documentation-content">
+            <section id="quickstart">
+              <h2>Testnet quickstart</h2>
+              <ol>
+                <li>
+                  Open <Link href="/start">the testnet workspace</Link> in MetaMask or Rabby. On
+                  mobile, use the wallet’s built-in browser.
+                </li>
+                <li>
+                  Get free Arc Testnet USDC from{' '}
+                  <a href="https://faucet.circle.com" target="_blank" rel="noreferrer">
+                    Circle’s faucet
+                  </a>
+                  . Arc uses test USDC for transaction fees.
+                </li>
+                <li>Connect, sign the login message and deploy your own vault.</li>
+                <li>
+                  Create one project, add up to two recipients and wait three minutes for
+                  activation.
+                </li>
+                <li>
+                  Deposit test USDC. Review the automatic draft, then sign the exact payout in your
+                  wallet.
+                </li>
+                <li>
+                  Confirm the vault, receipt and payout in the Arc explorer links shown in the
+                  workspace.
+                </li>
+              </ol>
+              <p>
+                The preview caps invoices at 10 test USDC and payout batches at 5 test USDC. Use the{' '}
+                <Link href="/demo">wallet-free demo</Link> if you only want to inspect the workflow.
+              </p>
+            </section>
             <section id="workflow">
               <h2>Payment workflow</h2>
               <p>
@@ -283,10 +318,10 @@ export default function Documentation() {
               </p>
               <p>
                 The authenticated API and worker are live at{' '}
-                <a href="https://api.usesplitt.xyz/health">api.usesplitt.xyz</a> and connected to the{' '}
-                <Link href="/start">self-serve workspace</Link>. Signed access checks cover three
-                controlled owners, replay and CSRF rejection, and cross-wallet isolation. This is a
-                capped Arc Testnet preview, not a mainnet payment service.
+                <a href="https://api.usesplitt.xyz/health">api.usesplitt.xyz</a> and connected to
+                the <Link href="/start">self-serve workspace</Link>. Signed access checks cover
+                three controlled owners, replay and CSRF rejection, and cross-wallet isolation. This
+                is a capped Arc Testnet preview, not a mainnet payment service.
               </p>
               <p>
                 Allocation model evaluations do not establish an improvement over the baseline. No
@@ -296,9 +331,50 @@ export default function Documentation() {
                 Review the <a href="https://github.com/IamHarrie-Labs/splitt">source repository</a>{' '}
                 for implementation details and evidence, and the{' '}
                 <a href="https://repo.sourcify.dev/5042002/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6">
-                  verified contract source
+                  historical V1 verified source
                 </a>{' '}
-                for the deployed vault. The contract is not independently security-audited.
+                for the deployed vault. The self-serve flow uses a pinned V1 deployment artifact;
+                ProjectVaultV2 and the current dependency tree are a separate mainnet review
+                candidate. Neither contract is independently security-audited.
+              </p>
+            </section>
+            <section id="troubleshooting">
+              <h2>Troubleshooting</h2>
+              <h3>The wallet is missing or the network will not switch</h3>
+              <p>
+                Install MetaMask or Rabby, or open Splitt inside the wallet app on mobile. Accept
+                the Arc Testnet network request. A login signature proves wallet ownership and does
+                not authorize a payment.
+              </p>
+              <h3>The wallet has no funds</h3>
+              <p>
+                Use{' '}
+                <a href="https://faucet.circle.com" target="_blank" rel="noreferrer">
+                  Circle’s faucet
+                </a>{' '}
+                and select Arc Testnet. Test USDC funds the project and pays Arc testnet fees.
+              </p>
+              <h3>A recipient says “waiting”</h3>
+              <p>
+                This is the three-minute recipient-change delay. Keep the page open or return later;
+                the workspace refreshes the countdown automatically.
+              </p>
+              <h3>A transaction was submitted but the page did not update</h3>
+              <p>
+                Check the transaction in your wallet or the Arc explorer before retrying. If it
+                confirmed, use the recovery field in the workspace and paste that transaction hash.
+                Do not submit a second deposit or payout while the first result is uncertain.
+              </p>
+              <h3>A payout is pending</h3>
+              <p>
+                Do not sign it again. Splitt reconciles the Circle operation with the chain and
+                blocks another allocation until the outcome is known. Refresh after confirmation; if
+                the issue persists, include the public transaction hash in a GitHub issue.
+              </p>
+              <h3>Sponsored execution is unavailable</h3>
+              <p>
+                The public preview has per-wallet and service-wide caps. Your wallet still owns the
+                vault and its balance. Wait for the displayed reset or retry later.
               </p>
             </section>
           </div>
