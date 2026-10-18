@@ -18,23 +18,23 @@ The public journey is Overview → Demo → allocation review → simulated sett
 
 ## Verification
 
-| Check | Result |
-| --- | --- |
-| TypeScript | Passed |
-| Production Next.js build | Passed, including `/`, `/demo`, `/docs`, `/testnet`, `/workspace` and the dynamic workspace routes |
-| Full regression suite | 72 tests passed across eight files |
-| Regression scope | Planner/money, contract execution/replay/isolation, API, owner authorization, PostgreSQL, live service/worker and provider fallback |
-| Static link audit | 24 static links checked across 12 source components; no missing local route or anchor targets |
-| Shared skip-link targets | Present on all four pages using the public header |
-| Footer source link | GitHub CLI confirms the linked repository exists and is public |
-| Mobile typography | Measured actual font advances at 320, 360, 375, 768 and 1280px; corrected the 320px headline size |
+| Check                    | Result                                                                                                                                      |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| TypeScript               | Passed                                                                                                                                      |
+| Production Next.js build | Passed, including `/`, `/demo`, `/docs`, `/testnet`, `/workspace` and the dynamic workspace routes                                          |
+| Full regression suite    | 72 tests passed across eight files                                                                                                          |
+| Regression scope         | Planner/money, contract execution/replay/isolation, API, owner authorization, PostgreSQL, live service/worker and provider fallback         |
+| Static link audit        | 24 static links checked across 12 source components; no missing local route or anchor targets                                               |
+| Shared skip-link targets | Present on all four pages using the public header                                                                                           |
+| Footer source link       | GitHub CLI confirms the linked repository exists and is public                                                                              |
+| Mobile typography        | Measured actual font advances at 320, 360, 375, 768 and 1280px; corrected the 320px headline size                                           |
 | Responsive source review | Public grids collapse at 759px; tables retain amounts, docs navigation stacks, menu scrolling is contained, long testnet addresses can wrap |
-| Credential scan | Passed before publication |
+| Credential scan          | Passed before publication                                                                                                                   |
 
 Tests validate the payment engine and service workflows; they do not constitute a browser end-to-end test of the redesigned interface. Font advance calculations do not replace rendered layout inspection.
 
-## Not verified
+## Current browser evidence
 
-Browser inspection was rejected by the browser security policy in this conversation. No alternate browser or indirect page-fetch workaround was used. Desktop/tablet/mobile screenshots, visual overflow, contrast over individual video frames, actual keyboard/touch walkthroughs, live owner-wallet signing and Agentation click/copy remain unverified in the browser. These limits prevent a claim of a fully completed visual or device QA pass.
+The public release was later checked in Chromium at 375×812, 390×844, 768×1024 and 1280×900. The landing page, wallet-free demo, testnet entry, documentation and pilot form had no horizontal overflow. Keyboard navigation, focus states and the complete simulated 700/200 then 300 remainder flow passed. Screenshots are under `docs/qa/`.
 
-Manual acceptance flow: open the public demo, generate 700/200, simulate once, receive the remaining 800, generate only the outstanding 300, simulate, confirm final balance 800 and Fieldwork 1,000, then reset. Check navigation, docs anchors, menu Escape/outside click, focus rings and reduced motion at 320/375/768/1280px. Testnet actions require the configured owner and API; no transaction was submitted during this UI pass.
+Physical-device testing and an uninterrupted browser-wallet signing recording remain unverified. Public signed-API and on-chain payout proofs cover the underlying authorization and execution path, but do not substitute for those interaction checks.

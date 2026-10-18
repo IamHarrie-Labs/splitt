@@ -566,7 +566,7 @@ Demo amounts: real testnet USDC from the faucet is limited, so the video may use
 - [ ] Public GitHub repo, MIT license, no secrets in history
 - [ ] README: what it is, how to run in under 15 minutes, architecture diagram, contract addresses, Circle tools used (and which were not), limits and disclosures, traction table with labels
 - [ ] Deployed review link
-- [ ] Demo video under 3:00 (Loom, YouTube or Vimeo)
+- [ ] Render and inspect the current demo video under 3:00, then upload it to Loom, YouTube or Vimeo
 - [ ] `docs/eval-report.md` with E1 to E8 results
 - [ ] Metrics page live
 - [ ] Contract verified on the explorer

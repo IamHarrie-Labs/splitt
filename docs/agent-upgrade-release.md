@@ -20,7 +20,7 @@ See `payment-note-evaluation-live.json`. Ten synthetic cases: literal matcher 7/
 - The deployed worker processed a public controlled receipt, created an automatic Haiku draft and completed an owner-reviewed Circle payout. The hashes and limitations are recorded in `public-onboarding-proof.json`.
 - Claude Haiku 5.5 is configured on the VPS with durable per-vault and global request limits. The current small regression result is recorded in `anthropic-evaluation.md`; it is not a production-accuracy benchmark.
 - Arc, USDC, Circle wallet and verified vault integrations remain the proven Circle usage. CCTP is implemented and tested but has no completed transfer proof. Gateway, Paymaster and USYC are not claimed.
-- Record and host the new agent-story video under three minutes. The earlier draft video is not footage of these new features.
+- The updated 2:40 captured-UI walkthrough source includes the receipt-triggered agent story and final public evidence. Its final render, visual review and upload remain pending.
 - The user submits the hackathon form. Do not invent pilot counts, volume, a quote or a score.
 
 ## Review limits at release time

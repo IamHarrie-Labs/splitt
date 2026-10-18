@@ -1,144 +1,143 @@
 1
-00:00:00,000 --> 00:00:04,330
+00:00:00,000 --> 00:00:04,400
 A client pays part of an
-invoice. Your contractors are waiting, and
+invoice. Contractors are waiting, while the
 
 2
-00:00:04,330 --> 00:00:08,660
-your project still needs a reserve.
-Splitt turns that shortfall into a
+00:00:04,400 --> 00:00:08,799
+project still needs a reserve. Splitt
+turns the shortfall into a reviewed
 
 3
-00:00:08,660 --> 00:00:11,907
-reviewed payment plan, with a reason
-behind every amount.
+00:00:08,799 --> 00:00:11,732
+payment plan, with a reason behind
+every amount.
 
 4
-00:00:20,000 --> 00:00:25,362
-This is our synthetic Northstar project.
-The invoice is two thousand USDC,
+00:00:20,000 --> 00:00:24,891
+This synthetic Northstar example starts with
+a two thousand USDC invoice. Twelve
 
 5
-00:00:25,362 --> 00:00:30,723
-but only twelve hundred arrived. Three
-hundred stays protected. That leaves nine
+00:00:24,891 --> 00:00:29,781
+hundred arrived, and three hundred stays
+protected. Splitt records the obligations, accepted
 
 6
-00:00:30,723 --> 00:00:36,085
-hundred available for eligible contractor obligations.
-These demo amounts do not move
+00:00:29,781 --> 00:00:34,672
+work and payment terms before it
+proposes where the remaining nine hundred
 
 7
-00:00:36,085 --> 00:00:36,978
-real funds.
+00:00:34,672 --> 00:00:35,487
+can go.
 
 
 8
-00:00:40,000 --> 00:00:44,867
-The allocation engine pays Amara's full
-seven hundred because her accepted work
+00:00:40,000 --> 00:00:44,949
+When a receipt arrives, the hosted
+worker drafts a plan automatically. Here,
 
 9
-00:00:44,867 --> 00:00:49,733
-unlocks delivery. Tobi receives two hundred
-because his agreed terms allow a
+00:00:44,949 --> 00:00:49,898
+Amara receives seven hundred, and Tobi
+receives a permitted partial payment of
 
 10
-00:00:49,733 --> 00:00:54,600
-partial payment. The validator checks eligibility,
-reserve, caps, shortfall and supporting facts
+00:00:49,898 --> 00:00:54,846
+two hundred. A separate validator checks
+the reserve, eligibility, caps, evidence and
 
 11
-00:00:54,600 --> 00:00:55,816
-before owner review.
+00:00:54,846 --> 00:00:56,083
+current project state.
 
 
 12
-00:01:00,000 --> 00:01:04,807
-In the live workspace, the owner
-reviews and signs the exact batch.
+00:01:00,000 --> 00:01:04,614
+The owner reviews the exact batch
+and signs it in their own
 
 13
-00:01:04,807 --> 00:01:09,613
-The signature binds the project version,
+00:01:04,614 --> 00:01:09,228
+wallet. The signature binds the vault,
 plan, ordered payments and expiry. Circle's
 
 14
-00:01:09,613 --> 00:01:14,420
-operator executes it. A durable queue
-retains the original intent, and chain
+00:01:09,228 --> 00:01:13,843
+operator executes the batch, while durable
+reconciliation checks the chain before any
 
 15
-00:01:14,420 --> 00:01:18,025
-replay flags establish the outcome after
-a missing response.
+00:01:13,843 --> 00:01:14,612
+recovery attempt.
+
 
 16
-00:01:20,000 --> 00:01:25,308
-Now the eight hundred USDC remainder
-arrives in our browser simulation. Splitt
+00:01:20,000 --> 00:01:24,884
+When the remainder arrives, Splitt replans
+from what is still owed. Amara
 
 17
-00:01:25,308 --> 00:01:30,616
-replans from the remaining obligations. Amara
-is already paid. Tobi receives only
+00:01:24,884 --> 00:01:29,767
+is already complete. Tobi receives only
+his outstanding three hundred. The earlier
 
 18
-00:01:30,616 --> 00:01:35,482
-his outstanding three hundred. The earlier
-batch cannot be counted twice.
+00:01:29,767 --> 00:01:34,244
+authorization cannot be counted twice, and
+the project keeps the rest.
 
 19
-00:01:40,000 --> 00:01:45,656
-Northstar finishes with both contractor obligations
-fully paid and eight hundred USDC
+00:01:40,000 --> 00:01:45,204
+Northstar finishes with its obligations paid
+and eight hundred USDC remaining. Fieldwork's
 
 20
-00:01:45,656 --> 00:01:51,311
-remaining. Fieldwork's separate one thousand USDC
-balance stays untouched. Allocation never borrows
+00:01:45,204 --> 00:01:50,408
+separate one thousand USDC balance stays
+untouched. Each user owns their vault,
 
 21
-00:01:51,311 --> 00:01:55,082
-one project's cash to satisfy another
-project's commitments.
+00:01:50,408 --> 00:01:55,612
+and Splitt never borrows one project's
+cash to satisfy another project's commitments.
 
 22
-00:02:00,000 --> 00:02:04,966
-The real vault is deployed on
-Arc Testnet. Sourcify confirms exact matches
+00:02:00,000 --> 00:02:05,013
+The public website and API are
+live. Three controlled vaults completed four
 
 23
-00:02:04,966 --> 00:02:09,932
-for creation and runtime bytecode. Circle's
-operator has completed a verified contract
+00:02:05,013 --> 00:02:10,027
+Circle-executed batches totalling two point four
+test USDC. The latest run used
 
 24
-00:02:09,932 --> 00:02:14,898
-query. That query transferred zero value
-and is not a contractor payout.
+00:02:10,027 --> 00:02:15,040
+a Haiku draft and paid zero
+point three USDC. These are controlled
 
 25
-00:02:14,898 --> 00:02:17,381
-The scaled payout proof is prepared.
+00:02:15,040 --> 00:02:16,711
+tests, not customer traction.
 
 
 26
-00:02:20,000 --> 00:02:24,898
-Contractors activate on October fifteenth at
-four eighteen PM Lagos. Real payouts,
+00:02:20,000 --> 00:02:24,647
+Splitt is live on Arc Testnet,
+with a verified contract, a public
 
 27
-00:02:24,898 --> 00:02:29,797
-live model comparison and a consenting
-business pilot remain pending. The browser
+00:02:24,647 --> 00:02:29,294
+API and one hundred eighty five
+passing tests. Connect a wallet to
 
 28
-00:02:29,797 --> 00:02:34,695
-demo uses the deterministic engine. This
-draft shows the current build honestly;
+00:02:29,294 --> 00:02:33,941
+run the flow, or preview it
+without one. Controlled evidence is public;
 
 29
-00:02:34,695 --> 00:02:37,961
-the final submission must include the
-completed evidence.
+00:02:33,941 --> 00:02:35,877
+verified business pilots remain zero.

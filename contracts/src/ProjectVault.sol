@@ -10,7 +10,9 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol
 import {EIP712} from "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
-/// @notice Testnet-only project accounting and owner-authorized atomic USDC payouts.
+/// @notice Project accounting and owner-authorized atomic USDC payouts.
+/// @dev The current deployment and operational tooling are testnet-only. Do not use this
+///      unaudited contract with production funds.
 contract ProjectVault is Ownable2Step, Pausable, ReentrancyGuard, EIP712 {
     using SafeERC20 for IERC20;
     struct Project { uint256 balance; uint256 reserveMin; uint256 maxPerPayment; uint256 maxPerDay; uint64 version; bool active; }

@@ -4,6 +4,8 @@
 
 Validation: 185 automated tests passed in GitHub Actions. Strict type checking and the production Next.js build passed. Public Chromium checks covered 375×812, 390×844, 768×1024 and 1280×900 layouts, keyboard navigation and the complete simulated demo. Physical phones and browser-wallet signing remain separate gaps.
 
+Mainnet preparation: a read-only Arc Mainnet preflight and a documented launch gate are now included. The running product remains locked to Arc Testnet. Independent contract audit, Arc Foundry fork testing, production owner/operator resources, monitoring, legal/support disclosures and a capped real-business pilot are required before any mainnet deployment. The updated final-video composition, narration and captions are prepared; the MP4 render, visual review and accepted-host upload remain pending.
+
 The dated entries below are historical. Current implemented work includes receipt-triggered drafts, payment-note evidence checks, pilot intake, invoice-bound CCTP funding and owner decision evidence. Arc payout/remainder and lost-response recovery are proven in `testnet-payout-proof.json`. A later public run in `public-onboarding-proof.json` records a new wallet-owned vault, automatic Haiku draft and confirmed Circle payout through the deployed website/API path. Signed access and wallet isolation are recorded in `public-access-proof.json`. CCTP is tested but has no completed transfer proof. No real pilot or customer volume is verified. See `judge-readiness.md` and `cctp-runbook.md` for claim boundaries.
 
 ## Latest update — 16 October 2026

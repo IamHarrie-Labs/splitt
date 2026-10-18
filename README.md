@@ -1,137 +1,116 @@
 # Splitt
 
-A project payment workspace for agencies. When a client pays part of an invoice, Splitt proposes which approved contractors can be paid, protects the project reserve, and explains what remains unpaid.
+Splitt helps agencies decide what to pay when a client pays only part of an invoice. It keeps each project's money separate, protects an owner-set reserve, drafts a payment plan from recorded obligations and asks the owner to sign the exact batch before any USDC moves.
 
-[Public website](https://www.usesplitt.xyz) · [Launch testnet app](https://www.usesplitt.xyz/start) · [Interactive synthetic demo](https://www.usesplitt.xyz/demo) · [Source repository](https://github.com/IamHarrie-Labs/splitt). The authenticated API/worker runs on an isolated VPS service connected to the frontend over HTTPS. The separate demo cannot move funds.
+[Website](https://www.usesplitt.xyz) · [Live testnet app](https://www.usesplitt.xyz/start) · [Wallet-free demo](https://www.usesplitt.xyz/demo) · [Documentation](https://www.usesplitt.xyz/docs)
 
-[2:40 walkthrough preview and captions](https://github.com/IamHarrie-Labs/splitt/releases/tag/v0.1.0-preview). This captured-UI preview predates publication; its closing localhost URL is superseded by the public demo above. It also predates the public on-chain and hosted-model proof below. A final current recording and verified business pilot remain pending.
+![Splitt landing page](docs/qa/landing-desktop.png)
 
-## Current build
+## What works today
 
-The `/start` flow supports wallet-owned Arc Testnet vaults, automatic receipt-triggered drafts and owner-signed Circle payouts within preview limits. Public API health, signed authentication, secure cookies, replay/CSRF rejection and wallet isolation are verified through the frontend. [Public access evidence](docs/public-access-proof.json). The canonical website is `https://www.usesplitt.xyz`, using `https://api.usesplitt.xyz`; the apex domain and old Vercel URL redirect to the canonical website. [Scope, sponsorship caps and deployment instructions](docs/selfserve-testnet.md). Controlled proof wallets and public testnet activity are counted separately; neither establishes business adoption.
+The public release runs on **Arc Testnet**. A visitor can connect MetaMask or Rabby, deploy a wallet-owned vault, create one project, record contractor obligations, deposit test USDC, review an automatic draft and sign a payout. A Circle developer-controlled wallet submits the signed batch. The server cannot change recipients or amounts and cannot pay without the vault owner's EIP-712 signature.
 
-The [public onboarding proof](docs/public-onboarding-proof.json) records a new controlled vault, project registration, recipient activation, a 0.8-USDC receipt, an automatic Haiku draft and a Circle-executed 0.3-USDC payout. The project retained 0.5 USDC, above its 0.3 reserve. This single accepted model allocation does not establish a general advantage over the baseline. Another controlled wallet correctly hit its existing daily gas allowance; its deposit remains in its vault ([policy evidence](docs/public-payment-policy-proof.json)).
+The no-wallet demo uses a fixed example: a 2,000-USDC invoice, 1,200 received and a 300 reserve. It proposes 700 to one contractor and a permitted 200 partial payment to another. When the 800 remainder arrives, the new plan includes only the outstanding 300. Demo settlement is simulated and clearly labelled.
 
-On 17 October, two fresh controlled wallets deployed separate vaults and completed three Circle-executed payouts totalling 2.1 test USDC. The worker drafted automatically from receipts, paid only the remaining 0.3 USDC after a remainder deposit, and preserved final project balances of 0.8 and 0.3 USDC. Cross-wallet workspace requests were denied. An unexecuted authorization expired during a provider fee spike; chain-time reconciliation retired it and the original receipt produced a fresh owner-reviewed proposal. [Two-wallet transaction evidence and limitations](docs/selfserve-testnet-proof.json). These runs used the deterministic fallback; they do not establish model superiority, a browser walkthrough or business adoption.
+The hosted testnet release has verified:
 
-The public `/demo` runs the deterministic allocation engine in the browser with synthetic data. The authenticated `/testnet` workspace connects to Arc balances, a PostgreSQL queue and Circle execution. The vault is deployed at `0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6`; [Sourcify confirms exact creation/runtime bytecode matches](https://repo.sourcify.dev/5042002/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6). **Contractor payouts executed on Arc Testnet on 15 October 2026** (scaled demo amounts, controlled test wallets): [first batch 0.7 + 0.2 USDC](https://explorer.testnet.arc.io/tx/0x938ea7d6370c06d25daf6c73493e5c43f304abf9938563b7bd934325edaebdc5), [0.8 USDC remainder deposit](https://explorer.testnet.arc.io/tx/0xde2ce4f47108ab118ef30b7dd835b7da7dae60ed7b83504ead5011acddd35c6d), [final 0.3 USDC payout](https://explorer.testnet.arc.io/tx/0x098fa70efda77e5f22396521bce7d5ccdeb3bbbaab8997e9ae8551a0ceb32881). Northstar ends at 0.8 USDC with its reserve intact; Fieldwork's separate 1 USDC was untouched. A deliberately lost provider response resumed as the same job with the same calldata, with no duplicate payment. Evidence: [testnet-payout-proof.json](docs/testnet-payout-proof.json). Current Claude Haiku evidence and its limitations are summarized below; earlier provider experiments remain in [model-evaluation.md](docs/model-evaluation.md) as development history. Real pilot adoption remains pending. Fixture amounts do not count as adoption.
+- three controlled wallet-owned vaults;
+- four Circle-executed payout batches totalling 2.4 test USDC;
+- receipt-triggered drafts, remainder handling and chain-based recovery;
+- signed sessions, CSRF and replay rejection, and isolation between wallets;
+- 185 automated tests, strict TypeScript checks and a production Next.js build.
 
-Implemented:
+These are controlled engineering tests. Verified businesses and customer payment volume remain zero.
 
-- Next.js workspace: projects, incoming payments, allocation, settlement and metrics.
-- Create projects and approved commitments; record arrivals; confirm unknown payments once.
-- Exact micro-USDC integers; deterministic baseline planner; model adapter with one correction attempt and labelled fallback.
-- Validator for eligibility, amounts, partial terms, reserve, daily cap, references, stale facts and hidden shortfalls.
-- Local simulation with replay rejection, interrupted callback and reconciliation.
-- Solidity `ProjectVault`: project isolation, deposits, replay-safe attribution, owner withdrawal, pause/revocation, EIP-712 owner authorization and atomic batches.
-- Relational Postgres repositories, transaction locks, append-only audit entries and additive migrations.
-- Single-use EIP-4361 owner challenges, revocable sessions, CSRF checks and exact EIP-712 fixture approval in the browser.
-- Separate Arc Testnet workspace, chain-derived balances and receipt indexing, a durable PostgreSQL execution queue, Circle wallet/network verification and replay-flag reconciliation. Deployment, Circle execution, authenticated indexing, the full payout/remainder sequence and lost-response recovery are verified on Arc Testnet.
+## Why the agent is safe
+
+The agent drafts; it does not control money. It reads current project facts and may suggest payments or allowed deferrals. A deterministic validator checks the reserve, eligibility, partial-payment terms, per-payment and daily caps, evidence references and stale state. Invalid or unavailable model output falls back to the rule-based plan.
+
+Payment-note matching uses Claude Haiku 5.5 with a deterministic fallback. Two runs on ten synthetic regression cases scored 10/10 for the combined path and 7/10 for literal matching. Five model answers were accepted and five safety cases fell back in each run. This is a small development check, not a production accuracy claim. See [the evaluation](docs/anthropic-evaluation.md).
+
+## Architecture
+
+```mermaid
+flowchart LR
+  Receipt[Client receipt] --> Indexer[Arc receipt indexer]
+  Indexer --> Draft[Agent draft]
+  Draft --> Validator[Deterministic validator]
+  Validator --> Review[Owner review]
+  Review --> Signature[EIP-712 signature]
+  Signature --> Circle[Circle operator]
+  Circle --> Vault[Wallet-owned ProjectVault]
+  Vault --> Chain[Arc settlement]
+  Chain -. events .-> Indexer
+```
+
+- **Web:** Next.js 16, wallet connection, setup, review, signing and recovery.
+- **API:** Fastify, SIWE sessions, CSRF protection, per-wallet authorization and rate limits.
+- **State:** PostgreSQL queues, event cursors, execution journals and isolated vault workspaces.
+- **Contracts:** Solidity 0.8.28, OpenZeppelin 5.2, project accounting, delayed recipients, caps, replay protection and atomic batches.
+- **Execution:** Circle developer-controlled operator with durable idempotency and on-chain reconciliation.
+
+## Evidence
+
+The original verified vault is [`0x724c…c6c6`](https://explorer.testnet.arc.io/address/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6). Sourcify reports exact creation and runtime bytecode matches.
+
+- [First contractor batch: 0.7 + 0.2 USDC](https://explorer.testnet.arc.io/tx/0x938ea7d6370c06d25daf6c73493e5c43f304abf9938563b7bd934325edaebdc5)
+- [Remainder deposit: 0.8 USDC](https://explorer.testnet.arc.io/tx/0xde2ce4f47108ab118ef30b7dd835b7da7dae60ed7b83504ead5011acddd35c6d)
+- [Final contractor payment: 0.3 USDC](https://explorer.testnet.arc.io/tx/0x098fa70efda77e5f22396521bce7d5ccdeb3bbbaab8997e9ae8551a0ceb32881)
+- [Public onboarding proof](docs/public-onboarding-proof.json)
+- [Two-wallet isolation and recovery proof](docs/selfserve-testnet-proof.json)
+- [Public authentication proof](docs/public-access-proof.json)
+
+The updated 2:40 walkthrough source has a companion [caption file](video/public/captions.srt). Render `video/out/splitt-hackathon-demo-final.mp4`, inspect it, then upload it to Loom, YouTube or Vimeo before putting it in a submission form.
 
 ## Run locally
 
-The configured server-side model is **Claude Haiku 5.5, with a rule-based fallback and validator**. Two post-fix payment-note regression runs scored 10/10 for the combined path versus 7/10 for literal matching, using five accepted model responses and five safety fallbacks each. These ten synthetic development cases do not establish production accuracy. Allocation smoke checks remain inconsistent; the final bounded check used the safe fallback. Structured payment reasons are also checked against recorded terms. [Evaluation details](docs/anthropic-evaluation.md). Hosted model calls have durable per-vault and global daily request limits.
-
-Arc Testnet integration setup: [testnet runbook](docs/testnet-runbook.md). `/testnet` exposes its connection state and, when configured, owner login, project metadata registration, allocation review and settlement status. Default fixture mode remains credential-free. [Submission draft](docs/submission.html) and [pilot plan](docs/pilot-plan.md) are prepared; neither represents a completed public submission or an onboarded business.
-
-The landing page is at `/`. Choose **Open Splitt** for `/start`, or use the adjacent **Preview the payment flow** link for `/demo`, which needs no wallet or API. The local full fixture workspace remains `/workspace`; `/testnet` is the earlier single-owner flow. Public users should use `/start`. See [publication runbook](docs/publication-runbook.md) for Vercel web setup and the separate persistent API host.
-
-Node.js 22 or newer. No wallet, database or API key is needed for fixture mode.
+Node.js 22 or newer is required. Fixture mode needs no wallet, database or API key.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Open [localhost:3000](http://localhost:3000). The API binds to `127.0.0.1:4000`. Both processes stay local. The API persists fixture data in `server/.data/fixture.json`; use **Reset demo** to restore sample data. Do not publish fixture mode as a production service.
+Open [localhost:3000](http://localhost:3000). The web app talks to the local API on `127.0.0.1:4000`. Fixture data stays in `server/.data/fixture.json`. Use the in-app reset control to restore it.
 
-The browser and API expect the same origin, `http://localhost:3000`. Use that URL instead of `http://127.0.0.1:3000` when submitting forms. To change it, copy `.env.example` to `.env` and edit `WEB_ORIGIN`. Keys belong only in the root `.env` or a host secret store, never a browser form.
+Copy `.env.example` to `.env` only when you need PostgreSQL, model access or Arc Testnet. Keep every credential server-side. The public self-serve environment is documented in [the testnet runbook](docs/selfserve-testnet.md).
 
-Optional AI: set `ANTHROPIC_API_KEY` and an account-available `PLANNER_MODEL`, or `PLANNER_PROVIDER=vercel-gateway`, `AI_GATEWAY_API_KEY` and `PLANNER_MODEL`, in server-only configuration, then restart the server. Without the selected credential and model, plans are clearly labelled **Deterministic baseline**. There are no automatic external messages.
-
-## Walk through the demo
-
-1. Northstar has received 1,200 of a 2,000 USDC invoice. Its reserve is 300.
-2. Open **Allocation review** and generate a proposal: 700 to Amara and 200 to Tobi. The 300 reserve stays protected.
-3. Choose **Review & simulate**. Optionally interrupt the confirmation callback.
-4. If interrupted, open **Settlement** and reconcile the original batch; there is no second payment.
-5. Add the 800 remainder in **Incoming payments**. Replan: only Tobi’s remaining 300 is proposed.
-6. The final project balance is 800. Fieldwork’s separate 1,000 remains untouched.
-7. Test an unknown payer by ticking **Unknown sender**. Its amount stays outside project balances until you confirm it.
-
-No explorer links or transaction hashes are fabricated for local fixtures. The demo clock is fixed to 3 October 2026 so deadline tests are repeatable.
-
-## Verify
+## Verify a change
 
 ```sh
 npm run typecheck
 npm test
 npm run contracts:compile
 npm run build
-npm run arc:check
+npm run release:check
 ```
 
-The test suite uses solc 0.8.28, OpenZeppelin 5.2.0, the Paris EVM target and IR compilation. Foundry settings are supplied, but Foundry is not installed on the current machine; the executable contract tests use Ganache and viem instead. Ganache uses its JavaScript fallback on Node 24 because an optional native WebSocket binary is unavailable. This does not prevent test execution.
+`npm run arc:check` performs a read-only Arc Testnet RPC check. `npm run mainnet:check` performs a read-only Arc Mainnet preflight and exits nonzero while production gates are missing.
 
-The Arc check is read-only and verifies chain ID and ERC-20 decimals. Funded owner/operator wallets, vault deployment and project deposits have been verified. The prepared `testnet:prove` command refuses execution before contractor activation. Evidence is recorded under `docs/`; see [testnet runbook](docs/testnet-runbook.md).
+## Mainnet path
 
-## Database
+Arc Mainnet is available, but Splitt is not being presented as production-ready. The current contract is unaudited and the running service is intentionally locked to Arc Testnet chain `5042002` and Circle `ARC-TESTNET` wallets.
 
-Docker and Postgres are not required for the local fixture demo. The live schema uses Postgres exclusively:
+Mainnet requires a reviewed contract candidate, Arc Foundry fork tests, a separate Circle `ARC` operator, a multisig or policy-controlled owner, a production database and restore drill, monitoring, legal/support copy and a capped real-business pilot. The complete gate and release order are in [mainnet readiness](docs/mainnet-readiness.md). No mainnet deployment command is included until those controls are complete.
 
-```sh
-docker compose up -d
-# Set DATABASE_URL in your shell before migration.
-npm run db:migrate
-```
+## Security model
 
-Copy `.env.example` to `.env`, set `SPLITT_STORAGE=postgres`, `DATABASE_URL` and your public `OWNER_ADDRESS`, then run `npm run db:migrate` and restart the app. The migration command reads the root `.env`. A fresh database receives sample projects once. Existing file-demo history is not imported. Database workspaces require owner sign-in and cannot reset the audit trail.
+- The model cannot sign, select wallet addresses, change policy or submit a transaction.
+- Every authorization binds the chain, vault, plan, project version, ordered payments and expiry.
+- Reused plan, execution and attribution IDs revert.
+- Recipient failures roll back the entire batch.
+- Policy changes make earlier signatures stale.
+- The owner can pause payments or remove the operator.
 
-Migrations and repository workflows are tested on PGlite and a native PostgreSQL 17.10 server, including the real TCP driver, row locking, rollback, signed owner sessions and restart persistence. See [Postgres evidence](docs/postgres-verification.json). `npm run db:start` manages the isolated local cluster when configured. The legacy workspace supports one configured owner; the hosted self-serve preview isolates multiple wallet-owned vaults in PostgreSQL.
+The owner can currently withdraw below the project reserve. That is intentional in the testnet design: the reserve constrains delegated operator spending, while the owner retains custody. It must be reviewed and described explicitly before mainnet.
 
-## Owner login and batch signing
+## Project guides
 
-See [owner authentication and signing setup](docs/owner-auth-and-signing.md). Set `OWNER_ADDRESS` to require signed login in file mode; it is mandatory for Postgres. Set a non-zero `VAULT_ADDRESS` to enable **Sign exact fixture batch** in Allocation review. Select Arc Testnet (5042002) in your wallet, review the exact batch, then sign.
+- [Product and contract specification](docs/project-spec.md)
+- [Build status](docs/build-status.md)
+- [Judge-ready evidence map](docs/judge-readiness.md)
+- [Mainnet readiness](docs/mainnet-readiness.md)
+- [VPS deployment](docs/vps-deployment.md)
+- [Hackathon submission copy](docs/submission-copy.md)
 
-**Fixture signatures use the `Splitt Fixture` domain. They cannot execute on a deployed `Splitt` vault.** A configured vault address does not prove deployment. Live authorization still requires fresh Arc state and current on-chain owner verification. Signing does not settle a fixture; simulation remains separate.
-
-## Architecture
-
-```mermaid
-flowchart LR
-  Web[Next.js owner workspace] --> API[Fastify API]
-  API --> Planner[Baseline or Anthropic planner]
-  API --> Storage[Postgres or fixture file]
-  Planner --> Validator[Deterministic validator]
-  Validator --> Review[Owner review]
-  Review --> Fixture[Local fixture settlement]
-  Review --> Signature[Exact fixture authorization]
-  Signature --> Circle[Circle operator adapter]
-  Circle --> Vault[ProjectVault on Arc Testnet]
-  Vault -. confirmed events .-> Reconciler[Indexer and reconciler]
-  Reconciler -.-> DB[Postgres]
-```
-
-## Remaining release gates
-
-1. ~~Execute the Circle payout, remainder and recovery proof.~~ Done 15 October 2026; see docs/testnet-payout-proof.json.
-2. ~~Deploy the API and PostgreSQL on the owner's VPS; verify HTTPS, signed owner access and wallet isolation.~~ Done 17 October 2026; see [public access evidence](docs/public-access-proof.json).
-3. ~~Run the configured model through validation and publish acceptance/fallback results.~~ Done for the small development regression set; no production-accuracy or allocation-superiority claim is made. See [evaluation details](docs/anthropic-evaluation.md).
-4. Onboard one consenting business with real invoice and contractor facts; synthetic scenarios stay excluded from adoption.
-5. Refresh the video with final evidence, upload to Loom/YouTube/Vimeo and complete the organizer's form. [Submission copy](docs/submission-copy.md) is ready for the owner.
-
-CCTP invoice funding is implemented for Base Sepolia → Arc Testnet with owner attribution, receipt verification and recovery. A completed transfer is still unproven; see [the runbook](docs/cctp-runbook.md). Paymaster and Gateway are outside this release; USYC, document extraction and contractor share links remain roadmap items. No pilot or mainnet readiness is claimed.
-
-## Security boundaries
-
-The model cannot sign, select addresses or modify policy. The vault accepts operator payouts only with the current owner’s EIP-712 signature. Domain binding includes chain ID and vault address; authorization binds plan, project version, ordered items and expiry. Reusing plan, execution or attribution IDs fails. A recipient transfer failure rolls back the entire batch. A changed owner policy invalidates prior signatures through the project version.
-
-The owner can withdraw below the reserve, by design; the reserve limits delegated operator spending. Contract source is unaudited and intended for testnet only. Direct `deposit()` credits the named project; unknown payer invoice matching is a separate app-level review and must not double-credit the deposit during live indexing.
-
-MIT license. Product spec: [docs/project-spec.md](docs/project-spec.md). Progress: [docs/build-status.md](docs/build-status.md).
-
-## Receipt automation and participant review (16 October)
-
-The Arc worker now queues validated allocation drafts from attributed receipts, with durable receipt IDs, expiring leases, bounded retry and in-app owner notifications. It cannot sign or create payout jobs. Payment-note analysis quotes evidence and compares it against indexed payer, invoice and amount data; it never attributes or spends funds. `/pilot` accepts a business's own anonymized case and exports unverified participant feedback without claiming adoption or payment volume. See [the upgrade release](docs/agent-upgrade-release.md) and [new note-reader evaluation](docs/payment-note-evaluation-live.json).
-
-Run `npm run notes:eval` for the offline synthetic comparison. `--live` requires an explicitly configured gateway credential and `PAYMENT_NOTE_MODEL`; the evaluation refuses a model whose currently published input/output pricing is nonzero. These ten development cases do not establish production accuracy. Public API hosting is complete; a verified real-business pilot remains pending.
+MIT licensed.

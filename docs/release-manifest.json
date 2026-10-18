@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-10-17T13:50:17.863Z",
+  "checkedAt": "2026-10-18T00:17:10.597Z",
   "secretScanPassed": true,
-  "fileCount": 258,
+  "fileCount": 260,
   "files": [
     ".dockerignore",
     ".env.example",
@@ -45,6 +45,7 @@
     "docs/institutional-ux-qa.md",
     "docs/integration-readiness.json",
     "docs/judge-readiness.md",
+    "docs/mainnet-readiness.md",
     "docs/model-evaluation.md",
     "docs/owner-auth-and-signing.md",
     "docs/owner-wallet.json",
@@ -117,6 +118,7 @@
     "scripts/check-anthropic-planner.ts",
     "scripts/check-arc.ts",
     "scripts/check-cctp.ts",
+    "scripts/check-mainnet-readiness.ts",
     "scripts/check-public-launch.ts",
     "scripts/check-publication.mjs",
     "scripts/circle-smoke.ts",

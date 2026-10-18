@@ -1,9 +1,13 @@
-Splitt's current build walkthrough: 2:40, 1080p, narrated locally, with a companion SRT caption file.
+# Splitt walkthrough release notes
 
-The captured UI demonstrates the synthetic underpayment/allocation/remainder flow using the deterministic engine. Amounts shown in the browser are simulated. The deployed Arc Testnet vault has independently verified exact creation/runtime bytecode matches. Circle's confirmed contract query transferred zero value and is not a contractor payout.
+The prepared walkthrough is 2:40, 1080p and narrated locally. It shows the synthetic underpayment and remainder example, the owner-signature boundary and the current public evidence: three controlled vaults, four Circle-executed batches and 2.4 test USDC on Arc Testnet.
 
-Contractor activation is 15 October 2026 at 16:18:53 Lagos. Full chain payout/remainder/recovery proof, real model evaluation and a consenting business pilot remain pending. This prerelease is a build preview, not the final hackathon submission.
+The video labels synthetic screens and controlled tests. It states that verified business pilots remain zero. It contains no private keys, account screens or customer data.
 
-Try the public demo: https://splitt-dun.vercel.app/demo
+- Planned render: `video/out/splitt-hackathon-demo-final.mp4`
+- Captions: `video/public/captions.srt`
+- Website: https://www.usesplitt.xyz
+- Live testnet app: https://www.usesplitt.xyz/start
+- Wallet-free demo: https://www.usesplitt.xyz/demo
 
-Source verification: https://repo.sourcify.dev/5042002/0x724c12bea7fab30e27a9b3f4d5581351ebc2c6c6
+Render and inspect the MP4, then upload it to Loom, YouTube or Vimeo before entering it in the organizer's form.

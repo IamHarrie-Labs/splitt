@@ -35,7 +35,8 @@
     "vault:verify:sourcify": "node scripts/verify-sourcify.mjs",
     "planner:eval": "tsx --env-file-if-exists=.env scripts/evaluate-planner.ts",
     "release:check": "node scripts/check-publication.mjs",
-    "notes:eval": "tsx --env-file-if-exists=.env scripts/evaluate-payment-notes.ts"
+    "notes:eval": "tsx --env-file-if-exists=.env scripts/evaluate-payment-notes.ts",
+    "mainnet:check": "tsx --env-file-if-exists=.env scripts/check-mainnet-readiness.ts"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",
