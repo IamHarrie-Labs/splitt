@@ -4,9 +4,11 @@
 
 When a client pays only part of an invoice, Splitt works out who gets paid, how much and why. An AI agent drafts the split, fixed rules check it, and nothing moves until the owner signs the exact batch. Payouts settle in USDC on Arc, executed through Circle.
 
-[![Watch the Splitt demo (1:30)](docs/media/splitt-demo-poster.jpg)](docs/media/splitt-demo.mp4)
+[![Splitt demo: click to watch the full 1:30 film with sound](docs/media/splitt-demo.gif)](docs/media/splitt-demo.mp4)
 
-[Watch the demo](docs/media/splitt-demo.mp4) · [Website](https://www.usesplitt.xyz) · [Launch the app](https://www.usesplitt.xyz/start) · [Try it without a wallet](https://www.usesplitt.xyz/demo) · [Docs](https://www.usesplitt.xyz/docs)
+_A short preview. [Watch the full film with sound and captions (1:30)](docs/media/splitt-demo.mp4)._
+
+[Website](https://www.usesplitt.xyz) · [Launch the app](https://www.usesplitt.xyz/start) · [Try it without a wallet](https://www.usesplitt.xyz/demo) · [Docs](https://www.usesplitt.xyz/docs)
 
 ## The problem
 
@@ -22,6 +24,10 @@ Agencies get paid in pieces. A client sends 1,200 of a 2,000 invoice, two contra
 6. **Replans when the rest arrives.** When the remaining 800 lands, Splitt pays Leo's outstanding 300 and nothing else. An old approval can never be used twice.
 
 ## Try it
+
+The wallet-free demo walks through the same example as the film: 1,200 of a 2,000 invoice arrives, 300 stays in reserve, Maya is paid 700 in full and Leo gets a permitted 200, then the remaining 800 settles Leo's last 300.
+
+[![The Splitt wallet-free demo, showing the Northstar project and the payments to Maya and Leo](docs/media/splitt-website-demo.png)](https://www.usesplitt.xyz/demo)
 
 | Option                                             | What you need                                    |
 | -------------------------------------------------- | ------------------------------------------------ |
