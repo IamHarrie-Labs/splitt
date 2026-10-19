@@ -58,14 +58,45 @@ Mainnet. `npm run mainnet:check` remains the release gate and must exit zero fir
    With `--broadcast` it records the transaction first, verifies the deployed code against the
    audited template and every constructor value, and prints the runtime hash the API pins.
 
-### Remaining
+7. **Separate USDC displays.** The live workspace shows the vault's balances separately:
+   - project USDC (the 6-decimal ERC-20);
+   - USDC received but not yet attributed to a project;
+   - the operator's gas balance (native USDC, 18 decimals).
 
-7. **Separate USDC displays.** Keep ERC-20 project USDC (6 decimals) and native gas (18 decimals)
-   visibly distinct on mainnet screens.
-8. **Alerts.** Balance drift, stuck jobs, paused vault, RPC and Circle failures.
-9. **Fork rehearsal.** Run the whole flow against an Arc Mainnet fork with a real Safe as owner.
-10. **Fuzz and invariant tests** for `totalAccounted`, unattributed funds, batch permutations and
-    blocklisted payees.
+   They are never added together.
+
+8. **Alerts.** Every minute the API checks for:
+   - the vault holding less USDC than it has accounted for;
+   - a paused vault;
+   - low operator gas;
+   - repeated worker failures, which point to the RPC or Circle;
+   - an unreachable RPC;
+   - payout jobs that are stuck, failed or stopped by an invariant violation.
+
+   New alerts go to `ALERT_WEBHOOK_URL` (Slack or Discord), repeat hourly while active, and send
+   a "resolved" message when they clear. They also appear at the top of the workspace.
+
+9. **Rehearsal with a real Safe.** `tests/mainnet-rehearsal.test.ts` deploys the official Safe
+   v1.4.1 contracts and runs the mainnet flow with a 2-of-3 Safe as owner:
+   - owner setup through Safe transactions;
+   - single-signature rejection and two-signature payment, checked by both the contract and
+     the API's verifier;
+   - replay protection, pause, operator revocation, the reserve on withdrawals and the
+     two-step ownership handover.
+
+   `REHEARSAL_FORK_URL=<Arc Mainnet RPC> npm run mainnet:rehearse` repeats it on a fork of Arc
+   Mainnet.
+
+10. **Fuzz and invariant tests.** `tests/vault-v2-invariants.test.ts` runs seeded random sequences
+    of every vault operation, including blocklisted payees and stale approvals. After each step
+    it checks the accounting, payout, cap, reserve and atomicity invariants. Seeds 20261019, 7 and
+    99 pass; `npm run test:fuzz` runs 300 steps.
+
+### Still open
+
+- The audit and the external gates below.
+- Run the rehearsal against a real Arc Mainnet fork once RPC access is available. This
+  environment cannot reach Arc's RPC.
 
 Your step-by-step checklist is [`mainnet-launch-guide.md`](mainnet-launch-guide.md).
 

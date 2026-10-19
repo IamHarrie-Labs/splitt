@@ -354,7 +354,7 @@ export class TestnetService {
     )
       fail('Expired or stale plan.');
     if (!(await this.ownerSigned(approval, signature))) fail('Owner signature invalid.', 403);
-    const signed = { ...approval, signature };
+    const signed = { ...approval, signature, signedAt: new Date().toISOString() };
     await this.chain.simulate(signed);
     return this.repo.transaction((s) => {
       if (s.jobs.some((j) => j.id === id)) return s.jobs.find((j) => j.id === id)!;

@@ -9,6 +9,7 @@ import { PostgresAuthRepository } from '../auth/repository.js';
 import { registerAuth } from '../auth/routes.js';
 import { LivePostgresRepository } from './repository.js';
 import { arcGateway } from './chain.js';
+import { AlertNotifier, evaluate, webhookSender, type VaultHealth } from './monitor.js';
 import { NETWORK } from '../network.js';
 import { TestnetService } from './service.js';
 import { circleOperator } from '../circle/operator.js';
@@ -18,6 +19,8 @@ import { analyzePaymentNote, paymentNoteInput } from '../agent/payment-notes.js'
 import { cctpGateway } from '../bridge/gateway.js';
 import { BridgeService } from '../bridge/service.js';
 import { registerBridgeRoutes } from '../bridge/routes.js';
+const serialize = (h: VaultHealth) =>
+  Object.fromEntries(Object.entries(h).map(([k, v]) => [k, typeof v === 'bigint' ? String(v) : v]));
 /** Runs one team-operated vault on the network SPLITT_MODE selects (arc-testnet or arc-mainnet). */
 export async function startTestnet() {
   const mode = NETWORK.id === 'mainnet' ? 'arc-mainnet' : 'arc-testnet';
@@ -121,6 +124,8 @@ export async function startTestnet() {
       operator,
       chainId: NETWORK.chainId,
       safe: await chain.safe(),
+      alerts: notifier.current(),
+      health: health && serialize(health),
     };
   });
   app.post('/testnet/projects', async (req) => service.register(req.body));
@@ -175,6 +180,7 @@ export async function startTestnet() {
   );
   let busy = false;
   let stopped = false;
+  let consecutiveFailures = 0;
   const tick = async () => {
     if (busy || stopped) return;
     busy = true;
@@ -182,16 +188,43 @@ export async function startTestnet() {
       await indexReceipts(repo, chain);
       await workerTick(repo, chain, provider);
       await draftReceipts(service);
+      consecutiveFailures = 0;
     } catch {
+      consecutiveFailures++;
       app.log.warn('Worker retry pending; no new batch created.');
     } finally {
       busy = false;
     }
   };
   const timer = setInterval(() => void tick(), 5000);
+  // Every minute: check balances, jobs and the worker, and alert the operators' webhook.
+  const notifier = new AlertNotifier(webhookSender(), `Splitt ${NETWORK.name}`);
+  let health: VaultHealth | null = null;
+  const watch = async () => {
+    health = await chain.health().catch(() => null);
+    const alerts = evaluate({
+      now: Date.now(),
+      state: await repo.snapshot(),
+      health,
+      consecutiveFailures,
+    });
+    if (!health)
+      alerts.push({
+        key: 'rpc-unreachable',
+        severity: 'critical',
+        message: 'Cannot read the vault from the RPC.',
+      });
+    await notifier.update(alerts, Date.now());
+  };
+  const monitor = setInterval(() => void watch().catch(() => undefined), 60_000);
+  app.get('/testnet/alerts', async () => ({
+    alerts: notifier.current(),
+    health: health && serialize(health),
+  }));
   app.addHook('onClose', async () => {
     stopped = true;
     clearInterval(timer);
+    clearInterval(monitor);
     while (busy) await new Promise((r) => setTimeout(r, 25));
     await db.close();
   });
@@ -200,5 +233,6 @@ export async function startTestnet() {
   await app.listen({ port: Number(process.env.PORT ?? 4000), host });
   for (const signal of ['SIGINT', 'SIGTERM'] as const) process.on(signal, () => void app.close());
   void tick();
+  void watch().catch(() => undefined);
   return app;
 }

@@ -7,6 +7,7 @@ import './testnet.css';
 import {
   createWalletClient,
   custom,
+  formatUnits,
   hashTypedData,
   type EIP1193Provider,
   type Address,
@@ -23,6 +24,13 @@ type Workspace = LiveState & {
   operator: Address;
   /** Set when the vault owner is a Safe: its members and how many must sign. */
   safe?: { owners: Address[]; threshold: number } | null;
+  alerts?: { key: string; severity: 'critical' | 'warning'; message: string }[];
+  health?: {
+    usdcBalance: string;
+    totalAccounted: string;
+    paused: boolean;
+    operatorGas: string;
+  } | null;
 };
 const demoOnly = process.env.NEXT_PUBLIC_DEMO_ONLY === 'true';
 export default function TestnetWorkspace() {
@@ -206,13 +214,66 @@ export default function TestnetWorkspace() {
                 >
                   Refresh receipts and settlement
                 </button>
-                <BridgeFunding
-                  workspace={workspace}
-                  api={api}
-                  refresh={refresh}
-                  busy={busy}
-                  run={run}
-                />
+                {(workspace.alerts ?? []).length > 0 && (
+                  <section
+                    className="panel"
+                    role="alert"
+                    aria-label="Operator alerts"
+                    style={{ padding: 24, marginTop: 24, border: '2px solid var(--danger)' }}
+                  >
+                    <h2>Needs attention</h2>
+                    {workspace.alerts!.map((a) => (
+                      <p key={a.key}>
+                        <strong>{a.severity === 'critical' ? 'Critical' : 'Warning'}:</strong>{' '}
+                        {a.message}
+                      </p>
+                    ))}
+                  </section>
+                )}
+                {workspace.health && (
+                  <section className="panel" style={{ padding: 24, marginTop: 24 }}>
+                    <h2>Funds</h2>
+                    {/* Project USDC is the 6-decimal ERC-20; gas is native USDC with 18 decimals.
+                        They are different balances and are never added together. */}
+                    <p>
+                      Project USDC in the vault:{' '}
+                      <strong>{formatUSDC(workspace.health.totalAccounted)} USDC</strong>
+                    </p>
+                    <p>
+                      Received but not yet attributed to a project:{' '}
+                      <strong>
+                        {formatUSDC(
+                          String(
+                            BigInt(workspace.health.usdcBalance) -
+                              BigInt(workspace.health.totalAccounted),
+                          ),
+                        )}{' '}
+                        USDC
+                      </strong>
+                    </p>
+                    <p>
+                      Operator gas (paid separately, never from project funds):{' '}
+                      <strong>
+                        {Number(formatUnits(BigInt(workspace.health.operatorGas), 18)).toFixed(4)}{' '}
+                        USDC
+                      </strong>
+                    </p>
+                    {workspace.health.paused && (
+                      <p style={{ color: 'var(--danger)' }}>
+                        The vault is paused. Payouts are stopped.
+                      </p>
+                    )}
+                  </section>
+                )}
+                {NETWORK.bridge && (
+                  <BridgeFunding
+                    workspace={workspace}
+                    api={api}
+                    refresh={refresh}
+                    busy={busy}
+                    run={run}
+                  />
+                )}
                 <section className="panel" style={{ padding: 24, marginTop: 24 }}>
                   <h2>Receipt activity</h2>
                   <p>

@@ -24,6 +24,7 @@ export const vaultAbi = parseAbi([
   'function operator() view returns (address)',
   'function usdc() view returns (address)',
   'function paused() view returns (bool)',
+  'function totalAccounted() view returns (uint256)',
   'function projects(bytes32) view returns (uint256 balance, uint256 reserveMin, uint256 maxPerPayment, uint256 maxPerDay, uint64 version, bool active)',
   'function commitments(bytes32) view returns (bytes32 projectId, address payee, uint256 maxAmount, uint256 paid, uint64 activeAfter, bool partialAllowed, bool cancelled)',
   'function spentOnDay(bytes32,uint256) view returns (uint256)',
@@ -110,6 +111,21 @@ export function arcGateway(vault: Address, owner: Address, operator: Address) {
     },
     async owner() {
       return read('owner');
+    },
+    /** Balances and state the monitor watches. */
+    async health() {
+      const [usdcBalance, totalAccounted, paused, operatorGas] = await Promise.all([
+        client.readContract({
+          address: USDC,
+          abi: erc20Abi,
+          functionName: 'balanceOf',
+          args: [vault],
+        }),
+        client.readContract({ address: vault, abi: vaultAbi, functionName: 'totalAccounted' }),
+        read('paused'),
+        client.getBalance({ address: operator }),
+      ]);
+      return { usdcBalance, totalAccounted, paused, operatorGas };
     },
     /** The owner's Safe members and threshold, or null when the owner is a single-key wallet. */
     async safe(): Promise<{ owners: Address[]; threshold: number } | null> {
@@ -284,5 +300,5 @@ export function arcGateway(vault: Address, owner: Address, operator: Address) {
   };
 }
 type Gateway = ReturnType<typeof arcGateway>;
-type Optional = 'verifyTypedData' | 'verifyMessage' | 'safe';
+type Optional = 'verifyTypedData' | 'verifyMessage' | 'safe' | 'health';
 export type ArcGateway = Omit<Gateway, Optional> & Partial<Pick<Gateway, Optional>>;

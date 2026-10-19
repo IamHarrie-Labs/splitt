@@ -61,8 +61,10 @@ in your local shell as `DEPLOYER_PRIVATE_KEY`, never in a file you commit.
   once to prove it works. Never point mainnet at the testnet database.
 - **API host.** Run a separate API for mainnet, for example `api.usesplitt.xyz`, and move
   testnet to its own subdomain such as `testnet-api.usesplitt.xyz`.
-- **Monitoring.** At minimum, set up an uptime check on `/health` and alerts for failed or
-  stuck payout jobs. Automated balance-drift alerts are still on the engineering list.
+- **Monitoring.** Create a Slack or Discord incoming webhook and set it as `ALERT_WEBHOOK_URL` on
+  the mainnet API. Splitt posts there when balances drift, a payout is stuck or fails, the vault is
+  paused, operator gas runs low, or the RPC or Circle stops responding. Also set up an uptime check
+  on `/health`.
 
 ## 6. Legal and support
 
@@ -149,11 +151,12 @@ Creating projects and adding payees are owner actions, so they're Safe transacti
 
 Only after that, raise the caps and announce.
 
-## Still on the engineering list
+## Before you deploy: rehearse on a mainnet fork
 
-These don't need your keys, and I can do them next:
+Once you have Arc Mainnet RPC access, run the full Safe rehearsal against a fork of mainnet:
 
-- separate on-screen displays for project USDC (6 decimals) and gas USDC (18 decimals);
-- balance-drift and stuck-job alerts;
-- a full rehearsal on an Arc Mainnet fork with a real Safe;
-- fuzz and invariant tests for the contract's accounting.
+```sh
+REHEARSAL_FORK_URL=https://rpc.mainnet.arc.io npm run mainnet:rehearse
+```
+
+It must pass. Also run `npm run test:fuzz` once on the release commit.
