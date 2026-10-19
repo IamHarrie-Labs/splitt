@@ -93,6 +93,17 @@
       }
     ]
   },
+  "immutableNames": {
+    "1455": "usdc",
+    "1457": "minimumPayeeChangeDelay",
+    "4312": "_cachedDomainSeparator",
+    "4314": "_cachedChainId",
+    "4316": "_cachedThis",
+    "4318": "_hashedName",
+    "4320": "_hashedVersion",
+    "4323": "_name",
+    "4326": "_version"
+  },
   "deploymentStatus": "blocked_pending_audit_and_production_controls",
   "note": "Runtime changes when constructor immutables are embedded. Lock the audited deployed runtime hash separately before release."
 }

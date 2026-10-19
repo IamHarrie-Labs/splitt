@@ -38,7 +38,8 @@
     "release:check": "node scripts/check-publication.mjs",
     "notes:eval": "tsx --env-file-if-exists=.env scripts/evaluate-payment-notes.ts",
     "mainnet:check": "tsx --env-file-if-exists=.env scripts/check-mainnet-readiness.ts",
-    "mainnet:artifact": "node scripts/build-mainnet-candidate.mjs"
+    "mainnet:artifact": "node scripts/build-mainnet-candidate.mjs",
+    "mainnet:deploy": "tsx --env-file-if-exists=.env scripts/deploy-mainnet-vault.ts"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",

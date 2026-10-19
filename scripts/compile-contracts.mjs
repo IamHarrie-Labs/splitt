@@ -19,6 +19,8 @@ export function compile(includeRuntime = false) {
       evmVersion: 'paris',
       outputSelection: {
         '*': {
+          // The AST names each immutable, so a deployed runtime can be predicted exactly.
+          ...(includeRuntime ? { '': ['ast'] } : {}),
           '*': includeRuntime
             ? [
                 'abi',
@@ -48,6 +50,23 @@ export function compile(includeRuntime = false) {
   );
   const errors = (output.errors ?? []).filter((error) => error.severity === 'error');
   if (errors.length) throw new Error(errors.map((error) => error.formattedMessage).join('\n'));
+  if (includeRuntime) {
+    const names = {};
+    const walk = (node) => {
+      if (!node || typeof node !== 'object') return;
+      if (node.nodeType === 'VariableDeclaration' && node.mutability === 'immutable')
+        names[node.id] = node.name;
+      for (const value of Object.values(node)) walk(value);
+    };
+    for (const source of Object.values(output.sources ?? {})) walk(source.ast);
+    for (const contracts of Object.values(output.contracts))
+      for (const artifact of Object.values(contracts)) {
+        const refs = artifact.evm?.deployedBytecode?.immutableReferences ?? {};
+        artifact.immutableNames = Object.fromEntries(
+          Object.keys(refs).map((id) => [id, names[id]]),
+        );
+      }
+  }
   fs.mkdirSync('artifacts', { recursive: true });
   fs.writeFileSync(
     'artifacts/verification-input.json',

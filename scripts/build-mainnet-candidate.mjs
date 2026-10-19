@@ -16,6 +16,7 @@ const manifest = {
   creationCodeHash: keccak256(`0x${artifact.evm.bytecode.object}`),
   runtimeTemplateHash: keccak256(`0x${artifact.evm.deployedBytecode.object}`),
   immutableReferences: artifact.evm.deployedBytecode.immutableReferences,
+  immutableNames: artifact.immutableNames,
   deploymentStatus: 'blocked_pending_audit_and_production_controls',
   note: 'Runtime changes when constructor immutables are embedded. Lock the audited deployed runtime hash separately before release.',
 };
