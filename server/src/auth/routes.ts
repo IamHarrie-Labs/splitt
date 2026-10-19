@@ -16,6 +16,8 @@ export type AuthOptions = {
   currentOwner?: () => Promise<Address>;
   /** Verifies through the chain so multisig (ERC-1271) owners can sign in; EOA-only when unset. */
   verifyMessage?: (message: string, address: Address, signature: `0x${string}`) => Promise<boolean>;
+  /** For a multisig owner: its member wallets, re-read on every check so removals take effect. */
+  ownerSigners?: () => Promise<Address[]>;
 };
 declare module 'fastify' {
   interface FastifyRequest {
@@ -54,8 +56,11 @@ export async function registerAuth(
   };
   async function checkOwner(wallet: string) {
     if (options?.allowAnyWallet) return;
-    if (!expectedOwner || wallet.toLowerCase() !== expectedOwner)
-      throw failure(403, 'This wallet is not the configured workspace owner.');
+    const member =
+      !!options?.ownerSigners &&
+      (await options.ownerSigners()).some((s) => s.toLowerCase() === wallet.toLowerCase());
+    if (!expectedOwner || (wallet.toLowerCase() !== expectedOwner && !member))
+      throw failure(403, 'This wallet is not the workspace owner or one of its Safe signers.');
     if (options?.currentOwner && (await options.currentOwner()).toLowerCase() !== expectedOwner)
       throw failure(403, 'Vault ownership changed. Update the workspace owner before continuing.');
   }

@@ -1,6 +1,12 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
-import { verifyTypedData, type Address, type Hex } from 'viem';
+import {
+  hashTypedData,
+  recoverTypedDataAddress,
+  verifyTypedData,
+  type Address,
+  type Hex,
+} from 'viem';
 import {
   addressSchema,
   moneySchema,
@@ -21,7 +27,7 @@ import { approvalTypedData } from '../approvals.js';
 import { signatureSchema } from '../auth/routes.js';
 import type { BatchApproval, StoredPlan } from '../store.js';
 import { NETWORK } from '../network.js';
-import type { SplittNetwork } from '@splitt/core';
+import { combineSafeSignatures, safeMessageTypedData, type SplittNetwork } from '@splitt/core';
 const hex32 = z.string().regex(/^0x[0-9a-fA-F]{64}$/);
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 export const metadataSchema = z
@@ -262,6 +268,56 @@ export class TestnetService {
         fixtureOnly: false,
       };
     });
+  }
+  /**
+   * One Safe member's signature for a prepared batch. Signatures are stored until the Safe's
+   * threshold is met, then combined and queued through the same checks as a direct signature.
+   */
+  async cosign(id: string, input: unknown) {
+    const signature = z.object({ signature: signatureSchema }).strict().parse(input)
+      .signature as Hex;
+    if (!/^0x[0-9a-fA-F]{130}$/.test(signature))
+      fail('Each Safe member signs once, with a single wallet signature.');
+    const safe = (await this.chain.safe?.()) ?? fail('The vault owner is not a Safe.', 409);
+    const stored = await this.repo.snapshot();
+    const plan = stored.plans.find((p) => p.id === id) ?? fail('Plan not found.', 404);
+    const approval = plan.approval ?? fail('Review the batch first.');
+    const existing = stored.jobs.find((job) => job.id === id);
+    if (existing) return { collected: safe.threshold, threshold: safe.threshold, job: existing };
+    if (BigInt(approval.message.deadline) <= BigInt(Math.floor(Date.now() / 1000)))
+      fail('Approval expired. Review the batch again.');
+    const digest = hashTypedData(approvalTypedData(approval));
+    const signer = (
+      await recoverTypedDataAddress({
+        ...safeMessageTypedData(this.owner, this.network.chainId, digest),
+        signature,
+      })
+    ).toLowerCase();
+    const members = safe.owners.map((o) => o.toLowerCase());
+    if (!members.includes(signer)) fail('This wallet is not a signer on the owner Safe.', 403);
+    const batch = (a: typeof approval) =>
+      hashJson({ domain: a.domain, message: a.message, items: a.items });
+    const collected = await this.repo.transaction((s) => {
+      const current = s.plans.find((p) => p.id === id)?.approval;
+      if (!current || batch(current) !== batch(approval))
+        fail('The batch changed while signing. Review it again.');
+      current.cosignatures = { ...current.cosignatures, [signer]: signature };
+      return current.cosignatures;
+    });
+    // Anyone removed from the Safe since signing no longer counts.
+    const valid = Object.fromEntries(
+      Object.entries(collected).filter(([k]) => members.includes(k)),
+    );
+    const status = {
+      collected: Object.keys(valid).length,
+      threshold: safe.threshold,
+      signers: Object.keys(valid),
+    };
+    if (status.collected < safe.threshold) return status;
+    return {
+      ...status,
+      job: await this.enqueue(id, { signature: combineSafeSignatures(valid, safe.threshold) }),
+    };
   }
   async enqueue(id: string, input: unknown) {
     const signature = signatureSchema.parse(

@@ -79,6 +79,7 @@ export async function startTestnet() {
       currentOwner: chain.owner,
       repository: new PostgresAuthRepository(db),
       verifyMessage: chain.verifyMessage,
+      ownerSigners: async () => (await chain.safe())?.owners ?? [],
     },
     { storage: 'postgres', approvalEnabled: true },
   );
@@ -119,6 +120,7 @@ export async function startTestnet() {
       owner,
       operator,
       chainId: NETWORK.chainId,
+      safe: await chain.safe(),
     };
   });
   app.post('/testnet/projects', async (req) => service.register(req.body));
@@ -167,6 +169,9 @@ export async function startTestnet() {
   );
   app.post<{ Params: { id: string } }>('/testnet/plans/:id/submit', async (req) =>
     service.enqueue(req.params.id, req.body),
+  );
+  app.post<{ Params: { id: string } }>('/testnet/plans/:id/cosign', async (req) =>
+    service.cosign(req.params.id, req.body),
   );
   let busy = false;
   let stopped = false;

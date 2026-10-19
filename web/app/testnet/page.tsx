@@ -4,19 +4,33 @@ import Link from 'next/link';
 import SiteFooter from '../site-footer';
 import SiteHeader from '../site-header';
 import './testnet.css';
-import { createWalletClient, custom, type EIP1193Provider, type Address, type Hex } from 'viem';
-import { authorizationTypes, formatUSDC } from '@splitt/core';
+import {
+  createWalletClient,
+  custom,
+  hashTypedData,
+  type EIP1193Provider,
+  type Address,
+  type Hex,
+} from 'viem';
+import { authorizationTypes, formatUSDC, safeMessageTypedData } from '@splitt/core';
 import type { LiveState } from '../../../server/src/live/repository';
 import type { BatchApproval } from '../../../server/src/store';
 import BridgeFunding from './bridge-funding';
 import { LIVE_MODES, NETWORK, addressUrl, switchNetworkMessage, txUrl } from '../network';
-type Workspace = LiveState & { vault: Address; owner: Address; operator: Address };
+type Workspace = LiveState & {
+  vault: Address;
+  owner: Address;
+  operator: Address;
+  /** Set when the vault owner is a Safe: its members and how many must sign. */
+  safe?: { owners: Address[]; threshold: number } | null;
+};
 const demoOnly = process.env.NEXT_PUBLIC_DEMO_ONLY === 'true';
 export default function TestnetWorkspace() {
   const [mode, setMode] = useState(demoOnly ? 'public-preview' : 'checking'),
     [workspace, setWorkspace] = useState<Workspace>(),
     [csrf, setCsrf] = useState(''),
     [error, setError] = useState(''),
+    [notice, setNotice] = useState(''),
     [busy, setBusy] = useState(false),
     [review, setReview] = useState<{ id: string; approval: BatchApproval }>();
   async function api<T>(path: string, body?: unknown, token = csrf): Promise<T> {
@@ -90,22 +104,50 @@ export default function TestnetWorkspace() {
     if (!provider) throw new Error('Owner wallet required.');
     const client = createWalletClient({ transport: custom(provider) });
     const accounts = await client.getAddresses();
-    if (accounts[0]?.toLowerCase() !== workspace.owner.toLowerCase())
-      throw new Error('Select the configured owner wallet.');
+    const account = accounts[0];
+    const safe = workspace.safe;
+    const allowed = safe
+      ? safe.owners.some((o) => o.toLowerCase() === account?.toLowerCase())
+      : account?.toLowerCase() === workspace.owner.toLowerCase();
+    if (!account || !allowed)
+      throw new Error(
+        safe
+          ? 'Select a wallet that signs for the owner Safe.'
+          : 'Select the configured owner wallet.',
+      );
     if ((await client.getChainId()) !== NETWORK.chainId) throw new Error(switchNetworkMessage);
     const a = review.approval;
-    const signature = await client.signTypedData({
-      account: accounts[0],
+    const batch = {
       domain: a.domain,
       types: authorizationTypes,
-      primaryType: 'PlanAuthorization',
+      primaryType: 'PlanAuthorization' as const,
       message: {
         ...a.message,
         projectVersion: BigInt(a.message.projectVersion),
         deadline: BigInt(a.message.deadline),
       },
-    });
-    await api(`/testnet/plans/${review.id}/submit`, { signature });
+    };
+    if (safe) {
+      // Each Safe member signs the Safe's wrapper of this exact batch; the API combines them.
+      const signature = await client.signTypedData({
+        account,
+        ...safeMessageTypedData(workspace.owner, NETWORK.chainId, hashTypedData(batch)),
+      });
+      const result = await api<{ collected: number; threshold: number; job?: unknown }>(
+        `/testnet/plans/${review.id}/cosign`,
+        { signature },
+      );
+      if (!result.job) {
+        setNotice(
+          `Signature recorded: ${result.collected} of ${result.threshold}. Another Safe signer needs to sign this batch.`,
+        );
+        return;
+      }
+    } else {
+      const signature = await client.signTypedData({ account, ...batch });
+      await api(`/testnet/plans/${review.id}/submit`, { signature });
+    }
+    setNotice('Batch authorized and queued for execution.');
     setReview(undefined);
     await refresh();
   }
@@ -114,14 +156,18 @@ export default function TestnetWorkspace() {
       <SiteHeader />
       <main className="testnet-main" id="main-content">
         <header className="art-band">
-          <h1>Testnet workspace</h1>
-          <p>Review and authorize payments on Arc Testnet. Testnet USDC only.</p>
+          <h1>{NETWORK.id === 'mainnet' ? 'Workspace' : 'Testnet workspace'}</h1>
+          <p>
+            Review and authorize payments on {NETWORK.name}.
+            {NETWORK.id === 'mainnet' ? ' These are real USDC payouts.' : ' Testnet USDC only.'}
+          </p>
         </header>
         {error && (
           <p role="alert" style={{ color: 'var(--danger)' }}>
             {error}
           </p>
         )}
+        {notice && <p role="status">{notice}</p>}
         {!LIVE_MODES.includes(mode) ? (
           <section className="panel" style={{ padding: 24, marginTop: 24 }}>
             <h2>
@@ -463,11 +509,21 @@ export default function TestnetWorkspace() {
                     aria-label="Exact batch review"
                     style={{ padding: 24, marginTop: 24, border: '2px solid var(--green)' }}
                   >
-                    <h2>Approve this testnet payment batch</h2>
+                    <h2>Approve this payment batch</h2>
                     <p>
-                      This signature authorizes real testnet USDC payouts on Arc Testnet through
-                      your Circle operator.
+                      This signature authorizes {NETWORK.id === 'mainnet' ? 'real' : 'testnet'} USDC
+                      payouts on {NETWORK.name} (chain {NETWORK.chainId}) through your Circle
+                      operator.
                     </p>
+                    {workspace.safe && (
+                      <p>
+                        Owner Safe: {workspace.owner}
+                        <br />
+                        Signatures needed: {workspace.safe.threshold} of{' '}
+                        {workspace.safe.owners.length}. Collected so far:{' '}
+                        {Object.keys(review.approval.cosignatures ?? {}).length}.
+                      </p>
+                    )}
                     <p>
                       Vault: {review.approval.domain.verifyingContract}
                       <br />
@@ -502,7 +558,7 @@ export default function TestnetWorkspace() {
                       disabled={busy}
                       onClick={() => void run(approve)}
                     >
-                      Sign and queue reviewed batch
+                      {workspace.safe ? 'Add my Safe signature' : 'Sign and queue reviewed batch'}
                     </button>
                     <button className="button secondary" onClick={() => setReview(undefined)}>
                       Cancel

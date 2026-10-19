@@ -41,21 +41,33 @@ Mainnet. `npm run mainnet:check` remains the release gate and must exit zero fir
    Self-serve vaults and the CCTP bridge stay testnet-only: on mainnet, `/start` routes teams to
    onboarding instead of deploying the unaudited V1 artifact.
 
+5. **Safe signing in the app.** When the vault owner is a Safe, any current Safe member can sign
+   in, and membership is re-read on every request, so removal takes effect at once. Each member
+   adds their signature to the exact batch from the review screen. The API stores the
+   signatures, combines them in the order Safe requires once the threshold is met, and queues the
+   batch through the same ERC-1271 check as any other approval.
+6. **Checked deploy script.** `npm run mainnet:deploy` is a dry run by default. It refuses to
+   deploy unless:
+   - the chain is 5042;
+   - the owner is a multisig and differs from the operator and deployer;
+   - the payee delay is at least 24 hours;
+   - an audit report link is set;
+   - the checkout is clean and at the release commit;
+   - the bytecode matches the audited manifest.
+
+   With `--broadcast` it records the transaction first, verifies the deployed code against the
+   audited template and every constructor value, and prints the runtime hash the API pins.
+
 ### Remaining
 
-5. **Safe signing flow in the UI.** The API now accepts a multisig signature, but the web app still
-   asks a single browser wallet to sign. Collecting the Safe threshold (through the Safe app or Safe
-   Transaction Service) and showing the full pre-sign summary is the next piece.
-6. **Separate USDC displays.** Keep ERC-20 project USDC (6 decimals) and native gas (18 decimals)
+7. **Separate USDC displays.** Keep ERC-20 project USDC (6 decimals) and native gas (18 decimals)
    visibly distinct on mainnet screens.
-7. **Mainnet deploy script.** A reviewed script that refuses any chain but `5042`, records the
-   transaction before waiting, verifies constructor arguments and the runtime hash, and requires a
-   passing `npm run mainnet:check`.
-8. **Fork rehearsal.** Run the whole flow against an Arc Mainnet fork with a real Safe as owner:
-   deploy, create a project, activate a payee, pay, pause, revoke the operator, transfer ownership
-   and withdraw above reserve. Record the transcript as evidence.
-9. **Fuzz and invariant tests** for `totalAccounted`, unattributed funds, batch permutations and
-   blocklisted payees.
+8. **Alerts.** Balance drift, stuck jobs, paused vault, RPC and Circle failures.
+9. **Fork rehearsal.** Run the whole flow against an Arc Mainnet fork with a real Safe as owner.
+10. **Fuzz and invariant tests** for `totalAccounted`, unattributed funds, batch permutations and
+    blocklisted payees.
+
+Your step-by-step checklist is [`mainnet-launch-guide.md`](mainnet-launch-guide.md).
 
 ## Phase 2: external gates (in parallel, owner: Harrie)
 

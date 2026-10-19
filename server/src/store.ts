@@ -31,6 +31,8 @@ export type BatchApproval = {
   items: { executionId: `0x${string}`; commitmentId: `0x${string}`; amount: string }[];
   signature?: `0x${string}`;
   signedAt?: string;
+  /** Safe owner signatures collected so far, keyed by lowercase signer address. */
+  cosignatures?: Record<string, `0x${string}`>;
 };
 export type LedgerEntry = {
   id: string;

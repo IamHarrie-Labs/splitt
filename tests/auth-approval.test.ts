@@ -194,3 +194,25 @@ describe('owner sessions and exact batch approval', () => {
     expect((await post(`/plans/${plan.id}/prepare`)).statusCode).toBe(409);
   });
 });
+
+describe('Safe owner sign-in', () => {
+  it('lets current Safe members sign in for a Safe owner and refuses everyone else', async () => {
+    const member = privateKeyToAccount(generatePrivateKey());
+    const safe = '0x5afe5afe5afe5afe5afe5afe5afe5afe5afe5afe' as const;
+    let members = [member.address];
+    app = await buildApp(new FixtureStore(), false, {
+      auth: { owner: safe, now: () => new Date(), ownerSigners: async () => members },
+    });
+    const challenge = (await post('/auth/challenge', { address: member.address })).json();
+    const signature = await member.signMessage({ message: challenge.message });
+    const response = await post('/auth/verify', { nonce: challenge.nonce, signature });
+    expect(response.statusCode).toBe(200);
+    expect((await post('/auth/challenge', { address: outsider.address })).statusCode).toBe(403);
+    // Removing the member from the Safe ends their existing session too.
+    members = [];
+    const session = String(response.headers['set-cookie']).split(';')[0];
+    expect((await app.inject({ url: '/workspace', headers: { cookie: session } })).statusCode).toBe(
+      403,
+    );
+  });
+});

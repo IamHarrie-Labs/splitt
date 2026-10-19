@@ -37,6 +37,10 @@ export const vaultAbi = parseAbi([
   'event PayoutExecuted(bytes32 indexed executionId,bytes32 indexed commitmentId,bytes32 indexed projectId,address payee,uint256 amount,bytes32 planHash)',
   'event PlanExecuted(bytes32 indexed planId,bytes32 indexed planHash,bytes32 indexed projectId,uint256 totalAmount)',
 ]);
+const safeAbi = parseAbi([
+  'function getOwners() view returns (address[])',
+  'function getThreshold() view returns (uint256)',
+]);
 export const arc = defineChain({
   id: ARC_ID,
   name: NETWORK.name,
@@ -71,6 +75,7 @@ export function arcGateway(vault: Address, owner: Address, operator: Address) {
       retryDelay: 1000,
     }),
   });
+  let safeCache: { at: number; value: { owners: Address[]; threshold: number } | null } | undefined;
   const read = <T extends 'owner' | 'operator' | 'usdc' | 'paused'>(name: T) =>
     client.readContract({ address: vault, abi: vaultAbi, functionName: name });
   return {
@@ -105,6 +110,20 @@ export function arcGateway(vault: Address, owner: Address, operator: Address) {
     },
     async owner() {
       return read('owner');
+    },
+    /** The owner's Safe members and threshold, or null when the owner is a single-key wallet. */
+    async safe(): Promise<{ owners: Address[]; threshold: number } | null> {
+      if (safeCache && Date.now() - safeCache.at < 30_000) return safeCache.value;
+      let value: { owners: Address[]; threshold: number } | null = null;
+      if (await client.getCode({ address: owner })) {
+        const [owners, threshold] = await Promise.all([
+          client.readContract({ address: owner, abi: safeAbi, functionName: 'getOwners' }),
+          client.readContract({ address: owner, abi: safeAbi, functionName: 'getThreshold' }),
+        ]);
+        value = { owners: [...owners], threshold: Number(threshold) };
+      }
+      safeCache = { at: Date.now(), value };
+      return value;
     },
     /** Checks EOA, ERC-1271 (multisig) and ERC-6492 owner signatures against current chain state. */
     async verifyTypedData(typed: TypedDataDefinition, address: Address, signature: Hex) {
@@ -264,5 +283,6 @@ export function arcGateway(vault: Address, owner: Address, operator: Address) {
     },
   };
 }
-export type ArcGateway = Omit<ReturnType<typeof arcGateway>, 'verifyTypedData' | 'verifyMessage'> &
-  Partial<Pick<ReturnType<typeof arcGateway>, 'verifyTypedData' | 'verifyMessage'>>;
+type Gateway = ReturnType<typeof arcGateway>;
+type Optional = 'verifyTypedData' | 'verifyMessage' | 'safe';
+export type ArcGateway = Omit<Gateway, Optional> & Partial<Pick<Gateway, Optional>>;

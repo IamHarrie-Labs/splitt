@@ -85,7 +85,7 @@ Open [localhost:3000](http://localhost:3000). The app runs on fixture data by de
 
 ```sh
 npm run typecheck          # strict TypeScript
-npm test                   # 198 tests, including contract tests on a local chain
+npm test                   # 204 tests, including contract tests on a local chain
 npm run contracts:compile
 npm run build
 npm run release:check      # scans the release for credentials
@@ -101,7 +101,7 @@ npm run release:check      # scans the release for credentials
 
 ## More
 
-- [Mainnet launch plan](docs/mainnet-launch-plan.md) and [readiness gates](docs/mainnet-readiness.md)
+- [Mainnet launch guide](docs/mainnet-launch-guide.md), [launch plan](docs/mainnet-launch-plan.md) and [readiness gates](docs/mainnet-readiness.md)
 - [Product and contract specification](docs/project-spec.md)
 - [Demo film source](video/README.md) (narration, music and captions are generated from code)
 - [VPS deployment](docs/vps-deployment.md)
