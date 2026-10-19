@@ -263,11 +263,11 @@ export default function Landing() {
                       </div>
                       <dl className="preview-lines">
                         <div>
-                          <dt>Amara</dt>
+                          <dt>Maya</dt>
                           <dd>$700</dd>
                         </div>
                         <div>
-                          <dt>Tobi</dt>
+                          <dt>Leo</dt>
                           <dd>$200</dd>
                         </div>
                         <div>
@@ -285,11 +285,11 @@ export default function Landing() {
                       <p className="preview-caption">Two recipients. One exact batch.</p>
                       <dl className="preview-lines">
                         <div>
-                          <dt>Amara</dt>
+                          <dt>Maya</dt>
                           <dd>$700</dd>
                         </div>
                         <div>
-                          <dt>Tobi</dt>
+                          <dt>Leo</dt>
                           <dd>$200</dd>
                         </div>
                         <div className="preview-total">

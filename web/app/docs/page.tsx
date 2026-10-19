@@ -120,12 +120,12 @@ export default function Documentation() {
               </p>
               <ol>
                 <li>The 1,200 USDC receipt already has a draft ready for review.</li>
-                <li>Review 700 for Amara and 200 for Tobi, leaving the 300 reserve.</li>
+                <li>Review 700 for Maya and 200 for Leo, leaving the 300 reserve.</li>
                 <li>Run the approved batch in the demo.</li>
                 <li>
                   Add the 800 USDC still owed by the client. A new draft appears automatically.
                 </li>
-                <li>Review Tobi’s remaining 300 and run the final demo batch.</li>
+                <li>Review Leo’s remaining 300 and run the final demo batch.</li>
               </ol>
               <p>
                 The project ends with 800 USDC. Fieldwork’s separate 1,000 balance is unchanged.

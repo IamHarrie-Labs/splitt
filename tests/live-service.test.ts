@@ -108,7 +108,7 @@ describe('Arc owner authorization and remainder flow', () => {
       plan.output.items
         .filter((i) => i.action === 'pay')
         .map((i) => [i.commitment_id, i.amount_micro]),
-    ).toEqual([['tobi', '300000000']]);
+    ).toEqual([['leo', '300000000']]);
     expect(fixtureProjects()[1].balance).toBe('1000000000');
   });
 });

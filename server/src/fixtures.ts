@@ -13,7 +13,7 @@ export function fixtureProjects(): Project[] {
     projectId: 'northstar',
     name,
     role,
-    payee: address(id === 'amara' ? 2 : 3),
+    payee: address(id === 'maya' ? 2 : 3),
     maximum: parseUSDC(amount),
     paid: '0',
     dueDate: '2026-10-03',
@@ -47,10 +47,10 @@ export function fixtureProjects(): Project[] {
       unresolved: false,
       source: 'fixture',
       commitments: [
-        make('amara', 'Amara Okafor', 'Brand strategy & direction', '700', {
+        make('maya', 'Maya Chen', 'Brand strategy & direction', '700', {
           blocksDelivery: true,
         }),
-        make('tobi', 'Tobi Adebayo', 'Website development', '500', {
+        make('leo', 'Leo Martin', 'Website development', '500', {
           partialAllowed: true,
           dueDate: '2026-10-13',
           deferUntil: '2026-10-17',

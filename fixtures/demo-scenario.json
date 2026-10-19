@@ -22,10 +22,10 @@
       "source": "fixture",
       "commitments": [
         {
-          "id": "amara",
+          "id": "maya",
           "onchainId": "0x434b65cb342fb78156205c1c6c97018c90f60f841108dcc0ed17aea09f84fcf8",
           "projectId": "northstar",
-          "name": "Amara Okafor",
+          "name": "Maya Chen",
           "role": "Brand strategy & direction",
           "payee": "0x0000000000000000000000000000000000000002",
           "maximum": "700000000",
@@ -41,10 +41,10 @@
           "dependsOn": null
         },
         {
-          "id": "tobi",
+          "id": "leo",
           "onchainId": "0x3fdf1cdb0ad7fccd028a997d05ea0eb7f536f1a9f5d5b38fd1bb76e5d7385205",
           "projectId": "northstar",
-          "name": "Tobi Adebayo",
+          "name": "Leo Martin",
           "role": "Website development",
           "payee": "0x0000000000000000000000000000000000000003",
           "maximum": "500000000",

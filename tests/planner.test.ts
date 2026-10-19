@@ -32,14 +32,14 @@ describe('allocation safety', () => {
     project.commitments[0].blocksDelivery = false;
     project.commitments[1].dueDate = '2026-10-01';
     const plan = baselinePlan(buildFacts(project, demoNow()));
-    expect(plan.items[0].commitment_id).toBe('tobi');
+    expect(plan.items[0].commitment_id).toBe('leo');
   });
   it('never pays a non-partial commitment partially', () => {
     const { project } = setup();
     project.commitments[1].partialAllowed = false;
     const facts = buildFacts(project, demoNow());
     const plan = baselinePlan(facts);
-    expect(plan.items.find((i) => i.commitment_id === 'tobi')?.action).toBe('defer');
+    expect(plan.items.find((i) => i.commitment_id === 'leo')?.action).toBe('defer');
     expect(validatePlan(plan, facts, facts).ok).toBe(true);
   });
   it('rejects reserve breaches and forged facts', () => {

@@ -21,7 +21,7 @@ const EXPLORER = 'https://explorer.testnet.arc.io/tx/';
 const CHAIN_PROOF = [
   {
     step: 'First batch',
-    detail: '0.7 USDC to Amara, 0.2 USDC to Tobi',
+    detail: '0.7 USDC to Maya, 0.2 USDC to Leo',
     tx: '0x938ea7d6370c06d25daf6c73493e5c43f304abf9938563b7bd934325edaebdc5',
   },
   {
@@ -31,7 +31,7 @@ const CHAIN_PROOF = [
   },
   {
     step: 'Final batch',
-    detail: '0.3 USDC to Tobi; project keeps 0.8',
+    detail: '0.3 USDC to Leo; project keeps 0.8',
     tx: '0x098fa70efda77e5f22396521bce7d5ccdeb3bbbaab8997e9ae8551a0ceb32881',
   },
 ];
