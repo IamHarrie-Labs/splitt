@@ -39,10 +39,13 @@
     "notes:eval": "tsx --env-file-if-exists=.env scripts/evaluate-payment-notes.ts",
     "mainnet:check": "tsx --env-file-if-exists=.env scripts/check-mainnet-readiness.ts",
     "mainnet:artifact": "node scripts/build-mainnet-candidate.mjs",
-    "mainnet:deploy": "tsx --env-file-if-exists=.env scripts/deploy-mainnet-vault.ts"
+    "mainnet:deploy": "tsx --env-file-if-exists=.env scripts/deploy-mainnet-vault.ts",
+    "test:fuzz": "VAULT_FUZZ_STEPS=300 vitest run tests/vault-v2-invariants.test.ts",
+    "mainnet:rehearse": "vitest run tests/mainnet-rehearsal.test.ts"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",
+    "@safe-global/safe-contracts": "1.4.1",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
