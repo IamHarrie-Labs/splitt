@@ -1,1328 +1,1380 @@
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate } from 'remotion';
 import {
-  Atmosphere,
+  Abs,
   B,
-  BAR,
-  Check,
+  Camera,
+  Confetti,
   Count,
-  Flow,
-  H,
-  Scramble,
-  Sphere,
-  Words,
+  Marquee,
+  Rise,
+  Shapes,
+  Slam,
+  backOut,
   c,
+  display,
   expo,
   font,
   inOut,
   mix,
+  pop,
   prog,
   pulse,
+  shake,
+  useCue,
   useF,
 } from './kit';
 
-const Dark = ({
-  children,
-  tint,
-  beat,
-}: {
-  children: React.ReactNode;
-  tint?: string;
-  beat?: number;
-}) => (
-  <AbsoluteFill style={{ background: c.void, overflow: 'hidden' }}>
-    <Atmosphere tint={tint} beat={beat} />
-    {children}
-  </AbsoluteFill>
+const Bg = ({ color, children }: { color: string; children: React.ReactNode }) => (
+  <AbsoluteFill style={{ background: color, overflow: 'hidden' }}>{children}</AbsoluteFill>
 );
 
-const Light = ({ children }: { children: React.ReactNode }) => {
-  const f = useF();
-  return (
-    <AbsoluteFill
-      style={{
-        background: `radial-gradient(circle at ${30 + Math.sin(f / 120) * 8}% 20%, ${c.surface} 0%, ${c.pearl} 52%, #e2e9f0 100%)`,
-        overflow: 'hidden',
-        color: c.ink,
-      }}
-    >
-      <svg width={1920} height={1080} style={{ position: 'absolute', inset: 0, opacity: 0.5 }}>
-        {Array.from({ length: 13 }, (_, i) => (
-          <line
-            key={i}
-            x1={i * 160}
-            x2={i * 160}
-            y1={0}
-            y2={1080}
-            stroke={c.rule}
-            strokeWidth={1}
-          />
-        ))}
-      </svg>
-      {children}
-    </AbsoluteFill>
-  );
-};
+const Avatar = ({
+  letter,
+  color,
+  size = 120,
+}: {
+  letter: string;
+  color: string;
+  size?: number;
+}) => (
+  <div
+    style={{
+      width: size,
+      height: size,
+      borderRadius: '50%',
+      background: color,
+      color: c.white,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      ...display,
+      fontSize: size * 0.48,
+      border: `5px solid ${c.ink}`,
+    }}
+  >
+    {letter}
+  </div>
+);
 
-/* 01 · A single drop of USDC lands. */
-export function Open() {
+/* 01 · Hook: the client paid, then the invoice tears in two. */
+export function Hook() {
   const f = useF();
-  const fall = interpolate(f, [8, 60], [-60, 600], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-    easing: Easing.in(Easing.quad),
-  });
-  const line = prog(f, 60, 50, inOut);
-  const landed = f >= 60;
+  const q = useCue();
+  const out = prog(f, q.at('hook2') - 4, 14, inOut);
+  const tear = q.word('hook2', 'part');
+  const card = pop(f, q.at('hook2'), 140);
+  const fall = Math.max(0, f - tear) / 30;
+  const zig = Array.from(
+    { length: 9 },
+    (_, i) => `${62 + (i % 2 ? 2.5 : -2.5)}% ${i * 12.5}%`,
+  ).join(',');
   return (
-    <Dark tint="#0f2744">
-      <div
-        style={{
-          position: 'absolute',
-          left: 959,
-          top: fall - 260,
-          width: 2,
-          height: 260,
-          background: `linear-gradient(transparent, ${c.sky})`,
-          opacity: landed ? Math.max(0, 1 - (f - 60) / 10) : 0.7,
-        }}
-      />
-      {[0, 9, 18].map((d) => {
-        const p = prog(f, 60 + d, 70, Easing.out(Easing.cubic));
-        return (
-          <div
-            key={d}
-            style={{
-              position: 'absolute',
-              left: 960 - p * 520,
-              top: 600 - p * 70,
-              width: p * 1040,
-              height: p * 140,
-              borderRadius: '50%',
-              border: `1.5px solid ${c.sky}`,
-              opacity: landed ? (1 - p) * 0.7 : 0,
-            }}
-          />
-        );
-      })}
-      <div
-        style={{
-          position: 'absolute',
-          top: 600,
-          left: 960 - line * 800,
-          width: line * 1600,
-          height: 1,
-          background: `linear-gradient(90deg, transparent, ${c.sky}, transparent)`,
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          left: 960 - 9,
-          top: fall - 9,
-          width: 18,
-          height: 18,
-          borderRadius: '50%',
-          background: c.glow,
-          boxShadow: `0 0 ${30 + (landed ? 30 * pulse(f, 0.08) : 0)}px ${c.sky}`,
-        }}
-      />
-      <H
-        style={{
-          top: 340,
-          width: 1920,
-          display: 'flex',
-          justifyContent: 'center',
-          fontSize: 150,
-          color: c.glow,
-        }}
+    <Bg color={c.ink}>
+      <Shapes seed={1} colors={[c.volt, c.coral, c.violet]} count={9} opacity={0.5} />
+      <Camera
+        keys={[
+          [0, 1.08, 0, 0],
+          [q.at('hook2'), 1, 0, 0],
+          [q.length, 1.06, 0, 0],
+        ]}
       >
-        <Words text="A client paid part." start={8 * B} stagger={B} serif={['part.']} />
-      </H>
-      <div
-        style={{
-          position: 'absolute',
-          top: 660,
-          width: 1920,
-          display: 'flex',
-          justifyContent: 'center',
-          fontFamily: font.body,
-          fontSize: 38,
-          color: c.ice,
-          opacity: 0.85,
-        }}
-      >
-        <Words text="The work still has to move." start={12 * B} stagger={2} />
-      </div>
-    </Dark>
-  );
-}
-
-/* 02 · The invoice, the cash that arrived, and the reserve that stays put. */
-export function Problem() {
-  const f = useF();
-  const x0 = 160,
-    w = 1600,
-    y = 470,
-    h = 116;
-  const fill = prog(f, 3 * B + 4, 44, inOut) * 0.6;
-  const lockP = prog(f, 10 * B, 18);
-  const lift = Math.sin(Math.min(1, Math.max(0, (f - 10 * B) / 16)) * Math.PI) * -16;
-  const people = [
-    { name: 'Amara', role: 'Design lead', owed: 700, at: 16 * B },
-    { name: 'Tobi', role: 'Developer', owed: 500, at: 17 * B },
-  ];
-  return (
-    <Light>
-      <H style={{ left: 160, top: 150, fontSize: 76, color: c.ink }}>
-        <Words text="An invoice for 2,000 USDC." start={4} serif={['2,000']} />
-      </H>
-      <div
-        style={{
-          position: 'absolute',
-          left: x0,
-          top: y - 52,
-          width: w,
-          display: 'flex',
-          justifyContent: 'space-between',
-          fontFamily: font.body,
-          fontSize: 24,
-          color: c.muted,
-          opacity: prog(f, 14, 20),
-        }}
-      >
-        <span>Northstar · brand launch</span>
-        <span>
-          Received{' '}
-          <b style={{ color: c.ink, fontFamily: font.head, fontWeight: 500 }}>
-            <Count to={1200} start={3 * B + 4} dur={44} />
-          </b>{' '}
-          of 2,000
-        </span>
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          left: x0,
-          top: y,
-          width: w,
-          height: h,
-          borderRadius: h / 2,
-          border: `2px dashed ${c.rule}`,
-          opacity: prog(f, 10, 20),
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          left: x0,
-          top: y,
-          width: w * fill,
-          height: h,
-          borderRadius: h / 2,
-          overflow: 'hidden',
-          background: `linear-gradient(90deg, ${c.deep}, ${c.accent})`,
-          boxShadow: `0 24px 60px rgba(24,58,96,.25)`,
-        }}
-      >
-        <div
+        <Abs
           style={{
-            position: 'absolute',
-            inset: 0,
-            background: `linear-gradient(100deg, transparent ${((f * 1.4) % 160) - 40}%, rgba(255,255,255,.28) ${((f * 1.4) % 160) - 25}%, transparent ${((f * 1.4) % 160) - 10}%)`,
-          }}
-        />
-      </div>
-      {/* reserve: the first 300 lifts, hatches and locks */}
-      <div
-        style={{
-          position: 'absolute',
-          left: x0,
-          top: y + lift,
-          width: w * 0.15,
-          height: h,
-          borderRadius: `${h / 2}px 0 0 ${h / 2}px`,
-          background: `repeating-linear-gradient(-45deg, ${c.ink} 0 10px, ${c.deep} 10px 20px)`,
-          opacity: lockP,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: c.glow,
-          fontFamily: font.head,
-          fontSize: 30,
-          gap: 12,
-        }}
-      >
-        <svg width={26} height={30} viewBox="0 0 26 30">
-          <rect x={2} y={13} width={22} height={16} rx={3} fill={c.glow} />
-          <path
-            d={`M7 13 V9 a6 6 0 0 1 12 0 V${mix(4, 13, prog(f, 10 * B + 4, 10))}`}
-            fill="none"
-            stroke={c.glow}
-            strokeWidth={3}
-          />
-        </svg>
-        300
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          left: x0 + w * 0.15 + 30,
-          top: y + 34,
-          fontFamily: font.head,
-          fontSize: 40,
-          color: c.glow,
-          opacity: prog(f, 11 * B, 16),
-        }}
-      >
-        900 available
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          left: x0 + w * 0.6 + 34,
-          top: y + 36,
-          fontFamily: font.body,
-          fontSize: 28,
-          color: c.muted,
-          opacity: prog(f, 12 * B, 16),
-        }}
-      >
-        800 still owed by the client
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          left: x0,
-          top: y + h + 22,
-          fontFamily: font.body,
-          fontSize: 24,
-          color: c.deep,
-          opacity: prog(f, 10 * B + 8, 16),
-        }}
-      >
-        Reserve · stays in the vault
-      </div>
-      {people.map((p, i) => {
-        const s = prog(f, p.at, 22);
-        const waiting = 0.4 + 0.6 * pulse(f, 0.12);
-        return (
-          <div
-            key={p.name}
-            style={{
-              position: 'absolute',
-              left: x0 + i * 520,
-              top: 760 + (1 - s) * 40,
-              opacity: s,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 22,
-              fontFamily: font.body,
-            }}
-          >
-            <div
-              style={{
-                width: 84,
-                height: 84,
-                borderRadius: '50%',
-                background: c.surface,
-                border: `2px solid ${c.rule}`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontFamily: font.head,
-                fontSize: 34,
-                color: c.deep,
-              }}
-            >
-              {p.name[0]}
-            </div>
-            <div>
-              <div style={{ fontFamily: font.head, fontSize: 38, color: c.ink }}>
-                {p.name} · owed {p.owed}
-              </div>
-              <div
-                style={{
-                  fontSize: 24,
-                  color: c.muted,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                }}
-              >
-                <i
-                  style={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: '50%',
-                    background: c.accent,
-                    opacity: waiting,
-                  }}
-                />
-                {p.role} · waiting
-              </div>
-            </div>
-          </div>
-        );
-      })}
-      <H style={{ right: 160, top: 900, fontSize: 64, color: c.deep }}>
-        <Words
-          text="Who gets paid, and how much?"
-          start={20 * B}
-          stagger={2}
-          serif={['how', 'much?']}
-        />
-      </H>
-    </Light>
-  );
-}
-
-/* 03 · Title drop: the wordmark literally splits and snaps back together. */
-export function Title() {
-  const f = useF();
-  const snap = prog(f, 0, 26);
-  const sphere = prog(f, 0, 50);
-  const halves = [
-    { clip: 'inset(0 0 50% 0)', dx: -140 },
-    { clip: 'inset(50% 0 0 0)', dx: 140 },
-  ];
-  return (
-    <Dark tint="#123a63" beat={1}>
-      <Sphere
-        size={mix(380, 640, sphere)}
-        x={960}
-        y={520}
-        spin={f * 1.4}
-        glow={0.6 + 0.4 * pulse(f)}
-        style={{ opacity: sphere * 0.9 }}
-      />
-      {halves.map((h, i) => (
-        <div
-          key={i}
-          style={{
-            position: 'absolute',
-            top: 345,
+            top: 330,
             width: 1920,
-            textAlign: 'center',
-            fontFamily: font.head,
-            fontWeight: 700,
-            fontSize: 290,
-            letterSpacing: '-0.06em',
-            color: c.glow,
-            clipPath: h.clip,
-            transform: `translateX(${h.dx * (1 - snap)}px)`,
-            textShadow: '0 20px 80px rgba(6,13,24,.6)',
+            display: 'flex',
+            justifyContent: 'center',
+            transform: `translateY(${-out * 700}px)`,
+            opacity: 1 - out,
           }}
         >
-          splitt<span style={{ color: c.sky }}>.</span>
-        </div>
-      ))}
-      <div
-        style={{
-          position: 'absolute',
-          top: 519,
-          left: 960 - 900 * (1 - snap),
-          width: 1800 * (1 - snap) + 1,
-          height: 2,
-          background: c.glow,
-          opacity: 1 - snap,
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          top: 760,
-          width: 1920,
-          display: 'flex',
-          justifyContent: 'center',
-          fontFamily: font.body,
-          fontSize: 42,
-          color: c.ice,
-        }}
-      >
-        <Words
-          text="Payment plans with a reason behind every amount."
-          start={2 * B}
-          stagger={2}
-          serif={['reason']}
-        />
-      </div>
-    </Dark>
-  );
-}
-
-/* 04 · The agent drafts the split; deterministic checks tick on the beat. */
-export function Draft() {
-  const f = useF();
-  const src: [number, number] = [420, 560];
-  const toA: [number, number] = [1330, 400];
-  const toT: [number, number] = [1330, 720];
-  const flowStart = 2 * B;
-  const flowEnd = 10 * B;
-  const checks = [
-    'Reserve held',
-    'Recipients eligible',
-    'Within caps',
-    'Evidence attached',
-    'Current state',
-  ];
-  const stamp = prog(f, 24 * B, 10, Easing.out(Easing.back(2)));
-  const nodes = [
-    { at: toA, name: 'Amara', amount: 700, note: 'Paid in full' },
-    { at: toT, name: 'Tobi', amount: 200, note: 'Partial · permitted by terms' },
-  ];
-  return (
-    <Dark tint="#123a63" beat={1}>
-      <H style={{ left: 140, top: 110, fontSize: 74, color: c.glow }}>
-        <Words text="The agent drafts the split." start={0} serif={['split.']} />
-      </H>
-      <Flow
-        pts={[
-          [src[0] + 120, src[1]],
-          [800, src[1]],
-          [960, toA[1]],
-          [toA[0] - 84, toA[1]],
-        ]}
-        draw={B}
-        flowFrom={flowStart}
-        flowTo={flowEnd}
-        count={22}
-      />
-      <Flow
-        pts={[
-          [src[0] + 120, src[1]],
-          [800, src[1]],
-          [960, toT[1]],
-          [toT[0] - 84, toT[1]],
-        ]}
-        draw={B + 6}
-        flowFrom={flowStart + 10}
-        flowTo={flowEnd - 30}
-        count={8}
-      />
-      <Sphere size={240} x={src[0]} y={src[1]} spin={f * 1.2} glow={0.4 + 0.6 * pulse(f)}>
-        <div style={{ fontFamily: font.head, fontSize: 62, color: c.glow, fontWeight: 500 }}>
-          <Count from={900} to={0} start={flowStart + 6} dur={flowEnd - flowStart - 10} />
-        </div>
-        <div style={{ fontFamily: font.body, fontSize: 20, color: c.ice }}>available</div>
-      </Sphere>
-      {nodes.map((n, i) => {
-        const s = prog(f, B * (1 + i), 24);
-        const got = f > flowStart + 40;
-        return (
-          <div
-            key={n.name}
-            style={{
-              position: 'absolute',
-              left: n.at[0] - 80,
-              top: n.at[1] - 80,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 34,
-              opacity: s,
-            }}
-          >
-            <div
-              style={{
-                width: 160,
-                height: 160,
-                borderRadius: '50%',
-                border: `2px solid ${got ? c.sky : 'rgba(143,179,220,.35)'}`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontFamily: font.head,
-                fontSize: 56,
-                color: c.glow,
-                boxShadow: got ? `0 0 ${40 + 40 * pulse(f)}px rgba(143,179,220,.35)` : 'none',
-              }}
-            >
-              {n.name[0]}
-            </div>
-            <div>
-              <div style={{ fontFamily: font.body, fontSize: 26, color: c.ice }}>{n.name}</div>
-              <div style={{ fontFamily: font.head, fontSize: 76, color: c.glow, lineHeight: 1.05 }}>
-                <Count
-                  to={n.amount}
-                  start={flowStart + 30 + i * 10}
-                  dur={flowEnd - flowStart - 40}
-                />
-              </div>
-              <div
-                style={{
-                  fontFamily: font.body,
-                  fontSize: 22,
-                  color: c.sky,
-                  opacity: prog(f, 8 * B + i * 6, 16),
-                }}
-              >
-                {n.note}
-              </div>
-            </div>
-          </div>
-        );
-      })}
-      <div style={{ position: 'absolute', left: 140, top: 900, display: 'flex', gap: 22 }}>
-        {checks.map((label, i) => {
-          const on = (12 + 2 * i) * B;
-          const lit = f >= on;
-          return (
-            <div
-              key={label}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 14,
-                padding: '14px 26px 14px 16px',
-                borderRadius: 999,
-                border: `1.5px solid ${lit ? c.sky : 'rgba(143,179,220,.25)'}`,
-                background: lit ? 'rgba(143,179,220,.12)' : 'transparent',
-                fontFamily: font.body,
-                fontSize: 24,
-                color: lit ? c.glow : 'rgba(207,224,242,.5)',
-                opacity: prog(f, 10 * B + i * 4, 16),
-              }}
-            >
-              <Check on={on} />
-              {label}
-            </div>
-          );
-        })}
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          left: 140,
-          top: 860,
-          fontFamily: font.body,
-          fontSize: 22,
-          color: c.sky,
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-          opacity: prog(f, 10 * B, 16),
-        }}
-      >
-        Deterministic validator · independent of the model
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          left: 1180,
-          top: 120,
-          padding: '20px 34px',
-          border: `3px solid ${c.glow}`,
-          borderRadius: 14,
-          fontFamily: font.head,
-          fontSize: 40,
-          color: c.glow,
-          transform: `rotate(-5deg) scale(${mix(1.8, 1, stamp)})`,
-          opacity: Math.min(1, stamp * 1.4),
-          background: 'rgba(6,13,24,.55)',
-        }}
-      >
-        Ready for owner review
-      </div>
-    </Dark>
-  );
-}
-
-/* 05 · The owner signs exactly what will move, then Circle and Arc carry it out. */
-export function Sign() {
-  const f = useF();
-  const rows: [string, string][] = [
-    ['vault', '0x724c…c6c6'],
-    ['plan', 'northstar · draft 1'],
-    ['pay[0]', 'Amara · 700 USDC'],
-    ['pay[1]', 'Tobi · 200 USDC'],
-    ['expiry', '30 minutes'],
-  ];
-  const compress = prog(f, 8 * B, 24, inOut);
-  const sig = prog(f, 9 * B, 36, inOut);
-  const steps = ['Signature checked', 'Circle executes', 'Arc settles', 'Reconciled from chain'];
-  const rail = prog(f, 16 * B, 6 * B, (x) => x);
-  return (
-    <Light>
-      <H style={{ left: 140, top: 110, fontSize: 74, color: c.ink }}>
-        <Words text="The owner signs the exact batch." start={0} serif={['exact']} />
-      </H>
-      <div
-        style={{
-          position: 'absolute',
-          left: 140,
-          top: 270,
-          width: 820,
-          height: 600,
-          background: c.surface,
-          border: `1px solid ${c.rule}`,
-          borderRadius: 12,
-          boxShadow: '0 30px 80px rgba(24,58,96,.12)',
-          opacity: prog(f, 4, 20),
-          transform: `translateY(${(1 - prog(f, 4, 26)) * 30}px)`,
-          overflow: 'hidden',
-        }}
-      >
-        <div
+          <Slam
+            text="Your client just paid."
+            start={q.at('hook1')}
+            stagger={6}
+            colors={{ 'paid.': c.volt }}
+            style={{ ...display, fontSize: 190, color: c.white }}
+          />
+        </Abs>
+        <Abs
           style={{
-            padding: '30px 40px',
-            borderBottom: `1px solid ${c.rule}`,
-            fontFamily: font.body,
-            fontSize: 22,
-            color: c.muted,
-            letterSpacing: '0.06em',
-            textTransform: 'uppercase',
+            left: 960 - 520,
+            top: 240,
+            width: 1040,
+            height: 520,
+            transform: `translateY(${(1 - card) * 900}px) rotate(${mix(-14, -4, card)}deg)`,
           }}
         >
-          EIP-712 typed data · ProjectVault
-        </div>
-        <div
-          style={{
-            padding: '26px 40px',
-            transform: `scaleY(${1 - compress * 0.85})`,
-            transformOrigin: 'top',
-            opacity: 1 - compress,
-            filter: `blur(${compress * 6}px)`,
-          }}
-        >
-          {rows.map(([k, v], i) => (
+          {[0, 1].map((half) => (
             <div
-              key={k}
+              key={half}
               style={{
-                display: 'flex',
-                fontFamily: font.head,
-                fontSize: 34,
-                lineHeight: '62px',
-                opacity: prog(f, B + i * 6, 12),
+                position: 'absolute',
+                inset: 0,
+                background: half ? c.paper : c.volt,
+                borderRadius: 26,
+                padding: '54px 64px',
+                color: c.ink,
+                clipPath: half
+                  ? `polygon(${zig}, 100% 100%, 100% 0)`
+                  : `polygon(0 0, ${zig}, 0 100%)`,
+                transform:
+                  half && f > tear
+                    ? `translate(${fall * 220}px, ${fall * fall * 900}px) rotate(${fall * 40}deg)`
+                    : 'none',
               }}
             >
-              <span style={{ width: 170, color: c.accent }}>{k}</span>
-              <span style={{ color: c.ink }}>
-                <Scramble text={v} start={B + i * 6} dur={14} />
-              </span>
+              <div style={{ fontFamily: font.body, fontSize: 30, letterSpacing: '0.18em' }}>
+                INVOICE · NORTHSTAR
+              </div>
+              <div style={{ ...display, fontSize: 210, marginTop: 30 }}>2,000</div>
+              <div style={{ fontFamily: font.body, fontSize: 30, marginTop: 10 }}>
+                USDC due · brand launch
+              </div>
             </div>
           ))}
-        </div>
-        <div
+        </Abs>
+        <Abs
           style={{
-            position: 'absolute',
-            left: 40,
-            top: 170,
-            fontFamily: font.head,
-            fontSize: 30,
-            color: c.deep,
-            opacity: compress,
+            top: 800,
+            width: 1920,
+            display: 'flex',
+            justifyContent: 'center',
+            transform: shake(f, tear, 10),
           }}
         >
-          <Scramble text="digest 0x5e1d…9b07 · signature 0x3f9a…e21c" start={8 * B + 10} dur={20} />
-        </div>
-        <svg width={740} height={200} style={{ position: 'absolute', left: 40, top: 280 }}>
-          <path
-            d="M10 130 C 60 40, 90 40, 110 120 S 160 170, 190 90 S 240 30, 260 120 S 320 150, 350 80 C 370 40, 400 60, 410 110 S 470 150, 520 90 S 600 70, 720 110"
-            fill="none"
-            stroke={c.deep}
-            strokeWidth={4}
-            strokeLinecap="round"
-            pathLength={1}
-            strokeDasharray={`${sig} 1`}
-          />
+          <div
+            style={{
+              ...display,
+              fontSize: 120,
+              color: c.coral,
+              transform: `scale(${pop(f, tear, 260)}) rotate(-3deg)`,
+            }}
+          >
+            only part.
+          </div>
+        </Abs>
+      </Camera>
+    </Bg>
+  );
+}
+
+/* 02 · The donut: 1,200 of 2,000 landed, 300 locks as reserve; two people wait. */
+export function Problem() {
+  const f = useF();
+  const q = useCue();
+  const R = 250,
+    cx = 600,
+    cy = 470,
+    C = 2 * Math.PI * R;
+  const filled = prog(f, q.at('p1') + 10, q.end('p1') - q.at('p1'), inOut) * 0.6;
+  const lockP = pop(f, q.word('p2', 'reserve'), 160);
+  const qMark = pop(f, q.at('p4'), 120);
+  const zoom = prog(f, q.end('p4') - 6, q.length - q.end('p4') + 6, Easing.in(Easing.cubic));
+  const people = [
+    { n: 'Maya', role: 'Designer', owed: 700, col: c.coral, at: q.word('p3', 'Maya') },
+    { n: 'Leo', role: 'Developer', owed: 500, col: c.violet, at: q.word('p3', 'Leo') },
+  ];
+  return (
+    <Bg color={c.volt}>
+      <Shapes seed={2} colors={[c.ink]} count={8} opacity={0.12} />
+      <Camera
+        keys={[
+          [0, 1, 0, 0],
+          [q.end('p4') - 6, 1, 0, 0],
+          [q.length, 7, -1700, 1400],
+        ]}
+      >
+        <svg width={1920} height={1080} style={{ position: 'absolute', inset: 0 }}>
+          <g transform={`rotate(-90 ${cx} ${cy})`}>
+            <circle
+              cx={cx}
+              cy={cy}
+              r={R}
+              fill="none"
+              stroke={c.ink}
+              strokeOpacity={0.12}
+              strokeWidth={84}
+            />
+            <circle
+              cx={cx}
+              cy={cy}
+              r={R}
+              fill="none"
+              stroke={c.ink}
+              strokeWidth={84}
+              strokeDasharray={`${filled * C} ${C}`}
+            />
+            <g
+              transform={`translate(${Math.cos(0.15 * Math.PI) * 34 * lockP} ${Math.sin(0.15 * Math.PI) * 34 * lockP})`}
+            >
+              <circle
+                cx={cx}
+                cy={cy}
+                r={R}
+                fill="none"
+                stroke={c.coral}
+                strokeWidth={84 * lockP}
+                strokeDasharray={`${0.15 * C} ${C}`}
+              />
+            </g>
+          </g>
         </svg>
-        <div
-          style={{
-            position: 'absolute',
-            left: 40,
-            bottom: 34,
-            fontFamily: font.body,
-            fontSize: 26,
-            color: c.muted,
-            opacity: prog(f, 12 * B, 16),
-          }}
+        <Abs
+          style={{ left: cx - 200, top: cy - 90, width: 400, textAlign: 'center', color: c.ink }}
         >
-          Signed in the owner’s own wallet
-        </div>
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          left: 1180,
-          top: 300,
-          width: 3,
-          height: 3 * 150,
-          background: c.rule,
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          left: 1180,
-          top: 300,
-          width: 3,
-          height: 3 * 150 * rail,
-          background: c.deep,
-        }}
-      />
-      {steps.map((s, i) => {
-        const on = (16 + 2 * i) * B;
-        const lit = f >= on;
-        const ring = lit ? Math.max(0, 1 - (f - on) / 20) : 0;
-        return (
-          <div
-            key={s}
-            style={{
-              position: 'absolute',
-              left: 1160,
-              top: 280 + i * 150,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 36,
-              opacity: prog(f, 14 * B + i * 4, 16),
-            }}
-          >
-            <div
-              style={{
-                position: 'relative',
-                width: 44,
-                height: 44,
-                borderRadius: '50%',
-                background: lit ? c.deep : c.surface,
-                border: `3px solid ${lit ? c.deep : c.rule}`,
-                boxShadow: `0 0 0 ${ring * 22}px rgba(69,108,152,${ring * 0.25})`,
-              }}
-            />
-            <div>
-              <div style={{ fontFamily: font.head, fontSize: 42, color: lit ? c.ink : c.muted }}>
-                {s}
-              </div>
-              <div style={{ fontFamily: font.body, fontSize: 22, color: c.muted }}>
-                {
-                  [
-                    'Vault, plan, order and expiry must match',
-                    'Developer-controlled operator wallet',
-                    'Deterministic finality, no confirmations',
-                    'Durable job, checked before any retry',
-                  ][i]
-                }
-              </div>
-            </div>
+          <div style={{ ...display, fontSize: 120 }}>
+            <Count to={1200} start={q.at('p1') + 10} dur={q.end('p1') - q.at('p1')} />
           </div>
-        );
-      })}
-    </Light>
-  );
-}
-
-/* 06 · New cash, fresh plan; the first authorization can't count twice. */
-export function Remainder() {
-  const f = useF();
-  const fall = interpolate(f, [0, 2 * B], [-40, 300], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-    easing: Easing.in(Easing.quad),
-  });
-  const landed = f >= 2 * B;
-  const topUp = prog(f, 8 * B, 30, inOut);
-  const stamp = prog(f, 12 * B, 10, Easing.out(Easing.back(2)));
-  const balance = f < 8 * B ? mix(300, 1100, prog(f, 2 * B, 26, inOut)) : mix(1100, 800, topUp);
-  const rows = [
-    { name: 'Amara', paid: 700, owed: 700, note: 'Complete · skipped', dim: true },
-    {
-      name: 'Tobi',
-      paid: mix(200, 500, topUp),
-      owed: 500,
-      note: f >= 8 * B ? '+300 · now complete' : 'Owed 300 more',
-      dim: false,
-    },
-  ];
-  return (
-    <Dark tint="#0f2744" beat={1}>
-      <H style={{ left: 140, top: 110, fontSize: 74, color: c.glow }}>
-        <Words text="Then the rest arrives." start={0} serif={['rest']} />
-      </H>
-      <div
-        style={{
-          position: 'absolute',
-          left: 1530 - 9,
-          top: fall - 9,
-          width: 18,
-          height: 18,
-          borderRadius: '50%',
-          background: c.glow,
-          boxShadow: `0 0 40px ${c.sky}`,
-          opacity: 1 - prog(f, 2 * B, 12),
-        }}
-      />
-      {[0, 8].map((d) => {
-        const p = prog(f, 2 * B + d, 50, Easing.out(Easing.cubic));
-        return (
-          <div
-            key={d}
-            style={{
-              position: 'absolute',
-              left: 1530 - p * 220,
-              top: 300 - p * 40,
-              width: p * 440,
-              height: p * 80,
-              borderRadius: '50%',
-              border: `1.5px solid ${c.sky}`,
-              opacity: landed ? 1 - p : 0,
-            }}
-          />
-        );
-      })}
-      <div
-        style={{
-          position: 'absolute',
-          left: 1330,
-          top: 340,
-          width: 400,
-          textAlign: 'center',
-          fontFamily: font.head,
-          fontSize: 58,
-          color: c.glow,
-          opacity: prog(f, 2 * B, 14),
-        }}
-      >
-        +800 USDC
-      </div>
-      {rows.map((r, i) => (
-        <div
-          key={r.name}
+          <div style={{ fontFamily: font.body, fontSize: 30 }}>of 2,000 USDC</div>
+        </Abs>
+        <Abs
           style={{
-            position: 'absolute',
-            left: 140,
-            top: 330 + i * 170,
-            width: 1000,
-            opacity: prog(f, 6 + i * 6, 18) * (r.dim ? 0.55 : 1),
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'baseline',
-              fontFamily: font.head,
-              color: c.glow,
-            }}
-          >
-            <span style={{ fontSize: 46 }}>{r.name}</span>
-            <span style={{ fontSize: 46, fontVariantNumeric: 'tabular-nums' }}>
-              {Math.round(r.paid)} / {r.owed}
-            </span>
-          </div>
-          <div
-            style={{
-              height: 10,
-              borderRadius: 5,
-              background: 'rgba(143,179,220,.18)',
-              marginTop: 16,
-              overflow: 'hidden',
-            }}
-          >
-            <div
-              style={{
-                height: '100%',
-                width: `${(100 * r.paid) / r.owed}%`,
-                background: `linear-gradient(90deg, ${c.accent}, ${c.sky})`,
-              }}
-            />
-          </div>
-          <div style={{ fontFamily: font.body, fontSize: 24, color: c.sky, marginTop: 14 }}>
-            {r.note}
-          </div>
-        </div>
-      ))}
-      <div
-        style={{
-          position: 'absolute',
-          left: 140,
-          top: 720,
-          width: 1000,
-          borderTop: '1px solid rgba(143,179,220,.3)',
-          paddingTop: 30,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'baseline',
-          opacity: prog(f, 20, 18),
-        }}
-      >
-        <span style={{ fontFamily: font.body, fontSize: 28, color: c.ice }}>
-          Northstar vault balance
-        </span>
-        <span
-          style={{
+            left: cx + 160,
+            top: cy - 330,
+            padding: '14px 26px',
+            borderRadius: 999,
+            background: c.coral,
+            color: c.white,
             fontFamily: font.head,
-            fontSize: 84,
-            color: c.glow,
-            fontVariantNumeric: 'tabular-nums',
+            fontWeight: 700,
+            fontSize: 38,
+            transform: `scale(${lockP})`,
           }}
         >
-          {Math.round(balance).toLocaleString('en-US')}
-        </span>
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          left: 1320,
-          top: 520,
-          width: 420,
-          padding: '30px 34px',
-          borderRadius: 12,
-          border: '1px solid rgba(143,179,220,.35)',
-          background: 'rgba(11,24,41,.7)',
-          fontFamily: font.body,
-          color: c.ice,
-          opacity: prog(f, 4 * B, 18),
-        }}
-      >
-        <div
+          300 locked as reserve
+        </Abs>
+        <Abs
           style={{
-            fontSize: 20,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            color: c.sky,
-          }}
-        >
-          Authorization 1
-        </div>
-        <div
-          style={{
+            left: cx - 380,
+            top: cy + 300,
             fontFamily: font.head,
-            fontSize: 32,
-            marginTop: 14,
-            color: c.glow,
-            textDecoration: f >= 12 * B ? 'line-through' : 'none',
+            fontWeight: 700,
+            fontSize: 40,
+            color: c.ink,
+            opacity: prog(f, q.word('p2', 'reserve') + 10, 12),
           }}
         >
-          Amara 700 · Tobi 200
-        </div>
-        <div
-          style={{
-            position: 'absolute',
-            right: -18,
-            top: -26,
-            padding: '8px 18px',
-            border: `3px solid ${c.glow}`,
-            borderRadius: 10,
-            fontFamily: font.head,
-            fontSize: 30,
-            color: c.glow,
-            transform: `rotate(-8deg) scale(${mix(2, 1, stamp)})`,
-            opacity: Math.min(1, stamp * 1.4),
-            background: c.void,
-          }}
-        >
-          Used
-        </div>
-        <div style={{ fontSize: 24, marginTop: 18, opacity: prog(f, 13 * B, 16) }}>
-          It can’t count twice.
-        </div>
-      </div>
-    </Dark>
-  );
-}
-
-/* 07 · Breakdown: two vaults, and a line between them that never opens. */
-export function Isolation() {
-  const f = useF();
-  const reach = prog(f, 3 * B, 5 * B, inOut);
-  const hit = f >= 8 * B;
-  const retract = prog(f, 8 * B, 24, inOut);
-  const flash = hit ? Math.max(0, 1 - (f - 8 * B) / 24) : 0;
-  const tip = mix(1260, 980, reach) + retract * 280;
-  return (
-    <Dark tint="#0c2340">
-      <H
-        style={{
-          top: 120,
-          width: 1920,
-          display: 'flex',
-          justifyContent: 'center',
-          fontSize: 74,
-          color: c.glow,
-        }}
-      >
-        <Words text="Each project keeps its own cash." start={4} serif={['own']} />
-      </H>
-      <Sphere
-        size={380}
-        x={560}
-        y={570}
-        spin={f * 0.8}
-        glow={0.5}
-        style={{ opacity: prog(f, 10, 30) }}
-      >
-        <div style={{ fontFamily: font.head, fontSize: 70, color: c.glow }}>800</div>
-        <div style={{ fontFamily: font.body, fontSize: 24, color: c.ice }}>Northstar</div>
-      </Sphere>
-      <Sphere
-        size={380}
-        x={1360}
-        y={570}
-        spin={-f * 0.8}
-        glow={0.5}
-        style={{ opacity: prog(f, 18, 30) }}
-      >
-        <div style={{ fontFamily: font.head, fontSize: 70, color: c.glow }}>1,000</div>
-        <div style={{ fontFamily: font.body, fontSize: 24, color: c.ice }}>Fieldwork</div>
-      </Sphere>
-      <div
-        style={{
-          position: 'absolute',
-          left: 958,
-          top: 400,
-          width: 4,
-          height: 340,
-          borderRadius: 2,
-          background: c.glow,
-          boxShadow: `0 0 ${20 + flash * 80}px ${c.sky}`,
-          opacity: 0.35 + flash * 0.65,
-        }}
-      />
-      <svg width={1920} height={1080} style={{ position: 'absolute', inset: 0 }}>
-        <line
-          x1={1180}
-          y1={570}
-          x2={Math.max(1180, tip)}
-          y2={570}
-          stroke={c.sky}
-          strokeWidth={3}
-          strokeDasharray="10 12"
-          opacity={reach * (1 - retract)}
-        />
-      </svg>
-      <div
-        style={{
-          position: 'absolute',
-          top: 860,
-          width: 1920,
-          display: 'flex',
-          justifyContent: 'center',
-          fontFamily: font.serif,
-          fontStyle: 'italic',
-          fontSize: 58,
-          color: c.ice,
-        }}
-      >
-        <Words text="Never borrowed. Never mixed." start={9 * B} stagger={3} />
-      </div>
-    </Dark>
-  );
-}
-
-/* 08 · Proof: real Arc Testnet transactions, labelled for what they are. */
-export function Proof() {
-  const f = useF();
-  const stats = [
-    { n: 3, d: 0, label: 'controlled vaults' },
-    { n: 4, d: 0, label: 'Circle-executed batches' },
-    { n: 2.4, d: 1, label: 'test USDC paid out' },
-  ];
-  const txs = [
-    ['Batch 1 payout', '0x938ea7d6370c06d25daf6c73493e5c43f304abf9938563b7bd934325edaebdc5'],
-    ['Batch 2 payout', '0x098fa70efda77e5f22396521bce7d5ccdeb3bbbaab8997e9ae8551a0ceb32881'],
-    ['Remainder payout', '0xde2ce4f47108ab118ef30b7dd835b7da7dae60ed7b83504ead5011acddd35c6d'],
-    ['Circle receipt', '0x39d42d99caea9eeb2e7ab39db2464139bb7e8a42639caf5902a19c0356bbba4f'],
-  ];
-  return (
-    <Dark tint="#123a63" beat={1}>
-      <svg width={1920} height={1080} style={{ position: 'absolute', inset: 0, opacity: 0.18 }}>
-        {Array.from({ length: 25 }, (_, i) => (
-          <line
-            key={i}
-            x1={i * 80 - ((f * 0.6) % 80)}
-            x2={i * 80 - ((f * 0.6) % 80)}
-            y1={0}
-            y2={1080}
-            stroke={c.sky}
-            strokeWidth={1}
-          />
-        ))}
-      </svg>
-      <H style={{ left: 140, top: 110, fontSize: 74, color: c.glow }}>
-        <Words text="Live on Arc Testnet." start={0} serif={['Live']} />
-      </H>
-      <div
-        style={{
-          position: 'absolute',
-          left: 140,
-          top: 200,
-          fontFamily: font.body,
-          fontSize: 26,
-          color: c.ice,
-          opacity: prog(f, 12, 16),
-        }}
-      >
-        Controlled tests run by the team · recorded 14–18 October 2026
-      </div>
-      <div style={{ position: 'absolute', left: 140, top: 300, display: 'flex', gap: 120 }}>
-        {stats.map((s, i) => (
-          <div key={s.label} style={{ opacity: prog(f, B + i * 6, 16) }}>
-            <div
-              style={{
-                fontFamily: font.head,
-                fontSize: 150,
-                color: c.glow,
-                lineHeight: 1,
-                letterSpacing: '-0.04em',
-              }}
-            >
-              <Count to={s.n} start={B + i * 6} dur={40} decimals={s.d} />
-            </div>
-            <div style={{ fontFamily: font.body, fontSize: 26, color: c.sky, marginTop: 10 }}>
-              {s.label}
-            </div>
-          </div>
-        ))}
-      </div>
-      <div style={{ position: 'absolute', left: 140, top: 590, width: 1640 }}>
-        {txs.map(([label, hash], i) => {
-          const at = (12 + 2 * i) * B;
+          900 free to pay out
+        </Abs>
+        {people.map((p, i) => {
+          const s = pop(f, p.at, 150);
           return (
-            <div
-              key={hash}
+            <Abs
+              key={p.n}
               style={{
+                left: 1130,
+                top: 240 + i * 240,
                 display: 'flex',
-                alignItems: 'baseline',
-                gap: 40,
-                padding: '16px 0',
-                borderTop: '1px solid rgba(143,179,220,.22)',
-                opacity: prog(f, at - 4, 12),
+                alignItems: 'center',
+                gap: 30,
+                transform: `translateX(${(1 - s) * 900}px) rotate(${(1 - s) * 10}deg)`,
+                opacity: f >= p.at ? 1 : 0,
               }}
             >
-              <span style={{ width: 260, fontFamily: font.body, fontSize: 24, color: c.sky }}>
-                {label}
-              </span>
-              <span
-                style={{
-                  fontFamily: font.head,
-                  fontSize: 27,
-                  color: c.glow,
-                  letterSpacing: '0.01em',
-                }}
-              >
-                <Scramble text={hash} start={at} dur={20} />
-              </span>
-            </div>
+              <Avatar letter={p.n[0]} color={p.col} size={150} />
+              <div style={{ color: c.ink }}>
+                <div style={{ ...display, fontSize: 72 }}>{p.n}</div>
+                <div style={{ fontFamily: font.body, fontSize: 30 }}>
+                  {p.role} · owed {p.owed}
+                </div>
+                <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                  {[0, 1, 2].map((d) => (
+                    <i
+                      key={d}
+                      style={{
+                        width: 14,
+                        height: 14,
+                        borderRadius: 7,
+                        background: c.ink,
+                        opacity: 0.25 + 0.75 * Math.max(0, Math.sin((f - d * 5) / 6)),
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </Abs>
           );
         })}
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          left: 140,
-          top: 940,
-          fontFamily: font.body,
-          fontSize: 24,
-          color: c.ice,
-          opacity: prog(f, 21 * B, 16),
-        }}
-      >
-        Verified contract 0x724c12be…c6c6 · Sourcify exact match · controlled test wallets, not
-        customers · verified business pilots: 0
-      </div>
-    </Dark>
+        <Abs
+          style={{
+            left: 1580,
+            top: 120,
+            ...display,
+            fontSize: 420,
+            color: c.ink,
+            transform: `scale(${qMark}) rotate(${(1 - qMark) * 180 + Math.sin(f / 10) * 4}deg)`,
+            opacity: qMark > 0.01 ? 1 : 0,
+          }}
+        >
+          ?
+        </Abs>
+      </Camera>
+      <AbsoluteFill style={{ background: c.coral, opacity: zoom > 0.6 ? (zoom - 0.6) / 0.4 : 0 }} />
+    </Bg>
   );
 }
 
-/* 09 · Resolve on the wordmark; the closing drop loops back to the opening frame. */
-export function End() {
+/* 03 · Title drop: the wordmark pops letter by letter, splits, snaps; ribbons cross. */
+export function Title() {
   const f = useF();
-  const s = prog(f, 0, 60);
-  const out = prog(f, 22 * B, 2 * B, inOut);
-  const fall = interpolate(f, [20 * B, 23 * B], [-60, 600], {
+  const q = useCue();
+  const name = q.word('t1', 'Splitt');
+  const snap = prog(f, name + 26, 14, backOut);
+  const apart = prog(f, name + 12, 10, expo) * (1 - snap);
+  return (
+    <Bg color={c.coral}>
+      <svg width={1920} height={1080} style={{ position: 'absolute', inset: 0 }}>
+        {[0, 1, 2, 3].map((i) => {
+          const r = ((f * 6 + i * 220) % 880) + 40;
+          return (
+            <circle
+              key={i}
+              cx={960}
+              cy={540}
+              r={r}
+              fill="none"
+              stroke={c.ink}
+              strokeOpacity={0.18 * (1 - r / 920)}
+              strokeWidth={30}
+            />
+          );
+        })}
+      </svg>
+      <Marquee
+        text="SPLITT · PAYMENT PLANS · USDC · ARC · CIRCLE"
+        y={110}
+        speed={9}
+        bg={c.ink}
+        color={c.volt}
+        rotate={-4}
+      />
+      <Marquee
+        text="A REASON BEHIND EVERY AMOUNT"
+        y={860}
+        speed={-9}
+        bg={c.volt}
+        color={c.ink}
+        rotate={3}
+      />
+      <Abs
+        style={{
+          top: 300,
+          width: 1920,
+          display: 'flex',
+          justifyContent: 'center',
+          transform: `scale(${1 + 0.03 * pulse(f)})`,
+        }}
+      >
+        {[0, 1].map((half) => (
+          <div
+            key={half}
+            style={{
+              position: half ? 'absolute' : 'relative',
+              clipPath: half ? 'inset(50% 0 0 0)' : 'inset(0 0 50% 0)',
+              transform: `translateX(${(half ? 1 : -1) * apart * 160}px)`,
+            }}
+          >
+            {'splitt.'.split('').map((ch, i) => {
+              const p = pop(f, q.at('t1') + i * 3, 240);
+              return (
+                <span
+                  key={i}
+                  style={{
+                    display: 'inline-block',
+                    ...display,
+                    fontSize: 330,
+                    color: ch === '.' ? c.volt : c.ink,
+                    transform: `translateY(${(1 - p) * 300}px) scale(${p})`,
+                  }}
+                >
+                  {ch}
+                </span>
+              );
+            })}
+          </div>
+        ))}
+      </Abs>
+      <Abs style={{ top: 690, width: 1920, display: 'flex', justifyContent: 'center' }}>
+        <Slam
+          text="a reason behind every amount"
+          start={q.at('t2')}
+          stagger={4}
+          serif={['reason']}
+          style={{ ...display, fontSize: 70, color: c.white, letterSpacing: '-0.02em' }}
+        />
+      </Abs>
+    </Bg>
+  );
+}
+
+/* 04 · The agent reads, drafts the split, then the rule engine checks each line. */
+export function Draft() {
+  const f = useF();
+  const q = useCue();
+  const docs = [
+    { t: 'Invoice', d: '2,000 · 1,200 received', col: c.volt },
+    { t: 'Terms', d: 'Maya 700 · Leo up to 500', col: c.coral },
+    { t: 'Cash', d: '900 free · 300 reserve', col: c.violet },
+  ];
+  const scan = prog(f, q.at('d1') + 20, q.end('d1') - q.at('d1') - 20, inOut);
+  const collapse = prog(f, q.at('d2') - 10, 18, inOut);
+  const pay = (at: number) => prog(f, at, 26, inOut);
+  const toMaya = pay(q.word('d2', 'Maya'));
+  const toLeo = pay(q.word('d2', 'Leo'));
+  const checks = ['Reserve', 'Eligibility', 'Caps', 'Evidence', 'Current state'];
+  const stamp = pop(f, q.end('c5') + 8, 200);
+  return (
+    <Bg color={c.paper}>
+      <Shapes seed={4} colors={[c.violet, c.coral]} count={8} opacity={0.18} />
+      <Camera
+        keys={[
+          [0, 1.3, 0, 140],
+          [q.at('d2') - 10, 1.05, 0, 60],
+          [q.at('d3'), 1, 0, 0],
+          [q.length, 1.04, 0, -10],
+        ]}
+      >
+        <Abs
+          style={{
+            left: 120,
+            top: 120,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 18,
+            padding: '12px 26px',
+            borderRadius: 999,
+            background: c.ink,
+            color: c.white,
+            fontFamily: font.body,
+            fontSize: 30,
+            transform: `scale(${pop(f, 4)})`,
+          }}
+        >
+          <i
+            style={{
+              width: 16,
+              height: 16,
+              borderRadius: 8,
+              background: c.volt,
+              opacity: 0.4 + 0.6 * pulse(f, 0.12),
+            }}
+          />
+          AI agent drafting
+        </Abs>
+        {docs.map((d, i) => {
+          const s = pop(f, q.at('d1') + i * 8, 140);
+          const x = mix(250 + i * 480, 860, collapse);
+          const y = mix(220, 330, collapse);
+          return (
+            <Abs
+              key={d.t}
+              style={{
+                left: x,
+                top: y,
+                width: 400,
+                height: 300,
+                borderRadius: 24,
+                background: c.white,
+                border: `5px solid ${c.ink}`,
+                padding: 34,
+                transform: `translateY(${(1 - s) * 600}px) rotate(${(i - 1) * 5 * (1 - collapse)}deg) scale(${1 - collapse * 0.6})`,
+                opacity: 1 - prog(f, q.at('d2'), 8),
+              }}
+            >
+              <div
+                style={{
+                  display: 'inline-block',
+                  padding: '6px 16px',
+                  borderRadius: 999,
+                  background: d.col,
+                  color: d.col === c.volt ? c.ink : c.white,
+                  fontFamily: font.head,
+                  fontWeight: 700,
+                  fontSize: 30,
+                }}
+              >
+                {d.t}
+              </div>
+              {[0, 1, 2].map((l) => (
+                <div
+                  key={l}
+                  style={{
+                    height: 14,
+                    borderRadius: 7,
+                    marginTop: 26,
+                    width: `${[90, 70, 80][l]}%`,
+                    background: scan > (i + l / 3) / 3 ? c.ink : '#d8d3c8',
+                  }}
+                />
+              ))}
+              <div style={{ fontFamily: font.body, fontSize: 24, marginTop: 26, color: c.ink }}>
+                {d.d}
+              </div>
+            </Abs>
+          );
+        })}
+        <Abs
+          style={{
+            left: 200 + scan * 1500,
+            top: 180,
+            width: 10,
+            height: 420,
+            background: c.volt,
+            boxShadow: `0 0 40px ${c.volt}`,
+            opacity: scan > 0 && scan < 1 ? 1 : 0,
+          }}
+        />
+        {/* the split */}
+        <Abs style={{ left: 380, top: 250, opacity: prog(f, q.at('d2') - 4, 10) }}>
+          <div
+            style={{
+              width: 300,
+              height: 300,
+              borderRadius: '50%',
+              background: c.ink,
+              color: c.volt,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transform: `scale(${pop(f, q.at('d2') - 4)})`,
+            }}
+          >
+            <div style={{ ...display, fontSize: 110 }}>
+              <Count
+                from={900}
+                to={0}
+                start={q.word('d2', 'Maya')}
+                dur={q.end('d2') - q.word('d2', 'Maya')}
+              />
+            </div>
+            <div style={{ fontFamily: font.body, fontSize: 26, color: c.white }}>to allocate</div>
+          </div>
+        </Abs>
+        {[
+          { n: 'Maya', col: c.coral, amt: 700, p: toMaya, y: 170, note: 'paid in full' },
+          {
+            n: 'Leo',
+            col: c.violet,
+            amt: 200,
+            p: toLeo,
+            y: 470,
+            note: 'partial · allowed by terms',
+          },
+        ].map((r, i) => (
+          <React.Fragment key={r.n}>
+            {Array.from({ length: 6 }, (_, k) => {
+              const t = Math.min(1, Math.max(0, r.p * 1.6 - k * 0.12));
+              const x = mix(680, 1240, t);
+              const y = mix(400, r.y + 70, t) - Math.sin(t * Math.PI) * 160;
+              return t > 0 && t < 1 ? (
+                <Abs
+                  key={k}
+                  style={{
+                    left: x,
+                    top: y,
+                    width: 44,
+                    height: 44,
+                    borderRadius: 22,
+                    background: c.volt,
+                    border: `4px solid ${c.ink}`,
+                  }}
+                />
+              ) : null;
+            })}
+            <Abs
+              style={{
+                left: 1260,
+                top: r.y,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 30,
+                opacity: prog(f, q.at('d2') - 4 + i * 6, 12),
+                transform: `scale(${1 + 0.15 * Math.max(0, 1 - Math.abs(r.p - 1) * 8) * (r.p >= 1 ? Math.exp(-(f - q.word('d2', r.n) - 26) / 8) : 0)})`,
+              }}
+            >
+              <Avatar letter={r.n[0]} color={r.col} size={140} />
+              <div style={{ color: c.ink }}>
+                <div style={{ fontFamily: font.body, fontSize: 30 }}>{r.n}</div>
+                <div style={{ ...display, fontSize: 110 }}>
+                  <Count to={r.amt} start={q.word('d2', r.n)} dur={26} />
+                </div>
+                <div style={{ fontFamily: font.body, fontSize: 24 }}>{r.note}</div>
+              </div>
+            </Abs>
+          </React.Fragment>
+        ))}
+        {/* the rule engine */}
+        <Abs
+          style={{
+            left: 120,
+            top: 700,
+            width: 1680,
+            display: 'flex',
+            gap: 22,
+            opacity: prog(f, q.at('d3'), 12),
+            transform: `translateY(${(1 - prog(f, q.at('d3'), 20)) * 120}px)`,
+          }}
+        >
+          {checks.map((label, i) => {
+            const on = q.at(`c${i + 1}`);
+            const lit = f >= on;
+            const s = pop(f, on, 260);
+            return (
+              <div
+                key={label}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 16,
+                  padding: '24px 22px',
+                  borderRadius: 22,
+                  border: `5px solid ${c.ink}`,
+                  background: lit ? c.volt : c.white,
+                  fontFamily: font.head,
+                  fontWeight: 700,
+                  fontSize: 34,
+                  color: c.ink,
+                  transform: `scale(${lit ? mix(1.25, 1, s) : 1})`,
+                }}
+              >
+                <svg width={46} height={46} viewBox="0 0 46 46">
+                  <circle
+                    cx={23}
+                    cy={23}
+                    r={20}
+                    fill={lit ? c.ink : 'none'}
+                    stroke={c.ink}
+                    strokeWidth={4}
+                  />
+                  <path
+                    d="M13 24 l7 7 l13 -15"
+                    fill="none"
+                    stroke={c.volt}
+                    strokeWidth={5}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    pathLength={1}
+                    strokeDasharray={`${lit ? prog(f, on + 2, 10) : 0} 1`}
+                  />
+                </svg>
+                {label}
+              </div>
+            );
+          })}
+        </Abs>
+        <Abs
+          style={{
+            left: 1150,
+            top: 560,
+            padding: '18px 34px',
+            border: `7px solid ${c.coral}`,
+            borderRadius: 18,
+            color: c.coral,
+            ...display,
+            fontSize: 54,
+            transform: `rotate(-7deg) scale(${mix(2.2, 1, stamp)})`,
+            opacity: f >= q.end('c5') + 8 ? 1 : 0,
+            background: c.paper,
+          }}
+        >
+          READY FOR YOUR SIGNATURE
+        </Abs>
+      </Camera>
+    </Bg>
+  );
+}
+
+/* 05 · Nothing moves until you sign; then three bands slam in. */
+export function Sign() {
+  const f = useF();
+  const q = useCue();
+  const phone = pop(f, q.at('s1'), 120);
+  const rows = [
+    ['Vault', '0x724c…c6c6', 'vault'],
+    ['Maya', '700 USDC', 'payments'],
+    ['Leo', '200 USDC', 'payments'],
+    ['Expires', 'in 30 min', 'deadline'],
+  ];
+  const press = q.end('s2') - 6;
+  const pressed = f >= press;
+  const ripple = prog(f, press, 22);
+  const sig = prog(f, press + 4, 26, inOut);
+  const bands = [
+    { id: 's3', t: 'Circle executes', bg: c.white, fg: c.ink },
+    { id: 's4', t: 'Arc settles', bg: c.volt, fg: c.ink },
+    { id: 's5', t: 'Splitt reconciles', bg: c.coral, fg: c.white },
+  ];
+  const headOut = prog(f, q.at('s3') - 8, 12, inOut);
+  return (
+    <Bg color={c.violet}>
+      <Shapes seed={5} colors={[c.volt, c.white]} count={10} opacity={0.35} />
+      <Camera
+        keys={[
+          [0, 1.1, 0, 0],
+          [q.at('s2'), 1, 0, 0],
+          [q.at('s3'), 1.04, -20, 0],
+          [q.length, 1, 0, 0],
+        ]}
+      >
+        <Abs
+          style={{
+            left: 170,
+            top: 90,
+            width: 520,
+            height: 900,
+            borderRadius: 64,
+            background: c.ink,
+            border: `10px solid ${c.ink}`,
+            boxShadow: '0 40px 0 rgba(0,0,0,.25)',
+            transform: `translateY(${(1 - phone) * 1000}px) rotate(${(1 - phone) * -12}deg)`,
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              inset: 8,
+              borderRadius: 54,
+              background: c.paper,
+              padding: '70px 40px',
+              color: c.ink,
+            }}
+          >
+            <div style={{ fontFamily: font.body, fontSize: 24, letterSpacing: '0.14em' }}>
+              APPROVE BATCH
+            </div>
+            <div style={{ ...display, fontSize: 64, marginTop: 10 }}>900 USDC</div>
+            {rows.map(([k, v, word], i) => {
+              const hl = prog(f, q.word('s2', word) - 2 + (k === 'Leo' ? 6 : 0), 10);
+              return (
+                <div
+                  key={k}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    marginTop: 26,
+                    paddingBottom: 14,
+                    borderBottom: `4px solid ${hl > 0 ? c.volt : '#d8d3c8'}`,
+                    fontFamily: font.body,
+                    fontSize: 28,
+                    transform: `scale(${1 + 0.06 * hl * (1 - prog(f, q.word('s2', word) + 12, 12))})`,
+                    opacity: prog(f, q.at('s1') + 10 + i * 4, 10),
+                  }}
+                >
+                  <span>{k}</span>
+                  <b style={{ fontFamily: font.head }}>{v}</b>
+                </div>
+              );
+            })}
+            <svg width={420} height={130} style={{ marginTop: 20 }}>
+              <path
+                d="M10 90 C 40 20, 70 20, 80 80 S 120 120, 140 60 S 180 20, 200 85 S 250 110, 280 50 C 300 20, 330 40, 410 70"
+                fill="none"
+                stroke={c.ink}
+                strokeWidth={5}
+                strokeLinecap="round"
+                pathLength={1}
+                strokeDasharray={`${sig} 1`}
+              />
+            </svg>
+            <div
+              style={{
+                position: 'absolute',
+                left: 40,
+                right: 40,
+                bottom: 50,
+                height: 104,
+                borderRadius: 52,
+                background: pressed ? c.volt : c.ink,
+                color: pressed ? c.ink : c.white,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                ...display,
+                fontSize: 44,
+                transform: `scale(${pressed ? mix(0.9, 1, prog(f, press, 10, backOut)) : 1})`,
+              }}
+            >
+              {pressed ? 'Signed' : 'Sign'}
+              <div
+                style={{
+                  position: 'absolute',
+                  width: 600 * ripple,
+                  height: 600 * ripple,
+                  borderRadius: '50%',
+                  border: `6px solid ${c.volt}`,
+                  opacity: 1 - ripple,
+                }}
+              />
+            </div>
+          </div>
+        </Abs>
+        <Abs
+          style={{
+            left: 800,
+            top: 260,
+            width: 1000,
+            opacity: 1 - headOut,
+            transform: `translateX(${headOut * 300}px)`,
+          }}
+        >
+          <Slam
+            text="Nothing moves until you sign."
+            start={q.at('s1')}
+            stagger={5}
+            colors={{ 'sign.': c.volt }}
+            style={{ ...display, fontSize: 130, color: c.white }}
+          />
+        </Abs>
+        {bands.map((b, i) => {
+          const s = prog(f, q.at(b.id), 16, backOut);
+          return (
+            <Abs
+              key={b.id}
+              style={{
+                left: 760,
+                top: 230 + i * 200,
+                width: 1220,
+                height: 160,
+                background: b.bg,
+                color: b.fg,
+                borderRadius: '80px 0 0 80px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 36,
+                paddingLeft: 60,
+                ...display,
+                fontSize: 96,
+                transform: `translateX(${(1 - s) * 1300}px)`,
+              }}
+            >
+              <span
+                style={{
+                  width: 70,
+                  height: 70,
+                  borderRadius: '50%',
+                  background: b.fg,
+                  display: 'inline-block',
+                  transform: `scale(${pop(f, q.at(b.id) + 8)})`,
+                }}
+              />
+              {b.t}
+            </Abs>
+          );
+        })}
+      </Camera>
+    </Bg>
+  );
+}
+
+/* 06 · The remainder lands; Leo is topped up; the old approval gets stamped. */
+export function Remainder() {
+  const f = useF();
+  const q = useCue();
+  const drop = interpolate(f, [q.at('r1'), q.at('r1') + 18], [-300, 200], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
     easing: Easing.in(Easing.quad),
   });
+  const bounce = pop(f, q.at('r1') + 18, 200);
+  const leo = prog(f, q.word('r2', 'Leo') + 6, 30, inOut);
+  const stampAt = q.at('r3') + 27;
+  const stamped = f >= stampAt;
   return (
-    <Light>
-      <Sphere
-        size={mix(420, 560, s)}
-        x={960}
-        y={440}
-        light
-        spin={f * 0.9}
-        glow={0.5}
-        style={{ opacity: s }}
+    <Bg color={c.ink}>
+      <Shapes seed={6} colors={[c.volt, c.coral, c.violet]} count={10} opacity={0.4} />
+      <Abs style={{ inset: 0, transform: shake(f, stampAt, 22) }}>
+        <Abs
+          style={{
+            left: 120,
+            top: 130,
+            ...display,
+            fontSize: 60,
+            color: c.white,
+            opacity: prog(f, q.at('r1'), 12),
+          }}
+        >
+          The rest arrives. <span style={{ color: c.volt }}>Splitt plans again.</span>
+        </Abs>
+        <Abs
+          style={{
+            left: 1380,
+            top: drop,
+            width: 380,
+            height: 380,
+            borderRadius: '50%',
+            background: c.volt,
+            border: `8px solid ${c.white}`,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: c.ink,
+            transform: `scale(${f >= q.at('r1') + 18 ? mix(1.25, 1, bounce) : 1}) rotate(${Math.sin(f / 14) * 6}deg)`,
+          }}
+        >
+          <div style={{ ...display, fontSize: 130 }}>+800</div>
+          <div style={{ fontFamily: font.body, fontSize: 30 }}>USDC received</div>
+        </Abs>
+        {[
+          {
+            n: 'Maya',
+            col: c.coral,
+            have: 700,
+            owe: 700,
+            p: 1,
+            note: 'Already paid · skipped',
+            at: q.word('r2', 'Maya'),
+          },
+          {
+            n: 'Leo',
+            col: c.violet,
+            have: mix(200, 500, leo),
+            owe: 500,
+            p: mix(0.4, 1, leo),
+            note: leo > 0 ? '+300 · now complete' : 'Owed 300 more',
+            at: q.word('r2', 'Leo'),
+          },
+        ].map((r, i) => (
+          <Abs
+            key={r.n}
+            style={{
+              left: 120,
+              top: 260 + i * 210,
+              width: 1100,
+              opacity: prog(f, q.at('r2') - 10 + i * 6, 10),
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 26 }}>
+              <Avatar letter={r.n[0]} color={r.col} size={100} />
+              <div style={{ flex: 1 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    ...display,
+                    fontSize: 56,
+                    color: c.white,
+                  }}
+                >
+                  <span>{r.n}</span>
+                  <span style={{ fontVariantNumeric: 'tabular-nums' }}>
+                    {Math.round(r.have)} / {r.owe}
+                  </span>
+                </div>
+                <div
+                  style={{
+                    height: 26,
+                    borderRadius: 13,
+                    background: 'rgba(255,255,255,.14)',
+                    marginTop: 12,
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div style={{ height: '100%', width: `${r.p * 100}%`, background: r.col }} />
+                </div>
+                <div
+                  style={{
+                    fontFamily: font.body,
+                    fontSize: 26,
+                    color: r.p >= 1 ? c.volt : c.white,
+                    marginTop: 10,
+                  }}
+                >
+                  {r.note}
+                </div>
+              </div>
+            </div>
+          </Abs>
+        ))}
+        <Abs
+          style={{
+            left: 120,
+            top: 720,
+            width: 760,
+            padding: '30px 40px',
+            borderRadius: 26,
+            background: c.paper,
+            color: c.ink,
+            transform: `rotate(-2deg) scale(${pop(f, q.at('r3'))})`,
+            filter: stamped ? 'grayscale(1)' : 'none',
+          }}
+        >
+          <div style={{ fontFamily: font.body, fontSize: 24, letterSpacing: '0.14em' }}>
+            APPROVAL #1
+          </div>
+          <div
+            style={{
+              ...display,
+              fontSize: 56,
+              marginTop: 8,
+              textDecoration: stamped ? 'line-through' : 'none',
+            }}
+          >
+            Maya 700 · Leo 200
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              right: -40,
+              top: -50,
+              padding: '12px 30px',
+              border: `9px solid ${c.coral}`,
+              borderRadius: 16,
+              color: c.coral,
+              background: c.paper,
+              ...display,
+              fontSize: 84,
+              transform: `rotate(12deg) scale(${stamped ? mix(2.6, 1, pop(f, stampAt, 300)) : 0})`,
+            }}
+          >
+            USED
+          </div>
+        </Abs>
+        <Abs
+          style={{
+            left: 960,
+            top: 760,
+            ...display,
+            fontSize: 64,
+            color: c.white,
+            opacity: prog(f, stampAt + 8, 10),
+          }}
+        >
+          Can’t count <span style={{ color: c.coral }}>twice.</span>
+        </Abs>
+      </Abs>
+    </Bg>
+  );
+}
+
+/* 07 · Two vaults, two colours; a coin tries to cross and a wall slams down. */
+export function Isolation() {
+  const f = useF();
+  const q = useCue();
+  const inL = prog(f, 0, 18, expo);
+  const inR = prog(f, 4, 18, expo);
+  const wallAt = q.at('i2') + 12;
+  const wall = prog(f, wallAt, 8, Easing.in(Easing.quad));
+  const tryX =
+    f < wallAt + 8
+      ? mix(
+          1500,
+          1010,
+          prog(f, q.at('i1') + 30, wallAt + 8 - q.at('i1') - 30, Easing.in(Easing.quad)),
+        )
+      : mix(1010, 1500, prog(f, wallAt + 8, 24, backOut));
+  return (
+    <Bg color={c.ink}>
+      <Abs
+        style={{
+          left: 0,
+          top: 0,
+          width: 960,
+          height: 1080,
+          background: c.coral,
+          transform: `translateY(${(1 - inL) * -1080}px)`,
+        }}
       />
-      <div
+      <Abs
         style={{
-          position: 'absolute',
-          top: 330,
-          width: 1920,
-          textAlign: 'center',
-          fontFamily: font.head,
-          fontWeight: 700,
-          fontSize: 230,
-          letterSpacing: '-0.06em',
-          color: c.ink,
-          opacity: prog(f, 4, 20),
-          transform: `scale(${mix(1.08, 1, prog(f, 4, 40))})`,
-        }}
-      >
-        splitt<span style={{ color: c.accent }}>.</span>
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          top: 700,
-          width: 1920,
-          display: 'flex',
-          justifyContent: 'center',
-          fontFamily: font.serif,
-          fontStyle: 'italic',
-          fontSize: 66,
-          color: c.deep,
-        }}
-      >
-        <Words text="Every amount has a reason." start={2 * B} stagger={3} />
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          top: 840,
-          width: 1920,
-          textAlign: 'center',
-          fontFamily: font.head,
-          fontSize: 44,
-          color: c.accent,
-          opacity: prog(f, 5 * B, 20),
-        }}
-      >
-        usesplitt.xyz
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          top: 910,
-          width: 1920,
-          textAlign: 'center',
-          fontFamily: font.body,
-          fontSize: 26,
-          color: c.muted,
-          opacity: prog(f, 6 * B, 20),
-        }}
-      >
-        Live on Arc Testnet · USDC · Circle developer-controlled wallets
-      </div>
-      <AbsoluteFill style={{ background: c.void, opacity: out }} />
-      <div
-        style={{
-          position: 'absolute',
-          left: 951,
-          top: fall - 9,
-          width: 18,
-          height: 18,
-          borderRadius: '50%',
-          background: c.glow,
-          boxShadow: `0 0 30px ${c.sky}`,
-          opacity: f >= 20 * B && f < 23 * B ? 1 : 0,
+          left: 960,
+          top: 0,
+          width: 960,
+          height: 1080,
+          background: c.violet,
+          transform: `translateY(${(1 - inR) * 1080}px)`,
         }}
       />
-    </Light>
+      <Abs style={{ inset: 0, transform: shake(f, wallAt + 8, 20) }}>
+        {[
+          { n: 'Northstar', v: 800, x: 480 },
+          { n: 'Fieldwork', v: 1000, x: 1440 },
+        ].map((p, i) => (
+          <Abs
+            key={p.n}
+            style={{
+              left: p.x - 380,
+              top: 230,
+              width: 760,
+              textAlign: 'center',
+              color: c.white,
+              transform: `scale(${pop(f, 10 + i * 6)})`,
+            }}
+          >
+            <div style={{ fontFamily: font.body, fontSize: 40 }}>{p.n}</div>
+            <div style={{ ...display, fontSize: 230 }}>
+              <Count to={p.v} start={10 + i * 6} dur={24} />
+            </div>
+            <div style={{ fontFamily: font.body, fontSize: 30 }}>USDC in its own vault</div>
+          </Abs>
+        ))}
+        <Abs
+          style={{
+            left: tryX - 50,
+            top: 640,
+            width: 100,
+            height: 100,
+            borderRadius: 50,
+            background: c.volt,
+            border: `6px solid ${c.ink}`,
+            opacity: prog(f, q.at('i1') + 24, 8),
+          }}
+        />
+        <Abs
+          style={{
+            left: 930,
+            top: mix(-1080, 0, wall),
+            width: 60,
+            height: 1080,
+            background: c.white,
+            boxShadow: '0 0 0 10px rgba(11,11,15,.9)',
+          }}
+        />
+        <Abs style={{ top: 720, width: 1920, display: 'flex', justifyContent: 'center' }}>
+          <div
+            style={{
+              padding: '18px 44px',
+              background: c.ink,
+              color: c.volt,
+              borderRadius: 18,
+              ...display,
+              fontSize: 80,
+              transform: `scale(${pop(f, wallAt + 10, 260)}) rotate(-2deg)`,
+            }}
+          >
+            Never mixed.
+          </div>
+        </Abs>
+      </Abs>
+    </Bg>
+  );
+}
+
+/* 08 · Proof: real Arc Testnet numbers and hashes, then the honest zero. */
+export function Proof() {
+  const f = useF();
+  const q = useCue();
+  const hashes = [
+    '0x938ea7d6370c06d25daf6c73493e5c43f304abf9938563b7bd934325edaebdc5',
+    '0x098fa70efda77e5f22396521bce7d5ccdeb3bbbaab8997e9ae8551a0ceb32881',
+    '0xde2ce4f47108ab118ef30b7dd835b7da7dae60ed7b83504ead5011acddd35c6d',
+    '0x39d42d99caea9eeb2e7ab39db2464139bb7e8a42639caf5902a19c0356bbba4f',
+  ];
+  const stats = [
+    { n: 3, d: 0, l: 'test vaults', w: 'Three', bg: c.volt, fg: c.ink },
+    { n: 4, d: 0, l: 'batches via Circle', w: 'Four', bg: c.coral, fg: c.white },
+    { n: 2.4, d: 1, l: 'test USDC paid', w: 'Every', bg: c.violet, fg: c.white },
+  ];
+  const honest = pop(f, q.at('pr3'), 160);
+  return (
+    <Bg color={c.ink}>
+      <div style={{ position: 'absolute', inset: 0, opacity: 0.16 }}>
+        {[0, 1, 2, 3, 4, 5].map((row) => (
+          <div
+            key={row}
+            style={{
+              position: 'absolute',
+              top: 60 + row * 170,
+              left: 0,
+              whiteSpace: 'nowrap',
+              fontFamily: font.head,
+              fontSize: 38,
+              color: c.white,
+              transform: `translateX(${(((row % 2 ? 1 : -1) * f * 4) % 1800) - 900}px)`,
+            }}
+          >
+            {(hashes[row % 4] + '   ').repeat(4)}
+          </div>
+        ))}
+      </div>
+      <Camera
+        keys={[
+          [0, 1.15, 0, 0],
+          [q.at('pr2'), 1, 0, 0],
+          [q.at('pr3'), 1, 0, 0],
+          [q.length, 1.05, 0, 0],
+        ]}
+      >
+        <Abs style={{ left: 120, top: 130, display: 'flex', alignItems: 'center', gap: 26 }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 14,
+              padding: '10px 26px',
+              borderRadius: 999,
+              background: c.volt,
+              color: c.ink,
+              ...display,
+              fontSize: 40,
+              transform: `scale(${pop(f, q.at('pr1'))})`,
+            }}
+          >
+            <i
+              style={{
+                width: 18,
+                height: 18,
+                borderRadius: 9,
+                background: c.coral,
+                opacity: 0.4 + 0.6 * Math.abs(Math.sin(f / 8)),
+              }}
+            />
+            LIVE
+          </div>
+          <Slam
+            text="on Arc testnet."
+            start={q.at('pr1') + 6}
+            stagger={5}
+            style={{ ...display, fontSize: 110, color: c.white }}
+            colors={{ 'testnet.': c.volt }}
+          />
+        </Abs>
+        <Abs style={{ left: 120, top: 300, width: 1680, display: 'flex', gap: 36 }}>
+          {stats.map((s) => {
+            const at = q.word('pr2', s.w);
+            const p = pop(f, at, 170);
+            return (
+              <div
+                key={s.l}
+                style={{
+                  flex: 1,
+                  height: 340,
+                  borderRadius: 34,
+                  background: s.bg,
+                  color: s.fg,
+                  padding: '36px 44px',
+                  transform: `translateY(${(1 - p) * 500}px) rotate(${(1 - p) * 8}deg)`,
+                  opacity: f >= at ? 1 : 0,
+                }}
+              >
+                <div style={{ ...display, fontSize: 200 }}>
+                  <Count to={s.n} start={at} dur={20} decimals={s.d} />
+                </div>
+                <div style={{ fontFamily: font.body, fontSize: 36 }}>{s.l}</div>
+              </div>
+            );
+          })}
+        </Abs>
+        <Abs
+          style={{
+            left: 120,
+            top: 690,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 40,
+            transform: `scale(${honest})`,
+            transformOrigin: 'left center',
+            opacity: f >= q.at('pr3') ? 1 : 0,
+          }}
+        >
+          <div
+            style={{
+              padding: '22px 40px',
+              borderRadius: 24,
+              border: `6px solid ${c.white}`,
+              color: c.white,
+              ...display,
+              fontSize: 70,
+            }}
+          >
+            Paying customers: <span style={{ color: c.coral }}>0</span>
+          </div>
+          <div
+            style={{
+              ...display,
+              fontSize: 70,
+              color: c.volt,
+              opacity: prog(f, q.word('pr3', "That's"), 10),
+            }}
+          >
+            That’s next.
+          </div>
+        </Abs>
+      </Camera>
+    </Bg>
+  );
+}
+
+/* 09 · End card: wordmark, confetti, URL; fades to black to loop into the opening. */
+export function End() {
+  const f = useF();
+  const q = useCue();
+  const out = prog(f, q.length - 18, 18, inOut);
+  return (
+    <Bg color={c.volt}>
+      <Shapes seed={9} colors={[c.ink, c.coral, c.violet]} count={14} opacity={0.6} />
+      <svg width={1920} height={1080} style={{ position: 'absolute', inset: 0 }}>
+        {[0, 1, 2].map((i) => (
+          <circle
+            key={i}
+            cx={960}
+            cy={420}
+            r={260 + i * 90 + 14 * pulse(f)}
+            fill="none"
+            stroke={c.ink}
+            strokeWidth={10 - i * 3}
+            strokeDasharray="30 22"
+            transform={`rotate(${f * (i % 2 ? -1 : 1) * 0.8} 960 420)`}
+            opacity={prog(f, 4 + i * 4, 12)}
+          />
+        ))}
+      </svg>
+      <Abs style={{ top: 250, width: 1920, display: 'flex', justifyContent: 'center' }}>
+        {'splitt.'.split('').map((ch, i) => {
+          const p = pop(f, q.at('e1') + i * 3, 260);
+          return (
+            <span
+              key={i}
+              style={{
+                display: 'inline-block',
+                ...display,
+                fontSize: 300,
+                color: ch === '.' ? c.coral : c.ink,
+                transform: `translateY(${(1 - p) * -260}px) scale(${p})`,
+              }}
+            >
+              {ch}
+            </span>
+          );
+        })}
+      </Abs>
+      <Confetti x={960} y={420} at={q.at('e1') + 10} colors={[c.ink, c.coral, c.violet, c.white]} />
+      <Abs style={{ top: 600, width: 1920, display: 'flex', justifyContent: 'center' }}>
+        <Slam
+          text="Every amount has a reason."
+          start={q.at('e2')}
+          stagger={4}
+          serif={['reason.']}
+          style={{ ...display, fontSize: 84, color: c.ink, letterSpacing: '-0.02em' }}
+        />
+      </Abs>
+      <Abs style={{ top: 730, width: 1920, display: 'flex', justifyContent: 'center' }}>
+        <div
+          style={{
+            padding: '20px 56px',
+            borderRadius: 999,
+            background: c.ink,
+            color: c.volt,
+            ...display,
+            fontSize: 64,
+            transform: `scale(${pop(f, q.word('e3', 'usesplitt'), 200) * (1 + 0.04 * pulse(f))})`,
+          }}
+        >
+          usesplitt.xyz
+        </div>
+      </Abs>
+      <AbsoluteFill style={{ background: c.ink, opacity: out }} />
+    </Bg>
   );
 }
 
 export const SCENES = {
-  open: Open,
+  hook: Hook,
   problem: Problem,
   title: Title,
   draft: Draft,
@@ -1332,4 +1384,4 @@ export const SCENES = {
   proof: Proof,
   end: End,
 };
-export { BAR, expo };
+export { B };

@@ -1,55 +1,1319 @@
 {
-  "bpm": 120,
-  "fps": 30,
-  "bars": 48,
-  "sections": [
-    { "id": "open", "from": 0, "to": 4, "label": "Illustrative example" },
-    { "id": "problem", "from": 4, "to": 10, "label": "Illustrative example" },
-    { "id": "title", "from": 10, "to": 13, "label": "" },
-    { "id": "draft", "from": 13, "to": 20, "label": "Illustrative example" },
-    { "id": "sign", "from": 20, "to": 26, "label": "Illustrative example" },
-    { "id": "remainder", "from": 26, "to": 31, "label": "Illustrative example" },
-    { "id": "isolation", "from": 31, "to": 35, "label": "Illustrative example" },
-    { "id": "proof", "from": 35, "to": 42, "label": "Real · Arc Testnet" },
-    { "id": "end", "from": 42, "to": 48, "label": "" }
-  ],
-  "sfx": [
-    { "beat": 4, "type": "drop" },
-    { "beat": 8, "type": "tick" },
-    { "beat": 9, "type": "tick" },
-    { "beat": 10, "type": "tick" },
-    { "beat": 11, "type": "chime", "note": 74 },
-    { "beat": 19, "type": "whoosh" },
-    { "beat": 20, "type": "drop" },
-    { "beat": 26, "type": "lock" },
-    { "beat": 32, "type": "tick" },
-    { "beat": 33, "type": "tick" },
-    { "beat": 37, "type": "chime", "note": 69 },
-    { "beat": 40, "type": "impact" },
-    { "beat": 54, "type": "whoosh" },
-    { "beat": 56, "type": "chime", "note": 74 },
-    { "beat": 64, "type": "tick" },
-    { "beat": 66, "type": "tick" },
-    { "beat": 68, "type": "tick" },
-    { "beat": 70, "type": "tick" },
-    { "beat": 72, "type": "tick" },
-    { "beat": 76, "type": "stamp" },
-    { "beat": 88, "type": "whoosh" },
-    { "beat": 92, "type": "chime", "note": 81 },
-    { "beat": 96, "type": "chime", "note": 69 },
-    { "beat": 98, "type": "chime", "note": 72 },
-    { "beat": 100, "type": "chime", "note": 76 },
-    { "beat": 102, "type": "chime", "note": 81 },
-    { "beat": 106, "type": "drop" },
-    { "beat": 112, "type": "chime", "note": 77 },
-    { "beat": 116, "type": "stamp" },
-    { "beat": 132, "type": "lock" },
-    { "beat": 138, "type": "whoosh" },
-    { "beat": 140, "type": "impact" },
-    { "beat": 152, "type": "tick" },
-    { "beat": 154, "type": "tick" },
-    { "beat": 156, "type": "tick" },
-    { "beat": 158, "type": "tick" },
-    { "beat": 168, "type": "impact" }
-  ]
+ "fps": 30,
+ "bpm": 120,
+ "totalFrames": 2730,
+ "sections": [
+  {
+   "id": "hook",
+   "label": "Illustrative example",
+   "from": 0,
+   "to": 150
+  },
+  {
+   "id": "problem",
+   "label": "Illustrative example",
+   "from": 150,
+   "to": 510
+  },
+  {
+   "id": "title",
+   "label": "",
+   "from": 510,
+   "to": 690
+  },
+  {
+   "id": "draft",
+   "label": "Illustrative example",
+   "from": 690,
+   "to": 1230
+  },
+  {
+   "id": "sign",
+   "label": "Illustrative example",
+   "from": 1230,
+   "to": 1620
+  },
+  {
+   "id": "remainder",
+   "label": "Illustrative example",
+   "from": 1620,
+   "to": 1950
+  },
+  {
+   "id": "isolation",
+   "label": "Illustrative example",
+   "from": 1950,
+   "to": 2160
+  },
+  {
+   "id": "proof",
+   "label": "Real \u00b7 Arc Testnet",
+   "from": 2160,
+   "to": 2520
+  },
+  {
+   "id": "end",
+   "label": "",
+   "from": 2520,
+   "to": 2730
+  }
+ ],
+ "lines": {
+  "hook1": {
+   "scene": "hook",
+   "from": 16,
+   "to": 52,
+   "caption": "Your client just paid.",
+   "words": [
+    {
+     "w": "Your",
+     "from": 16,
+     "to": 25
+    },
+    {
+     "w": "client",
+     "from": 25,
+     "to": 36
+    },
+    {
+     "w": "just",
+     "from": 36,
+     "to": 44
+    },
+    {
+     "w": "paid.",
+     "from": 44,
+     "to": 52
+    }
+   ]
+  },
+  "hook2": {
+   "scene": "hook",
+   "from": 62,
+   "to": 107,
+   "caption": "But only part of the invoice.",
+   "words": [
+    {
+     "w": "But",
+     "from": 62,
+     "to": 68
+    },
+    {
+     "w": "only",
+     "from": 68,
+     "to": 76
+    },
+    {
+     "w": "part",
+     "from": 76,
+     "to": 84
+    },
+    {
+     "w": "of",
+     "from": 84,
+     "to": 89
+    },
+    {
+     "w": "the",
+     "from": 89,
+     "to": 96
+    },
+    {
+     "w": "invoice.",
+     "from": 96,
+     "to": 107
+    }
+   ]
+  },
+  "p1": {
+   "scene": "problem",
+   "from": 166,
+   "to": 266,
+   "caption": "Twelve hundred of a two thousand dollar invoice just landed.",
+   "words": [
+    {
+     "w": "Twelve",
+     "from": 166,
+     "to": 178
+    },
+    {
+     "w": "hundred",
+     "from": 178,
+     "to": 190
+    },
+    {
+     "w": "of",
+     "from": 190,
+     "to": 196
+    },
+    {
+     "w": "a",
+     "from": 196,
+     "to": 201
+    },
+    {
+     "w": "two",
+     "from": 201,
+     "to": 208
+    },
+    {
+     "w": "thousand",
+     "from": 208,
+     "to": 222
+    },
+    {
+     "w": "dollar",
+     "from": 222,
+     "to": 233
+    },
+    {
+     "w": "invoice",
+     "from": 233,
+     "to": 246
+    },
+    {
+     "w": "just",
+     "from": 246,
+     "to": 254
+    },
+    {
+     "w": "landed.",
+     "from": 254,
+     "to": 266
+    }
+   ]
+  },
+  "p2": {
+   "scene": "problem",
+   "from": 275,
+   "to": 337,
+   "caption": "Three hundred has to stay in reserve.",
+   "words": [
+    {
+     "w": "Three",
+     "from": 275,
+     "to": 285
+    },
+    {
+     "w": "hundred",
+     "from": 285,
+     "to": 297
+    },
+    {
+     "w": "has",
+     "from": 297,
+     "to": 304
+    },
+    {
+     "w": "to",
+     "from": 304,
+     "to": 310
+    },
+    {
+     "w": "stay",
+     "from": 310,
+     "to": 319
+    },
+    {
+     "w": "in",
+     "from": 319,
+     "to": 325
+    },
+    {
+     "w": "reserve.",
+     "from": 325,
+     "to": 337
+    }
+   ]
+  },
+  "p3": {
+   "scene": "problem",
+   "from": 346,
+   "to": 416,
+   "caption": "Maya and Leo are both waiting to get paid.",
+   "words": [
+    {
+     "w": "Maya",
+     "from": 346,
+     "to": 355
+    },
+    {
+     "w": "and",
+     "from": 355,
+     "to": 362
+    },
+    {
+     "w": "Leo",
+     "from": 362,
+     "to": 369
+    },
+    {
+     "w": "are",
+     "from": 369,
+     "to": 375
+    },
+    {
+     "w": "both",
+     "from": 375,
+     "to": 384
+    },
+    {
+     "w": "waiting",
+     "from": 384,
+     "to": 396
+    },
+    {
+     "w": "to",
+     "from": 396,
+     "to": 401
+    },
+    {
+     "w": "get",
+     "from": 401,
+     "to": 408
+    },
+    {
+     "w": "paid.",
+     "from": 408,
+     "to": 416
+    }
+   ]
+  },
+  "p4": {
+   "scene": "problem",
+   "from": 426,
+   "to": 456,
+   "caption": "So who gets what?",
+   "words": [
+    {
+     "w": "So",
+     "from": 426,
+     "to": 432
+    },
+    {
+     "w": "who",
+     "from": 432,
+     "to": 439
+    },
+    {
+     "w": "gets",
+     "from": 439,
+     "to": 447
+    },
+    {
+     "w": "what?",
+     "from": 447,
+     "to": 456
+    }
+   ]
+  },
+  "t1": {
+   "scene": "title",
+   "from": 526,
+   "to": 551,
+   "caption": "Meet Splitt.",
+   "words": [
+    {
+     "w": "Meet",
+     "from": 526,
+     "to": 537
+    },
+    {
+     "w": "Splitt.",
+     "from": 537,
+     "to": 551
+    }
+   ]
+  },
+  "t2": {
+   "scene": "title",
+   "from": 560,
+   "to": 640,
+   "caption": "Payment plans with a reason behind every amount.",
+   "words": [
+    {
+     "w": "Payment",
+     "from": 560,
+     "to": 573
+    },
+    {
+     "w": "plans",
+     "from": 573,
+     "to": 583
+    },
+    {
+     "w": "with",
+     "from": 583,
+     "to": 591
+    },
+    {
+     "w": "a",
+     "from": 591,
+     "to": 596
+    },
+    {
+     "w": "reason",
+     "from": 596,
+     "to": 607
+    },
+    {
+     "w": "behind",
+     "from": 607,
+     "to": 619
+    },
+    {
+     "w": "every",
+     "from": 619,
+     "to": 629
+    },
+    {
+     "w": "amount.",
+     "from": 629,
+     "to": 640
+    }
+   ]
+  },
+  "d1": {
+   "scene": "draft",
+   "from": 706,
+   "to": 843,
+   "caption": "An AI agent reads the invoice, the terms and the cash, and drafts the split.",
+   "words": [
+    {
+     "w": "An",
+     "from": 706,
+     "to": 713
+    },
+    {
+     "w": "AI",
+     "from": 713,
+     "to": 719
+    },
+    {
+     "w": "agent",
+     "from": 719,
+     "to": 730
+    },
+    {
+     "w": "reads",
+     "from": 730,
+     "to": 740
+    },
+    {
+     "w": "the",
+     "from": 740,
+     "to": 748
+    },
+    {
+     "w": "invoice,",
+     "from": 748,
+     "to": 762
+    },
+    {
+     "w": "the",
+     "from": 762,
+     "to": 770
+    },
+    {
+     "w": "terms",
+     "from": 770,
+     "to": 780
+    },
+    {
+     "w": "and",
+     "from": 780,
+     "to": 788
+    },
+    {
+     "w": "the",
+     "from": 788,
+     "to": 796
+    },
+    {
+     "w": "cash,",
+     "from": 796,
+     "to": 805
+    },
+    {
+     "w": "and",
+     "from": 805,
+     "to": 813
+    },
+    {
+     "w": "drafts",
+     "from": 813,
+     "to": 825
+    },
+    {
+     "w": "the",
+     "from": 825,
+     "to": 833
+    },
+    {
+     "w": "split.",
+     "from": 833,
+     "to": 843
+    }
+   ]
+  },
+  "d2": {
+   "scene": "draft",
+   "from": 853,
+   "to": 965,
+   "caption": "Seven hundred to Maya. Two hundred to Leo, as his terms allow.",
+   "words": [
+    {
+     "w": "Seven",
+     "from": 853,
+     "to": 864
+    },
+    {
+     "w": "hundred",
+     "from": 864,
+     "to": 877
+    },
+    {
+     "w": "to",
+     "from": 877,
+     "to": 884
+    },
+    {
+     "w": "Maya.",
+     "from": 884,
+     "to": 893
+    },
+    {
+     "w": "Two",
+     "from": 893,
+     "to": 901
+    },
+    {
+     "w": "hundred",
+     "from": 901,
+     "to": 915
+    },
+    {
+     "w": "to",
+     "from": 915,
+     "to": 921
+    },
+    {
+     "w": "Leo,",
+     "from": 921,
+     "to": 929
+    },
+    {
+     "w": "as",
+     "from": 929,
+     "to": 936
+    },
+    {
+     "w": "his",
+     "from": 936,
+     "to": 944
+    },
+    {
+     "w": "terms",
+     "from": 944,
+     "to": 955
+    },
+    {
+     "w": "allow.",
+     "from": 955,
+     "to": 965
+    }
+   ]
+  },
+  "d3": {
+   "scene": "draft",
+   "from": 975,
+   "to": 1048,
+   "caption": "Then a separate rule engine checks every line.",
+   "words": [
+    {
+     "w": "Then",
+     "from": 975,
+     "to": 983
+    },
+    {
+     "w": "a",
+     "from": 983,
+     "to": 988
+    },
+    {
+     "w": "separate",
+     "from": 988,
+     "to": 1001
+    },
+    {
+     "w": "rule",
+     "from": 1001,
+     "to": 1009
+    },
+    {
+     "w": "engine",
+     "from": 1009,
+     "to": 1019
+    },
+    {
+     "w": "checks",
+     "from": 1019,
+     "to": 1030
+    },
+    {
+     "w": "every",
+     "from": 1030,
+     "to": 1040
+    },
+    {
+     "w": "line.",
+     "from": 1040,
+     "to": 1048
+    }
+   ]
+  },
+  "c1": {
+   "scene": "draft",
+   "from": 1057,
+   "to": 1075,
+   "caption": "Reserve.",
+   "words": [
+    {
+     "w": "Reserve.",
+     "from": 1057,
+     "to": 1075
+    }
+   ]
+  },
+  "c2": {
+   "scene": "draft",
+   "from": 1081,
+   "to": 1106,
+   "caption": "Eligibility.",
+   "words": [
+    {
+     "w": "Eligibility.",
+     "from": 1081,
+     "to": 1106
+    }
+   ]
+  },
+  "c3": {
+   "scene": "draft",
+   "from": 1112,
+   "to": 1128,
+   "caption": "Caps.",
+   "words": [
+    {
+     "w": "Caps.",
+     "from": 1112,
+     "to": 1128
+    }
+   ]
+  },
+  "c4": {
+   "scene": "draft",
+   "from": 1133,
+   "to": 1153,
+   "caption": "Evidence.",
+   "words": [
+    {
+     "w": "Evidence.",
+     "from": 1133,
+     "to": 1153
+    }
+   ]
+  },
+  "c5": {
+   "scene": "draft",
+   "from": 1158,
+   "to": 1182,
+   "caption": "Current state.",
+   "words": [
+    {
+     "w": "Current",
+     "from": 1158,
+     "to": 1172
+    },
+    {
+     "w": "state.",
+     "from": 1172,
+     "to": 1182
+    }
+   ]
+  },
+  "s1": {
+   "scene": "sign",
+   "from": 1246,
+   "to": 1294,
+   "caption": "Nothing moves until you sign.",
+   "words": [
+    {
+     "w": "Nothing",
+     "from": 1246,
+     "to": 1259
+    },
+    {
+     "w": "moves",
+     "from": 1259,
+     "to": 1269
+    },
+    {
+     "w": "until",
+     "from": 1269,
+     "to": 1279
+    },
+    {
+     "w": "you",
+     "from": 1279,
+     "to": 1286
+    },
+    {
+     "w": "sign.",
+     "from": 1286,
+     "to": 1294
+    }
+   ]
+  },
+  "s2": {
+   "scene": "sign",
+   "from": 1304,
+   "to": 1436,
+   "caption": "Your signature covers the exact batch. The vault, the payments, and the deadline.",
+   "words": [
+    {
+     "w": "Your",
+     "from": 1304,
+     "to": 1313
+    },
+    {
+     "w": "signature",
+     "from": 1313,
+     "to": 1328
+    },
+    {
+     "w": "covers",
+     "from": 1328,
+     "to": 1340
+    },
+    {
+     "w": "the",
+     "from": 1340,
+     "to": 1347
+    },
+    {
+     "w": "exact",
+     "from": 1347,
+     "to": 1357
+    },
+    {
+     "w": "batch.",
+     "from": 1357,
+     "to": 1367
+    },
+    {
+     "w": "The",
+     "from": 1367,
+     "to": 1375
+    },
+    {
+     "w": "vault,",
+     "from": 1375,
+     "to": 1385
+    },
+    {
+     "w": "the",
+     "from": 1385,
+     "to": 1392
+    },
+    {
+     "w": "payments,",
+     "from": 1392,
+     "to": 1407
+    },
+    {
+     "w": "and",
+     "from": 1407,
+     "to": 1414
+    },
+    {
+     "w": "the",
+     "from": 1414,
+     "to": 1421
+    },
+    {
+     "w": "deadline.",
+     "from": 1421,
+     "to": 1436
+    }
+   ]
+  },
+  "s3": {
+   "scene": "sign",
+   "from": 1445,
+   "to": 1482,
+   "caption": "Circle executes it.",
+   "words": [
+    {
+     "w": "Circle",
+     "from": 1445,
+     "to": 1458
+    },
+    {
+     "w": "executes",
+     "from": 1458,
+     "to": 1475
+    },
+    {
+     "w": "it.",
+     "from": 1475,
+     "to": 1482
+    }
+   ]
+  },
+  "s4": {
+   "scene": "sign",
+   "from": 1491,
+   "to": 1517,
+   "caption": "Arc settles it.",
+   "words": [
+    {
+     "w": "Arc",
+     "from": 1491,
+     "to": 1499
+    },
+    {
+     "w": "settles",
+     "from": 1499,
+     "to": 1511
+    },
+    {
+     "w": "it.",
+     "from": 1511,
+     "to": 1517
+    }
+   ]
+  },
+  "s5": {
+   "scene": "sign",
+   "from": 1527,
+   "to": 1585,
+   "caption": "And Splitt reconciles it from the chain.",
+   "words": [
+    {
+     "w": "And",
+     "from": 1527,
+     "to": 1533
+    },
+    {
+     "w": "Splitt",
+     "from": 1533,
+     "to": 1543
+    },
+    {
+     "w": "reconciles",
+     "from": 1543,
+     "to": 1558
+    },
+    {
+     "w": "it",
+     "from": 1558,
+     "to": 1563
+    },
+    {
+     "w": "from",
+     "from": 1563,
+     "to": 1570
+    },
+    {
+     "w": "the",
+     "from": 1570,
+     "to": 1577
+    },
+    {
+     "w": "chain.",
+     "from": 1577,
+     "to": 1585
+    }
+   ]
+  },
+  "r1": {
+   "scene": "remainder",
+   "from": 1636,
+   "to": 1716,
+   "caption": "When the rest of the money arrives, Splitt plans again.",
+   "words": [
+    {
+     "w": "When",
+     "from": 1636,
+     "to": 1644
+    },
+    {
+     "w": "the",
+     "from": 1644,
+     "to": 1650
+    },
+    {
+     "w": "rest",
+     "from": 1650,
+     "to": 1658
+    },
+    {
+     "w": "of",
+     "from": 1658,
+     "to": 1663
+    },
+    {
+     "w": "the",
+     "from": 1663,
+     "to": 1669
+    },
+    {
+     "w": "money",
+     "from": 1669,
+     "to": 1678
+    },
+    {
+     "w": "arrives,",
+     "from": 1678,
+     "to": 1689
+    },
+    {
+     "w": "Splitt",
+     "from": 1689,
+     "to": 1699
+    },
+    {
+     "w": "plans",
+     "from": 1699,
+     "to": 1707
+    },
+    {
+     "w": "again.",
+     "from": 1707,
+     "to": 1716
+    }
+   ]
+  },
+  "r2": {
+   "scene": "remainder",
+   "from": 1725,
+   "to": 1821,
+   "caption": "Maya is already paid. Leo gets his final three hundred.",
+   "words": [
+    {
+     "w": "Maya",
+     "from": 1725,
+     "to": 1734
+    },
+    {
+     "w": "is",
+     "from": 1734,
+     "to": 1741
+    },
+    {
+     "w": "already",
+     "from": 1741,
+     "to": 1754
+    },
+    {
+     "w": "paid.",
+     "from": 1754,
+     "to": 1763
+    },
+    {
+     "w": "Leo",
+     "from": 1763,
+     "to": 1771
+    },
+    {
+     "w": "gets",
+     "from": 1771,
+     "to": 1780
+    },
+    {
+     "w": "his",
+     "from": 1780,
+     "to": 1787
+    },
+    {
+     "w": "final",
+     "from": 1787,
+     "to": 1798
+    },
+    {
+     "w": "three",
+     "from": 1798,
+     "to": 1808
+    },
+    {
+     "w": "hundred.",
+     "from": 1808,
+     "to": 1821
+    }
+   ]
+  },
+  "r3": {
+   "scene": "remainder",
+   "from": 1831,
+   "to": 1903,
+   "caption": "And the old approval can never be used twice.",
+   "words": [
+    {
+     "w": "And",
+     "from": 1831,
+     "to": 1838
+    },
+    {
+     "w": "the",
+     "from": 1838,
+     "to": 1845
+    },
+    {
+     "w": "old",
+     "from": 1845,
+     "to": 1851
+    },
+    {
+     "w": "approval",
+     "from": 1851,
+     "to": 1864
+    },
+    {
+     "w": "can",
+     "from": 1864,
+     "to": 1871
+    },
+    {
+     "w": "never",
+     "from": 1871,
+     "to": 1880
+    },
+    {
+     "w": "be",
+     "from": 1880,
+     "to": 1886
+    },
+    {
+     "w": "used",
+     "from": 1886,
+     "to": 1894
+    },
+    {
+     "w": "twice.",
+     "from": 1894,
+     "to": 1903
+    }
+   ]
+  },
+  "i1": {
+   "scene": "isolation",
+   "from": 1966,
+   "to": 2019,
+   "caption": "Every project keeps its own cash.",
+   "words": [
+    {
+     "w": "Every",
+     "from": 1966,
+     "to": 1976
+    },
+    {
+     "w": "project",
+     "from": 1976,
+     "to": 1988
+    },
+    {
+     "w": "keeps",
+     "from": 1988,
+     "to": 1997
+    },
+    {
+     "w": "its",
+     "from": 1997,
+     "to": 2004
+    },
+    {
+     "w": "own",
+     "from": 2004,
+     "to": 2011
+    },
+    {
+     "w": "cash.",
+     "from": 2011,
+     "to": 2019
+    }
+   ]
+  },
+  "i2": {
+   "scene": "isolation",
+   "from": 2029,
+   "to": 2119,
+   "caption": "One client's money never pays another client's bills.",
+   "words": [
+    {
+     "w": "One",
+     "from": 2029,
+     "to": 2036
+    },
+    {
+     "w": "client's",
+     "from": 2036,
+     "to": 2051
+    },
+    {
+     "w": "money",
+     "from": 2051,
+     "to": 2061
+    },
+    {
+     "w": "never",
+     "from": 2061,
+     "to": 2072
+    },
+    {
+     "w": "pays",
+     "from": 2072,
+     "to": 2081
+    },
+    {
+     "w": "another",
+     "from": 2081,
+     "to": 2094
+    },
+    {
+     "w": "client's",
+     "from": 2094,
+     "to": 2109
+    },
+    {
+     "w": "bills.",
+     "from": 2109,
+     "to": 2119
+    }
+   ]
+  },
+  "pr1": {
+   "scene": "proof",
+   "from": 2176,
+   "to": 2236,
+   "caption": "And it's live today, on Arc testnet.",
+   "words": [
+    {
+     "w": "And",
+     "from": 2176,
+     "to": 2184
+    },
+    {
+     "w": "it's",
+     "from": 2184,
+     "to": 2192
+    },
+    {
+     "w": "live",
+     "from": 2192,
+     "to": 2201
+    },
+    {
+     "w": "today,",
+     "from": 2201,
+     "to": 2210
+    },
+    {
+     "w": "on",
+     "from": 2210,
+     "to": 2216
+    },
+    {
+     "w": "Arc",
+     "from": 2216,
+     "to": 2223
+    },
+    {
+     "w": "testnet.",
+     "from": 2223,
+     "to": 2236
+    }
+   ]
+  },
+  "pr2": {
+   "scene": "proof",
+   "from": 2245,
+   "to": 2400,
+   "caption": "Three test vaults. Four batches executed through Circle. Every transaction on chain.",
+   "words": [
+    {
+     "w": "Three",
+     "from": 2245,
+     "to": 2257
+    },
+    {
+     "w": "test",
+     "from": 2257,
+     "to": 2267
+    },
+    {
+     "w": "vaults.",
+     "from": 2267,
+     "to": 2280
+    },
+    {
+     "w": "Four",
+     "from": 2280,
+     "to": 2290
+    },
+    {
+     "w": "batches",
+     "from": 2290,
+     "to": 2305
+    },
+    {
+     "w": "executed",
+     "from": 2305,
+     "to": 2321
+    },
+    {
+     "w": "through",
+     "from": 2321,
+     "to": 2336
+    },
+    {
+     "w": "Circle.",
+     "from": 2336,
+     "to": 2349
+    },
+    {
+     "w": "Every",
+     "from": 2349,
+     "to": 2361
+    },
+    {
+     "w": "transaction",
+     "from": 2361,
+     "to": 2381
+    },
+    {
+     "w": "on",
+     "from": 2381,
+     "to": 2388
+    },
+    {
+     "w": "chain.",
+     "from": 2388,
+     "to": 2400
+    }
+   ]
+  },
+  "pr3": {
+   "scene": "proof",
+   "from": 2410,
+   "to": 2478,
+   "caption": "No paying customers yet. That's next.",
+   "words": [
+    {
+     "w": "No",
+     "from": 2410,
+     "to": 2416
+    },
+    {
+     "w": "paying",
+     "from": 2416,
+     "to": 2429
+    },
+    {
+     "w": "customers",
+     "from": 2429,
+     "to": 2447
+    },
+    {
+     "w": "yet.",
+     "from": 2447,
+     "to": 2455
+    },
+    {
+     "w": "That's",
+     "from": 2455,
+     "to": 2468
+    },
+    {
+     "w": "next.",
+     "from": 2468,
+     "to": 2478
+    }
+   ]
+  },
+  "e1": {
+   "scene": "end",
+   "from": 2536,
+   "to": 2553,
+   "caption": "Splitt.",
+   "words": [
+    {
+     "w": "Splitt.",
+     "from": 2536,
+     "to": 2553
+    }
+   ]
+  },
+  "e2": {
+   "scene": "end",
+   "from": 2563,
+   "to": 2604,
+   "caption": "Every amount has a reason.",
+   "words": [
+    {
+     "w": "Every",
+     "from": 2563,
+     "to": 2572
+    },
+    {
+     "w": "amount",
+     "from": 2572,
+     "to": 2582
+    },
+    {
+     "w": "has",
+     "from": 2582,
+     "to": 2589
+    },
+    {
+     "w": "a",
+     "from": 2589,
+     "to": 2593
+    },
+    {
+     "w": "reason.",
+     "from": 2593,
+     "to": 2604
+    }
+   ]
+  },
+  "e3": {
+   "scene": "end",
+   "from": 2613,
+   "to": 2677,
+   "caption": "Try it at usesplitt.xyz",
+   "words": [
+    {
+     "w": "Try",
+     "from": 2613,
+     "to": 2625
+    },
+    {
+     "w": "it",
+     "from": 2625,
+     "to": 2635
+    },
+    {
+     "w": "at",
+     "from": 2635,
+     "to": 2644
+    },
+    {
+     "w": "usesplitt.xyz",
+     "from": 2644,
+     "to": 2677
+    }
+   ]
+  }
+ }
 }

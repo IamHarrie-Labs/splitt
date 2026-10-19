@@ -11,185 +11,197 @@ import {
   useCurrentFrame,
 } from 'remotion';
 import timeline from '../public/timeline.json';
-import { BAR, SceneClock, TOTAL, c, font, inOut, prog } from './kit';
+import { B, SceneProvider, TOTAL, c, display, font, inOut, mix, pop, prog, pulse } from './kit';
 import { SCENES } from './scenes';
 
-type Reveal = { kind: 'iris'; x: number; y: number } | { kind: 'split' } | { kind: 'cut' };
-// How each section enters. Cuts land on the two impacts; iris and split ride the downbeat.
-const REVEALS: Record<string, Reveal> = {
-  open: { kind: 'cut' },
-  problem: { kind: 'iris', x: 960, y: 600 },
-  title: { kind: 'cut' },
-  draft: { kind: 'iris', x: 1112, y: 520 },
-  sign: { kind: 'split' },
-  remainder: { kind: 'split' },
-  isolation: { kind: 'split' },
-  proof: { kind: 'cut' },
-  end: { kind: 'iris', x: 960, y: 540 },
-};
-const LEAD = 20; // frames the incoming section spends opening over the outgoing one
-const LIGHT = new Set(['problem', 'sign', 'end']);
+const WIPE = 9; // frames the colour bars take to cover, and again to uncover, each cut
+const BARS = [
+  [c.volt, c.coral, c.violet],
+  [c.ink, c.volt, c.coral],
+  [c.violet, c.ink, c.volt],
+  [c.coral, c.violet, c.ink],
+];
+const QUIET = new Set(['hook', 'isolation']); // no kick, so no beat punch
+const DARK = new Set(['hook', 'sign', 'remainder', 'proof', 'isolation']);
 
-function RevealFrame({ reveal, children }: { reveal: Reveal; children: React.ReactNode }) {
+/** Three skewed colour bars sweep across every cut, hiding it. */
+function Wipes() {
   const frame = useCurrentFrame();
-  if (reveal.kind === 'cut') return <>{children}</>;
-  const p = prog(frame, 0, LEAD, inOut);
-  if (p >= 1) return <>{children}</>;
-  if (reveal.kind === 'iris') {
-    return (
-      <AbsoluteFill style={{ clipPath: `circle(${p * 150}% at ${reveal.x}px ${reveal.y}px)` }}>
-        {children}
-      </AbsoluteFill>
-    );
-  }
-  const half = 50 * (1 - p);
   return (
     <>
-      <AbsoluteFill style={{ clipPath: `inset(0 ${half}% 0 ${half}%)` }}>{children}</AbsoluteFill>
-      {[50 - (50 - half), 50 + (50 - half)].map((x, i) => (
-        <div
-          key={i}
-          style={{
-            position: 'absolute',
-            top: 0,
-            bottom: 0,
-            left: `${x}%`,
-            width: 2,
-            background: c.glow,
-            boxShadow: `0 0 30px ${c.sky}`,
-            opacity: 1 - p,
-          }}
-        />
-      ))}
+      {timeline.sections.slice(1).map((s, k) => {
+        const local = frame - s.from;
+        if (local < -WIPE - 6 || local > WIPE + 6) return null;
+        const dir = k % 2 ? -1 : 1;
+        return BARS[k % BARS.length].map((color, i) => {
+          const cover = prog(local, -WIPE - 6 + i * 3, WIPE, inOut);
+          const leave = prog(local, i * 3, WIPE, inOut);
+          const x = mix(-1.3, 0, cover) + mix(0, 1.3, leave);
+          return (
+            <div
+              key={`${s.id}-${i}`}
+              style={{
+                position: 'absolute',
+                top: -200,
+                height: 1480,
+                left: -300,
+                width: 2520,
+                background: color,
+                transform: `translateX(${dir * x * 2520}px) skewX(-14deg)`,
+                zIndex: 50 + i,
+              }}
+            />
+          );
+        });
+      })}
     </>
   );
 }
 
-function Overlay() {
+type Line = { from: number; to: number; words: { w: string; from: number; to: number }[] };
+
+/** Captions that light up word by word, broken into short chunks. */
+function Captions() {
   const frame = useCurrentFrame();
-  const bar = frame / BAR;
-  const index = timeline.sections.findIndex((s) => bar >= s.from && bar < s.to);
-  const section = timeline.sections[Math.max(0, index)];
-  const light = LIGHT.has(section.id);
-  const local = frame - section.from * BAR;
-  const real = section.label.startsWith('Real');
-  const ink = light ? c.ink : c.glow;
-  const flashAt = timeline.sections
-    .filter((s) => REVEALS[s.id].kind === 'cut' && s.from > 0)
-    .map((s) => s.from * BAR);
-  const flash = Math.max(0, ...flashAt.map((f) => (frame >= f ? 1 - (frame - f) / 14 : 0)));
-  const hudIn = prog(frame, 50, 30);
+  const lines = Object.values(timeline.lines as Record<string, Line>);
+  const line = lines.find((l) => frame >= l.from - 4 && frame <= l.to + 10);
+  if (!line) return null;
+  const chunks: Line['words'][] = [];
+  for (const w of line.words) {
+    const last = chunks[chunks.length - 1];
+    if (!last || last.length >= 6 || last.map((x) => x.w).join(' ').length + w.w.length > 32)
+      chunks.push([w]);
+    else last.push(w);
+  }
+  const chunk = [...chunks].reverse().find((ch) => frame >= ch[0].from - 4) ?? chunks[0];
+  const enter = pop(frame, chunk[0].from - 4, 300);
   return (
-    <>
-      <AbsoluteFill style={{ background: c.glow, opacity: flash * 0.85, pointerEvents: 'none' }} />
-      <AbsoluteFill
-        style={{
-          backgroundImage: `url(${staticFile('grain.png')})`,
-          // Grain steps every other frame: still reads as film, and halves what the encoder must carry.
-          backgroundPosition: `${(Math.floor(frame / 2) * 137) % 384}px ${(Math.floor(frame / 2) * 251) % 384}px`,
-          opacity: light ? 0.035 : 0.05,
-          mixBlendMode: light ? 'multiply' : 'screen',
-        }}
-      />
-      <AbsoluteFill
-        style={{
-          background: 'radial-gradient(ellipse at center, transparent 55%, rgba(6,13,24,.42) 100%)',
-          opacity: light ? 0.35 : 1,
-        }}
-      />
+    <div
+      style={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 64,
+        display: 'flex',
+        justifyContent: 'center',
+        zIndex: 40,
+      }}
+    >
       <div
         style={{
-          position: 'absolute',
-          left: 140,
-          top: 46,
-          fontFamily: font.head,
-          fontWeight: 700,
-          fontSize: 30,
-          letterSpacing: '-0.04em',
-          color: ink,
-          opacity: section.id === 'title' || section.id === 'end' ? 0 : hudIn,
+          display: 'flex',
+          gap: 16,
+          padding: '14px 30px',
+          borderRadius: 20,
+          background: 'rgba(11,11,15,.88)',
+          ...display,
+          letterSpacing: '-0.01em',
+          fontSize: 50,
+          transform: `scale(${mix(0.85, 1, enter)})`,
         }}
       >
-        splitt.
+        {chunk.map((w, i) => {
+          const active = frame >= w.from && frame < w.to + 2;
+          const spoken = frame >= w.from;
+          return (
+            <span
+              key={i}
+              style={{
+                color: active ? c.volt : spoken ? c.white : 'rgba(255,255,255,.45)',
+                transform: `scale(${active ? 1.08 : 1})`,
+                display: 'inline-block',
+              }}
+            >
+              {w.w}
+            </span>
+          );
+        })}
       </div>
-      {section.label && (
+    </div>
+  );
+}
+
+function Hud() {
+  const frame = useCurrentFrame();
+  const s =
+    timeline.sections.find((x) => frame >= x.from && frame < x.to) ??
+    timeline.sections[timeline.sections.length - 1];
+  const dark = DARK.has(s.id);
+  const real = s.label.startsWith('Real');
+  return (
+    <>
+      {s.id !== 'title' && s.id !== 'end' && (
         <div
           style={{
             position: 'absolute',
-            right: 140,
-            top: 44,
+            left: 60,
+            top: 40,
+            ...display,
+            fontSize: 40,
+            color: dark ? c.white : c.ink,
+            zIndex: 30,
+          }}
+        >
+          splitt<span style={{ color: dark ? c.volt : c.coral }}>.</span>
+        </div>
+      )}
+      {s.label && (
+        <div
+          style={{
+            position: 'absolute',
+            right: 60,
+            top: 42,
+            zIndex: 30,
             display: 'flex',
             alignItems: 'center',
-            gap: 12,
+            gap: 10,
             padding: '8px 20px',
             borderRadius: 999,
-            border: `1.5px solid ${real ? c.sky : light ? c.rule : 'rgba(143,179,220,.4)'}`,
-            background: real ? 'rgba(143,179,220,.16)' : 'transparent',
             fontFamily: font.body,
-            fontSize: 20,
-            color: light ? c.muted : c.ice,
-            opacity: hudIn * prog(local, 0, 12),
+            fontSize: 22,
+            background: real ? c.volt : dark ? 'rgba(255,255,255,.12)' : 'rgba(11,11,15,.08)',
+            color: real ? c.ink : dark ? c.white : c.ink,
+            border: real
+              ? 'none'
+              : `2px solid ${dark ? 'rgba(255,255,255,.3)' : 'rgba(11,11,15,.25)'}`,
           }}
         >
           <i
             style={{
-              width: 9,
-              height: 9,
-              borderRadius: '50%',
-              background: real ? c.sky : light ? c.accent : c.ice,
-              opacity: real ? 0.5 + 0.5 * Math.abs(Math.sin(frame / 9)) : 0.7,
+              width: 10,
+              height: 10,
+              borderRadius: 5,
+              background: real ? c.coral : 'currentColor',
+              opacity: real ? 0.5 + 0.5 * Math.abs(Math.sin(frame / 8)) : 0.6,
             }}
           />
-          {section.label}
+          {s.label}
         </div>
       )}
       <div
         style={{
           position: 'absolute',
-          left: 140,
-          right: 140,
-          bottom: 40,
-          display: 'flex',
-          gap: 8,
-          opacity: hudIn * 0.9,
+          left: 0,
+          bottom: 0,
+          height: 8,
+          width: `${(100 * frame) / TOTAL}%`,
+          background: c.coral,
+          zIndex: 30,
         }}
-      >
-        {timeline.sections.map((s, i) => {
-          const fill = Math.min(1, Math.max(0, (bar - s.from) / (s.to - s.from)));
-          return (
-            <div
-              key={s.id}
-              style={{
-                flex: s.to - s.from,
-                height: 3,
-                borderRadius: 2,
-                background: light ? 'rgba(22,35,55,.12)' : 'rgba(207,224,242,.14)',
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                style={{
-                  width: `${fill * 100}%`,
-                  height: '100%',
-                  background: i === index ? (light ? c.accent : c.sky) : light ? c.muted : c.ice,
-                }}
-              />
-            </div>
-          );
-        })}
-      </div>
+      />
     </>
   );
 }
 
 const FONTS: [string, string, string, string][] = [
-  ['Grotesk', 'grotesk-500.woff2', '500', 'normal'],
   ['Grotesk', 'grotesk-700.woff2', '700', 'normal'],
+  ['Grotesk', 'grotesk-500.woff2', '500', 'normal'],
   ['Poppins', 'poppins.woff2', '400', 'normal'],
   ['Serif', 'serif-italic.woff2', '400', 'italic'],
 ];
 
 function Film() {
+  const frame = useCurrentFrame();
   const [handle] = useState(() => delayRender('Loading Splitt fonts'));
   useEffect(() => {
     Promise.all(
@@ -200,29 +212,40 @@ function Film() {
       ),
     ).then(() => continueRender(handle));
   }, [handle]);
+  const s = timeline.sections.find((x) => frame >= x.from && frame < x.to);
+  const punch = s && !QUIET.has(s.id) ? 1 + 0.012 * pulse(frame, 0.3) : 1;
   return (
-    <AbsoluteFill style={{ background: c.void, fontFamily: font.body }}>
-      <Audio src={staticFile('score.wav')} />
-      {timeline.sections.map((s) => {
-        const Scene = SCENES[s.id as keyof typeof SCENES];
-        const reveal = REVEALS[s.id];
-        const lead = reveal.kind === 'cut' ? 0 : LEAD;
-        return (
-          <Sequence
-            key={s.id}
-            from={s.from * BAR - lead}
-            durationInFrames={(s.to - s.from) * BAR + lead}
-            premountFor={30}
-          >
-            <SceneClock value={lead}>
-              <RevealFrame reveal={reveal}>
+    <AbsoluteFill style={{ background: c.ink, fontFamily: font.body }}>
+      <Audio src={staticFile('soundtrack.mp3')} />
+      <AbsoluteFill style={{ transform: `scale(${punch})` }}>
+        {timeline.sections.map((sec) => {
+          const Scene = SCENES[sec.id as keyof typeof SCENES];
+          return (
+            <Sequence
+              key={sec.id}
+              from={sec.from}
+              durationInFrames={sec.to - sec.from}
+              premountFor={30}
+            >
+              <SceneProvider value={sec}>
                 <Scene />
-              </RevealFrame>
-            </SceneClock>
-          </Sequence>
-        );
-      })}
-      <Overlay />
+              </SceneProvider>
+            </Sequence>
+          );
+        })}
+      </AbsoluteFill>
+      <AbsoluteFill
+        style={{
+          backgroundImage: `url(${staticFile('grain.png')})`,
+          backgroundPosition: `${(Math.floor(frame / 2) * 137) % 384}px ${(Math.floor(frame / 2) * 251) % 384}px`,
+          opacity: 0.045,
+          mixBlendMode: 'overlay',
+          zIndex: 20,
+        }}
+      />
+      <Hud />
+      <Captions />
+      <Wipes />
     </AbsoluteFill>
   );
 }
@@ -237,3 +260,4 @@ registerRoot(() => (
     durationInFrames={TOTAL}
   />
 ));
+export { B };

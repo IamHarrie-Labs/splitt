@@ -1,0 +1,127 @@
+1
+00:00:00,533 --> 00:00:01,733
+Your client just paid.
+
+2
+00:00:02,067 --> 00:00:03,567
+But only part of the invoice.
+
+3
+00:00:05,533 --> 00:00:08,867
+Twelve hundred of a two thousand dollar invoice just landed.
+
+4
+00:00:09,167 --> 00:00:11,233
+Three hundred has to stay in reserve.
+
+5
+00:00:11,533 --> 00:00:13,867
+Maya and Leo are both waiting to get paid.
+
+6
+00:00:14,200 --> 00:00:15,200
+So who gets what?
+
+7
+00:00:17,533 --> 00:00:18,367
+Meet Splitt.
+
+8
+00:00:18,667 --> 00:00:21,333
+Payment plans with a reason behind every amount.
+
+9
+00:00:23,533 --> 00:00:28,100
+An AI agent reads the invoice, the terms and the cash, and drafts the split.
+
+10
+00:00:28,433 --> 00:00:32,167
+Seven hundred to Maya. Two hundred to Leo, as his terms allow.
+
+11
+00:00:32,500 --> 00:00:34,933
+Then a separate rule engine checks every line.
+
+12
+00:00:35,233 --> 00:00:35,833
+Reserve.
+
+13
+00:00:36,033 --> 00:00:36,867
+Eligibility.
+
+14
+00:00:37,067 --> 00:00:37,600
+Caps.
+
+15
+00:00:37,767 --> 00:00:38,433
+Evidence.
+
+16
+00:00:38,600 --> 00:00:39,400
+Current state.
+
+17
+00:00:41,533 --> 00:00:43,133
+Nothing moves until you sign.
+
+18
+00:00:43,467 --> 00:00:47,867
+Your signature covers the exact batch. The vault, the payments, and the deadline.
+
+19
+00:00:48,167 --> 00:00:49,400
+Circle executes it.
+
+20
+00:00:49,700 --> 00:00:50,567
+Arc settles it.
+
+21
+00:00:50,900 --> 00:00:52,833
+And Splitt reconciles it from the chain.
+
+22
+00:00:54,533 --> 00:00:57,200
+When the rest of the money arrives, Splitt plans again.
+
+23
+00:00:57,500 --> 00:01:00,700
+Maya is already paid. Leo gets his final three hundred.
+
+24
+00:01:01,033 --> 00:01:03,433
+And the old approval can never be used twice.
+
+25
+00:01:05,533 --> 00:01:07,300
+Every project keeps its own cash.
+
+26
+00:01:07,633 --> 00:01:10,633
+One client's money never pays another client's bills.
+
+27
+00:01:12,533 --> 00:01:14,533
+And it's live today, on Arc testnet.
+
+28
+00:01:14,833 --> 00:01:20,000
+Three test vaults. Four batches executed through Circle. Every transaction on chain.
+
+29
+00:01:20,333 --> 00:01:22,600
+No paying customers yet. That's next.
+
+30
+00:01:24,533 --> 00:01:25,100
+Splitt.
+
+31
+00:01:25,433 --> 00:01:26,800
+Every amount has a reason.
+
+32
+00:01:27,100 --> 00:01:29,233
+Try it at usesplitt.xyz
