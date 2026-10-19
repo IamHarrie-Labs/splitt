@@ -1,5 +1,6 @@
 import { initiateDeveloperControlledWalletsClient } from '@circle-fin/developer-controlled-wallets';
 import { parseGwei, type Hex, type Address } from 'viem';
+import { NETWORK } from '../network.js';
 export type OperatorFee = { gasLimit: string; maxFee: string; priorityFee: string };
 export class CircleFeeRejectedError extends Error {}
 export function circleOperator(targetVault?: Address) {
@@ -35,10 +36,12 @@ export function circleOperator(targetVault?: Address) {
       const wallet = (await client.getWallet({ id: CIRCLE_WALLET_ID })).data?.wallet;
       if (
         !wallet ||
-        wallet.blockchain !== 'ARC-TESTNET' ||
+        wallet.blockchain !== NETWORK.circleBlockchain ||
         wallet.address.toLowerCase() !== expectedAddress.toLowerCase()
       )
-        throw new Error('Circle wallet must match the vault operator on ARC-TESTNET.');
+        throw new Error(
+          `Circle wallet must match the vault operator on ${NETWORK.circleBlockchain}.`,
+        );
     },
     async submit(callData: Hex, idempotencyKey: string, fee?: OperatorFee) {
       let response;

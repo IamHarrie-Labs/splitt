@@ -85,7 +85,7 @@ Open [localhost:3000](http://localhost:3000). The app runs on fixture data by de
 
 ```sh
 npm run typecheck          # strict TypeScript
-npm test                   # 193 tests, including contract tests on a local chain
+npm test                   # 198 tests, including contract tests on a local chain
 npm run contracts:compile
 npm run build
 npm run release:check      # scans the release for credentials

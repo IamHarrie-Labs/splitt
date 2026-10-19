@@ -7,7 +7,7 @@ export type ChainEvent = {
   txHash: string;
   name: string;
   args: Record<string, string>;
-  source: 'arc_testnet';
+  source: 'arc_testnet' | 'arc_mainnet';
 };
 export type Job = {
   id: string;

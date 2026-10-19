@@ -19,7 +19,9 @@ import { batchCalldata, type ArcGateway } from './chain.js';
 import { propose } from '../agent/planner.js';
 import { approvalTypedData } from '../approvals.js';
 import { signatureSchema } from '../auth/routes.js';
-import type { StoredPlan } from '../store.js';
+import type { BatchApproval, StoredPlan } from '../store.js';
+import { NETWORK } from '../network.js';
+import type { SplittNetwork } from '@splitt/core';
 const hex32 = z.string().regex(/^0x[0-9a-fA-F]{64}$/);
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 export const metadataSchema = z
@@ -71,7 +73,15 @@ export class TestnetService {
     public owner: Address,
     public vault: Address,
     private planner: typeof propose = propose,
+    private network: SplittNetwork = NETWORK,
   ) {}
+  /** Through the chain when available, so ERC-1271 multisig owners verify too. */
+  private ownerSigned(approval: BatchApproval, signature: Hex) {
+    const typed = approvalTypedData(approval);
+    return this.chain.verifyTypedData
+      ? this.chain.verifyTypedData(typed, this.owner, signature)
+      : verifyTypedData({ ...typed, address: this.owner, signature });
+  }
   async register(input: unknown) {
     const data = metadataSchema.parse(input);
     const metadata = {
@@ -229,7 +239,12 @@ export class TestnetService {
         BigInt(current.approval.message.deadline) <= BigInt(Math.floor(Date.now() / 1000))
       )
         current.approval = {
-          domain: { name: 'Splitt', version: '1', chainId: 5042002, verifyingContract: this.vault },
+          domain: {
+            name: 'Splitt',
+            version: this.network.vaultDomainVersion,
+            chainId: this.network.chainId,
+            verifyingContract: this.vault,
+          },
           message: {
             planId: idHash(id),
             planHash: plan.planHash as Hex,
@@ -257,7 +272,8 @@ export class TestnetService {
     const approval = plan.approval ?? fail('Review the batch first.');
     if (
       approval.domain.name !== 'Splitt' ||
-      approval.domain.chainId !== 5042002 ||
+      approval.domain.chainId !== this.network.chainId ||
+      approval.domain.version !== this.network.vaultDomainVersion ||
       approval.domain.verifyingContract.toLowerCase() !== this.vault.toLowerCase()
     )
       fail('Wrong signing domain.');
@@ -265,13 +281,7 @@ export class TestnetService {
     if (existing) {
       // A lost HTTP response must recover the original intent, even if its chain
       // state or deadline has since changed. Never replace its signature/calldata.
-      if (
-        !(await verifyTypedData({
-          ...approvalTypedData(existing.approval),
-          address: this.owner,
-          signature,
-        }))
-      )
+      if (!(await this.ownerSigned(existing.approval, signature)))
         fail('Owner signature invalid.', 403);
       return existing;
     }
@@ -287,10 +297,7 @@ export class TestnetService {
       BigInt(approval.message.deadline) <= BigInt(Math.floor(Date.now() / 1000))
     )
       fail('Expired or stale plan.');
-    if (
-      !(await verifyTypedData({ ...approvalTypedData(approval), address: this.owner, signature }))
-    )
-      fail('Owner signature invalid.', 403);
+    if (!(await this.ownerSigned(approval, signature))) fail('Owner signature invalid.', 403);
     const signed = { ...approval, signature };
     await this.chain.simulate(signed);
     return this.repo.transaction((s) => {

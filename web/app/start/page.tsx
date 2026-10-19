@@ -23,6 +23,7 @@ import SiteHeader from '../site-header';
 import SiteFooter from '../site-footer';
 import { WorkspaceApiError, walletRequestRejected, workspaceRequest } from './requests';
 import { assertPayoutMatchesReview } from './payout-review';
+import { NETWORK } from '../network';
 import './start.css';
 
 const arc = defineChain({
@@ -89,7 +90,37 @@ type Metadata = Pick<
 };
 type Setup = { metadata: Metadata; reserve: string };
 const today = () => new Date().toLocaleDateString('en-CA');
-export default function SelfServe() {
+/** Self-serve deploys the pinned V1 vault, so mainnet builds route teams to onboarding instead. */
+export default function StartPage() {
+  return NETWORK.selfServe ? <SelfServe /> : <MainnetOnboarding />;
+}
+
+function MainnetOnboarding() {
+  return (
+    <>
+      <SiteHeader />
+      <main id="main-content" className="selfserve-main">
+        <header className="selfserve-intro">
+          <div>
+            <h1>Splitt on {NETWORK.name}.</h1>
+            <p>
+              Mainnet vaults are set up with each team: a multisig owner, a dedicated Circle
+              operator and caps sized to your projects. Self-serve vaults open after the independent
+              contract audit.
+            </p>
+            <p>
+              <Link href="/pilot">Request mainnet onboarding</Link> ·{' '}
+              <Link href="/demo">See the flow without a wallet</Link>
+            </p>
+          </div>
+        </header>
+      </main>
+      <SiteFooter />
+    </>
+  );
+}
+
+function SelfServe() {
   const [config, setConfig] = useState<Config>(),
     [checking, setChecking] = useState(true),
     [wallet, setWallet] = useState<Address>(),

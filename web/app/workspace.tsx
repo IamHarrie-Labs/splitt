@@ -31,6 +31,7 @@ import {
   type PlanOutput,
   type Validation,
 } from '@splitt/core';
+import { LIVE_MODES, NETWORK, switchNetworkMessage } from './network';
 
 type Plan = {
   id: string;
@@ -241,7 +242,7 @@ export default function Workspace({ section }: { section: string }) {
   }
   const load = useCallback(async () => {
     const health = await fetch('/api/health', { cache: 'no-store' });
-    if (health.ok && (await health.json()).mode === 'arc-testnet') {
+    if (health.ok && LIVE_MODES.includes((await health.json()).mode)) {
       window.location.replace('/testnet');
       return;
     }
@@ -339,8 +340,7 @@ export default function Workspace({ section }: { section: string }) {
         throw new Error(
           'Wallet account changed. Disconnect and sign in with the owner wallet again.',
         );
-      if ((await client.getChainId()) !== 5042002)
-        throw new Error('Switch your wallet to Arc Testnet (chain 5042002), then sign again.');
+      if ((await client.getChainId()) !== NETWORK.chainId) throw new Error(switchNetworkMessage);
       const a = preparedBatch;
       const signature = await client.signTypedData({
         account: active,
@@ -1557,7 +1557,10 @@ export default function Workspace({ section }: { section: string }) {
                   Current environment<strong>Local fixture</strong>
                 </span>
                 <span>
-                  Settlement target<strong>Arc Testnet · 5042002</strong>
+                  Settlement target
+                  <strong>
+                    {NETWORK.name} · {NETWORK.chainId}
+                  </strong>
                 </span>
                 <span>
                   Connected wallet<strong>{address ?? 'Not connected'}</strong>

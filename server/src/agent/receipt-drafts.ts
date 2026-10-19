@@ -23,7 +23,7 @@ export async function draftReceipts(service: TestnetService, now = Date.now()) {
     const known = new Set(tasks.map((t) => t.id));
     for (const event of s.events) {
       if (
-        event.source !== 'arc_testnet' ||
+        !['arc_testnet', 'arc_mainnet'].includes(event.source) ||
         !['PaymentReceived', 'PaymentAttributed'].includes(event.name) ||
         known.has(event.id)
       )

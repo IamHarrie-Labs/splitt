@@ -165,3 +165,20 @@
     font-size: 11px;
   }
 }
+
+.splitt-network {
+  align-self: center;
+  margin-left: 14px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--rule, #d4dce5);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.splitt-network.mainnet {
+  border-color: var(--danger);
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-weight: 600;
+}

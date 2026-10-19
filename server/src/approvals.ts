@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
+import { NETWORK } from './network.js';
 import { verifyTypedData, type Address, type Hex } from 'viem';
 import {
   authorizationTypes,
@@ -53,7 +54,7 @@ function proposal(
     domain: {
       name: 'Splitt Fixture',
       version: '1',
-      chainId: 5042002,
+      chainId: NETWORK.chainId,
       verifyingContract: options.vault,
     },
     message: {

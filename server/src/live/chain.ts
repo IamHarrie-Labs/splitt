@@ -6,15 +6,19 @@ import {
   erc20Abi,
   decodeEventLog,
   encodeFunctionData,
+  keccak256,
   type Address,
   type Hex,
+  type TypedDataDefinition,
 } from 'viem';
 import type { Project } from '@splitt/core';
 import type { BatchApproval } from '../store.js';
 import type { ChainEvent } from './repository.js';
 import { arcRpcFetch } from './rpc.js';
-export const ARC_ID = 5042002;
-export const USDC = '0x3600000000000000000000000000000000000000' as const;
+import { NETWORK } from '../network.js';
+export const ARC_ID = NETWORK.chainId;
+export const USDC = NETWORK.usdc;
+export const EVENT_SOURCE = NETWORK.id === 'mainnet' ? 'arc_mainnet' : 'arc_testnet';
 export const vaultAbi = parseAbi([
   'function owner() view returns (address)',
   'function operator() view returns (address)',
@@ -35,9 +39,10 @@ export const vaultAbi = parseAbi([
 ]);
 export const arc = defineChain({
   id: ARC_ID,
-  name: 'Arc Testnet',
+  name: NETWORK.name,
   nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
-  rpcUrls: { default: { http: ['https://rpc.testnet.arc.io'] } },
+  rpcUrls: { default: { http: [NETWORK.rpcUrl] } },
+  blockExplorers: { default: { name: `${NETWORK.name} Explorer`, url: NETWORK.explorerUrl } },
 });
 export function batchCalldata(approval: BatchApproval): Hex {
   if (!approval.signature) throw new Error('Owner signature required.');
@@ -70,8 +75,20 @@ export function arcGateway(vault: Address, owner: Address, operator: Address) {
     client.readContract({ address: vault, abi: vaultAbi, functionName: name });
   return {
     async verify() {
-      if ((await client.getChainId()) !== ARC_ID) throw new Error('Only Arc Testnet is allowed.');
-      if (!(await client.getCode({ address: vault }))) throw new Error('Vault is not deployed.');
+      if ((await client.getChainId()) !== ARC_ID)
+        throw new Error(`Only ${NETWORK.name} is allowed.`);
+      const code = await client.getCode({ address: vault });
+      if (!code) throw new Error('Vault is not deployed.');
+      if (NETWORK.id === 'mainnet') {
+        // Mainnet only runs against the audited V2 build, pinned by its deployed runtime hash.
+        const expected = process.env.MAINNET_EXPECTED_RUNTIME_CODE_HASH?.trim().toLowerCase();
+        if (!expected || !/^0x[0-9a-f]{64}$/.test(expected))
+          throw new Error(
+            'Set MAINNET_EXPECTED_RUNTIME_CODE_HASH to the audited vault runtime hash.',
+          );
+        if (keccak256(code) !== expected)
+          throw new Error('The mainnet vault runtime does not match the audited code hash.');
+      }
       const [actualOwner, actualOperator, token, decimals] = await Promise.all([
         read('owner'),
         read('operator'),
@@ -88,6 +105,13 @@ export function arcGateway(vault: Address, owner: Address, operator: Address) {
     },
     async owner() {
       return read('owner');
+    },
+    /** Checks EOA, ERC-1271 (multisig) and ERC-6492 owner signatures against current chain state. */
+    async verifyTypedData(typed: TypedDataDefinition, address: Address, signature: Hex) {
+      return client.verifyTypedData({ ...(typed as any), address, signature });
+    },
+    async verifyMessage(message: string, address: Address, signature: Hex) {
+      return client.verifyMessage({ message, address, signature });
     },
     async head() {
       return client.getBlockNumber();
@@ -128,7 +152,7 @@ export function arcGateway(vault: Address, owner: Address, operator: Address) {
             args: Object.fromEntries(
               Object.entries(decoded.args ?? {}).map(([k, v]) => [k, String(v)]),
             ),
-            source: 'arc_testnet',
+            source: EVENT_SOURCE,
           });
         } catch {
           /* Ignore unrelated ABI events, never fabricate a receipt. */
@@ -240,4 +264,5 @@ export function arcGateway(vault: Address, owner: Address, operator: Address) {
     },
   };
 }
-export type ArcGateway = ReturnType<typeof arcGateway>;
+export type ArcGateway = Omit<ReturnType<typeof arcGateway>, 'verifyTypedData' | 'verifyMessage'> &
+  Partial<Pick<ReturnType<typeof arcGateway>, 'verifyTypedData' | 'verifyMessage'>>;

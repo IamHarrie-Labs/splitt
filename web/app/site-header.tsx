@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { List, X } from '@phosphor-icons/react';
+import { NETWORK } from './network';
 import './site-header.css';
 const navigation = [
   ['Docs', '/docs'],
@@ -43,6 +44,9 @@ export default function SiteHeader({
       query.removeEventListener('change', resize);
     };
   }, [open]);
+  // Mainnet is flagged everywhere; on testnet only the pages that can move funds say so.
+  const showNetwork =
+    NETWORK.id === 'mainnet' || /^\/(start|testnet|workspace)/.test(pathname ?? '');
   const links = navigation.map(([label, href]) => (
     <Link
       key={href}
@@ -65,6 +69,14 @@ export default function SiteHeader({
         </span>
         splitt<span>.</span>
       </Link>
+      {showNetwork && (
+        <span
+          className={`splitt-network ${NETWORK.id}`}
+          title={`Payments on this page settle on ${NETWORK.name} (chain ${NETWORK.chainId}).`}
+        >
+          {NETWORK.id === 'mainnet' ? `${NETWORK.name} · real USDC` : NETWORK.name}
+        </span>
+      )}
       <nav className="splitt-desktop-nav" aria-label="Main navigation">
         {links}
       </nav>

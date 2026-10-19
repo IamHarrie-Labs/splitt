@@ -254,5 +254,29 @@ describe('ProjectVaultV2 mainnet candidate', () => {
     await expectRevert(1, 'payBatch', await approval(item, 'multisig-plan', 4), 'InvalidSignature');
     await write(1, 'payBatch', await approval(item, 'multisig-plan', 3));
     expect(await read('balanceOf', [wallets[2].account!.address], true)).toBe(40n * unit);
+    // The API verifies owner signatures with viem's chain-aware check before submitting,
+    // so it must accept the multisig's ERC-1271 answer and reject anyone else's key.
+    const block = await publicClient.getBlock();
+    const typed = {
+      domain: { name: 'Splitt', version: '2', chainId: chain.id, verifyingContract: vault },
+      types: authorizationTypes,
+      primaryType: 'PlanAuthorization' as const,
+      message: {
+        planId: idHash('api-check'),
+        planHash: idHash('api-check-facts'),
+        projectId,
+        projectVersion: 2n,
+        deadline: block.timestamp + 600n,
+        itemsHash: itemsHash([item]),
+      },
+    };
+    const sign = (i: number) =>
+      wallets[i].signTypedData({ account: wallets[i].account!, ...typed });
+    expect(
+      await publicClient.verifyTypedData({ ...typed, address: multisig, signature: await sign(3) }),
+    ).toBe(true);
+    expect(
+      await publicClient.verifyTypedData({ ...typed, address: multisig, signature: await sign(4) }),
+    ).toBe(false);
   });
 });

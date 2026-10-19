@@ -9,6 +9,7 @@ import { PostgresAuthRepository } from '../auth/repository.js';
 import { registerAuth } from '../auth/routes.js';
 import { LivePostgresRepository } from './repository.js';
 import { arcGateway } from './chain.js';
+import { NETWORK } from '../network.js';
 import { TestnetService } from './service.js';
 import { circleOperator } from '../circle/operator.js';
 import { workerTick, indexReceipts } from './worker.js';
@@ -17,7 +18,9 @@ import { analyzePaymentNote, paymentNoteInput } from '../agent/payment-notes.js'
 import { cctpGateway } from '../bridge/gateway.js';
 import { BridgeService } from '../bridge/service.js';
 import { registerBridgeRoutes } from '../bridge/routes.js';
+/** Runs one team-operated vault on the network SPLITT_MODE selects (arc-testnet or arc-mainnet). */
 export async function startTestnet() {
+  const mode = NETWORK.id === 'mainnet' ? 'arc-mainnet' : 'arc-testnet';
   if (
     [
       'OWNER_ADDRESS',
@@ -28,23 +31,26 @@ export async function startTestnet() {
     ].some((name) => !process.env[name])
   )
     throw new Error(
-      'Missing testnet configuration. Set owner, vault, operator, database and deployment block.',
+      'Missing live configuration. Set owner, vault, operator, database and deployment block.',
     );
   const owner = addressSchema.parse(process.env.OWNER_ADDRESS) as Address,
     vault = addressSchema.parse(process.env.VAULT_ADDRESS) as Address,
     operator = addressSchema.parse(process.env.OPERATOR_ADDRESS) as Address;
   if (!process.env.DATABASE_URL || !/^\d+$/.test(process.env.VAULT_DEPLOYMENT_BLOCK ?? ''))
-    throw new Error('Testnet requires DATABASE_URL and VAULT_DEPLOYMENT_BLOCK.');
-  if (process.env.SPLITT_TESTNET_CONFIRM !== 'arc-testnet')
-    throw new Error('Set SPLITT_TESTNET_CONFIRM=arc-testnet after reviewing the deployment.');
+    throw new Error('Live mode requires DATABASE_URL and VAULT_DEPLOYMENT_BLOCK.');
+  // Each network has its own confirmation, so a testnet config can never start a mainnet API.
+  const confirm = NETWORK.id === 'mainnet' ? 'SPLITT_MAINNET_CONFIRM' : 'SPLITT_TESTNET_CONFIRM';
+  if (process.env[confirm] !== mode)
+    throw new Error(`Set ${confirm}=${mode} after reviewing the deployment.`);
   const chain = arcGateway(vault, owner, operator);
   await chain.verify();
   const provider = circleOperator();
   await provider.verify(operator);
   const db = connectDatabase(process.env.DATABASE_URL);
-  const repo = await new LivePostgresRepository(db, `5042002:${vault.toLowerCase()}`).init(
-    process.env.VAULT_DEPLOYMENT_BLOCK!,
-  );
+  const repo = await new LivePostgresRepository(
+    db,
+    `${NETWORK.chainId}:${vault.toLowerCase()}`,
+  ).init(process.env.VAULT_DEPLOYMENT_BLOCK!);
   const service = new TestnetService(repo, chain, owner, vault);
   const app = Fastify({ logger: true, bodyLimit: 100000 });
   const origin = process.env.WEB_ORIGIN ?? 'http://localhost:3000';
@@ -62,22 +68,29 @@ export async function startTestnet() {
           ? 'Invalid request fields.'
           : e.statusCode
             ? e.message
-            : 'Testnet operation failed; inspect batch status before retrying.',
+            : 'Operation failed; inspect batch status before retrying.',
     });
   });
   await registerAuth(
     app,
     origin,
-    { owner, currentOwner: chain.owner, repository: new PostgresAuthRepository(db) },
+    {
+      owner,
+      currentOwner: chain.owner,
+      repository: new PostgresAuthRepository(db),
+      verifyMessage: chain.verifyMessage,
+    },
     { storage: 'postgres', approvalEnabled: true },
   );
   app.get('/health', async () => ({
     status: 'ok',
-    mode: 'arc-testnet',
-    network: 'Arc Testnet',
+    mode,
+    network: NETWORK.name,
+    chainId: NETWORK.chainId,
     livePayments: true,
   }));
-  registerBridgeRoutes(app, new BridgeService(repo, cctpGateway(vault, owner), vault, owner));
+  if (NETWORK.bridge)
+    registerBridgeRoutes(app, new BridgeService(repo, cctpGateway(vault, owner), vault, owner));
   app.get('/testnet/workspace', async () => {
     const state = await repo.snapshot();
     state.projects = await Promise.all(
@@ -101,11 +114,11 @@ export async function startTestnet() {
     );
     return {
       ...state,
-      mode: 'arc-testnet',
+      mode,
       vault,
       owner,
       operator,
-      chainId: 5042002,
+      chainId: NETWORK.chainId,
     };
   });
   app.post('/testnet/projects', async (req) => service.register(req.body));
@@ -165,7 +178,7 @@ export async function startTestnet() {
       await workerTick(repo, chain, provider);
       await draftReceipts(service);
     } catch {
-      app.log.warn('Testnet worker retry pending; no new batch created.');
+      app.log.warn('Worker retry pending; no new batch created.');
     } finally {
       busy = false;
     }

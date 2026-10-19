@@ -7,6 +7,7 @@ import {
   type PlanOutput,
 } from '@splitt/core';
 import type { BatchApproval } from '../../../server/src/store';
+import { NETWORK } from '../network';
 
 export function assertPayoutMatchesReview(
   approval: BatchApproval,
@@ -19,8 +20,8 @@ export function assertPayoutMatchesReview(
   const expectedHash = itemsHash(expected);
   if (
     approval.domain.name !== 'Splitt' ||
-    approval.domain.version !== '1' ||
-    approval.domain.chainId !== 5042002 ||
+    approval.domain.version !== NETWORK.vaultDomainVersion ||
+    approval.domain.chainId !== NETWORK.chainId ||
     approval.domain.verifyingContract.toLowerCase() !== vault.toLowerCase() ||
     approval.message.projectId !== project.onchainId ||
     approval.message.projectVersion !== String(project.version) ||

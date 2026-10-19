@@ -17,32 +17,45 @@ Mainnet. `npm run mainnet:check` remains the release gate and must exit zero fir
 - `docs/mainnet-candidate.json` was regenerated for the changed source. The new hashes are the
   ones to hand the auditor.
 
-## Phase 1: engineering (about 2 weeks, no external dependency)
+## Phase 1: engineering
 
-1. **Integrate V2 into the app.** The server, core package and web app only know the V1 testnet
-   vault and EIP-712 domain version `1`. Add a V2 ABI and domain, then point the self-serve and live
-   paths at it by network.
-2. **Network configuration.** Chain ID `5042002` is hardcoded in 27 places across 16 files
-   (`server/src/live/*`, `server/src/approvals.ts`, `server/src/auth/routes.ts`,
-   `server/src/selfserve/registry.ts`, `server/src/bridge/gateway.ts`, `packages/core/src/*`,
-   `web/app/start/*`, `web/app/workspace.tsx`, `web/app/testnet/*`, `web/app/docs/page.tsx`). Replace
-   them with one `SPLITT_NETWORK=testnet|mainnet` setting that resolves chain ID, RPC, explorer, USDC
-   and the vault. Unknown values fail closed.
-3. **Smart-account signatures off-chain.** `server/src/approvals.ts`, `server/src/live/service.ts`
-   and `server/src/auth/routes.ts` use viem's standalone `verifyTypedData` and `verifyMessage`. These
-   only recover EOA signatures, so a Safe owner's signature would be rejected before reaching the
-   chain. Switch to the public-client actions, which check ERC-1271 and ERC-6492.
-4. **Safe signing flow in the UI.** A multisig signature needs threshold collection, for example
-   through the Safe app or Safe Transaction Service, before the batch is submitted. The pre-sign
-   summary must show the vault, recipients, exact amounts, reserve after payment and expiry, as listed
-   in the readiness doc.
-5. **Mainnet treatment in the UI.** Add a persistent network badge, a distinct mainnet warning and
-   separate ERC-20 (6-decimal) and native-gas (18-decimal) USDC display.
-6. **Fork rehearsal.** Script a run against an Arc Mainnet fork with a real Safe as owner: deploy,
-   create a project, add and activate a payee, pay, pause, revoke the operator, transfer ownership,
-   withdraw above reserve. Record the transcript as evidence.
-7. **Fuzz and invariant tests** for `totalAccounted`, unattributed funds, batch permutations and
-   blocklisted payees, as the readiness doc asks.
+### Done (19 October 2026)
+
+1. **One network setting.** `packages/core/src/network.ts` defines Arc Testnet and Arc Mainnet:
+   chain ID, RPC, explorer, USDC, Circle blockchain, vault EIP-712 version and which testnet-only
+   features exist. The API takes the network from `SPLITT_MODE` (`arc-testnet` or
+   `arc-mainnet`); the web app from `NEXT_PUBLIC_SPLITT_NETWORK` (`testnet` or `mainnet`). Unset
+   means testnet; unknown values fail closed. The live API, approvals, sign-in, Circle wallet check,
+   event indexing and the live and fixture web pages read it instead of hardcoded IDs.
+2. **V2 in the live path.** V1 and V2 share the server-facing ABI, so mainnet approvals now use the
+   V2 domain (`Splitt`, version `2`, chain `5042`), and an approval for the wrong network or version
+   is rejected. On mainnet the API refuses to start unless the vault's deployed runtime matches
+   `MAINNET_EXPECTED_RUNTIME_CODE_HASH`, so it only ever runs against the audited build.
+3. **Multisig signatures off-chain.** Owner approvals and sign-in are verified through the chain
+   with viem's ERC-1271 and ERC-6492 aware checks, and signatures up to 2 KB are accepted, so a Safe
+   owner is no longer rejected by the API. A V2 contract test checks this against a mock multisig on
+   a local chain.
+4. **Mainnet safeguards in the UI.** A mainnet build shows a red "Arc Mainnet · real USDC" badge in
+   the header on every page; testnet builds show the network on pages that move funds. A mainnet
+   API needs its own `SPLITT_MAINNET_CONFIRM=arc-mainnet`, so a testnet config can never start it.
+   Self-serve vaults and the CCTP bridge stay testnet-only: on mainnet, `/start` routes teams to
+   onboarding instead of deploying the unaudited V1 artifact.
+
+### Remaining
+
+5. **Safe signing flow in the UI.** The API now accepts a multisig signature, but the web app still
+   asks a single browser wallet to sign. Collecting the Safe threshold (through the Safe app or Safe
+   Transaction Service) and showing the full pre-sign summary is the next piece.
+6. **Separate USDC displays.** Keep ERC-20 project USDC (6 decimals) and native gas (18 decimals)
+   visibly distinct on mainnet screens.
+7. **Mainnet deploy script.** A reviewed script that refuses any chain but `5042`, records the
+   transaction before waiting, verifies constructor arguments and the runtime hash, and requires a
+   passing `npm run mainnet:check`.
+8. **Fork rehearsal.** Run the whole flow against an Arc Mainnet fork with a real Safe as owner:
+   deploy, create a project, activate a payee, pay, pause, revoke the operator, transfer ownership
+   and withdraw above reserve. Record the transcript as evidence.
+9. **Fuzz and invariant tests** for `totalAccounted`, unattributed funds, batch permutations and
+   blocklisted payees.
 
 ## Phase 2: external gates (in parallel, owner: Harrie)
 

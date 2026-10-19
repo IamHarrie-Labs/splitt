@@ -8,8 +8,10 @@ import { PostgresStore } from './db/postgres-store.js';
 import { PostgresAuthRepository } from './auth/repository.js';
 import { initialState, type StateStore } from './store.js';
 const mode = process.env.SPLITT_MODE ?? 'fixture';
-if (mode === 'arc-testnet') {
+if (mode === 'arc-testnet' || mode === 'arc-mainnet') {
   if (process.env.SPLITT_SELF_SERVE === 'true') {
+    // Self-serve deploys the pinned V1 artifact, which is never offered on mainnet.
+    if (mode === 'arc-mainnet') throw new Error('Self-serve vaults are testnet-only.');
     const { startSelfServe } = await import('./selfserve/runtime.js');
     await startSelfServe();
   } else {

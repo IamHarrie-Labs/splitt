@@ -9,6 +9,7 @@ import { authorizationTypes, formatUSDC } from '@splitt/core';
 import type { LiveState } from '../../../server/src/live/repository';
 import type { BatchApproval } from '../../../server/src/store';
 import BridgeFunding from './bridge-funding';
+import { LIVE_MODES, NETWORK, addressUrl, switchNetworkMessage, txUrl } from '../network';
 type Workspace = LiveState & { vault: Address; owner: Address; operator: Address };
 const demoOnly = process.env.NEXT_PUBLIC_DEMO_ONLY === 'true';
 export default function TestnetWorkspace() {
@@ -46,7 +47,7 @@ export default function TestnetWorkspace() {
       .catch(() => setMode('unavailable'));
   }, []);
   useEffect(() => {
-    if (!csrf || busy || mode !== 'arc-testnet') return;
+    if (!csrf || busy || !LIVE_MODES.includes(mode)) return;
     let active = true;
     const timer = setInterval(() => {
       void api<Workspace>('/testnet/workspace')
@@ -91,8 +92,7 @@ export default function TestnetWorkspace() {
     const accounts = await client.getAddresses();
     if (accounts[0]?.toLowerCase() !== workspace.owner.toLowerCase())
       throw new Error('Select the configured owner wallet.');
-    if ((await client.getChainId()) !== 5042002)
-      throw new Error('Switch your wallet to Arc Testnet.');
+    if ((await client.getChainId()) !== NETWORK.chainId) throw new Error(switchNetworkMessage);
     const a = review.approval;
     const signature = await client.signTypedData({
       account: accounts[0],
@@ -122,7 +122,7 @@ export default function TestnetWorkspace() {
             {error}
           </p>
         )}
-        {mode !== 'arc-testnet' ? (
+        {!LIVE_MODES.includes(mode) ? (
           <section className="panel" style={{ padding: 24, marginTop: 24 }}>
             <h2>
               {mode === 'checking'
@@ -149,11 +149,7 @@ export default function TestnetWorkspace() {
               <>
                 <p>
                   Vault:{' '}
-                  <a
-                    href={`https://explorer.testnet.arc.io/address/${workspace.vault}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
+                  <a href={addressUrl(workspace.vault)} target="_blank" rel="noreferrer">
                     {workspace.vault}
                   </a>
                 </p>
@@ -519,11 +515,7 @@ export default function TestnetWorkspace() {
                     <p key={j.id}>
                       {j.state} · {j.attempts} worker attempts{' '}
                       {j.txHash && (
-                        <a
-                          href={`https://explorer.testnet.arc.io/tx/${j.txHash}`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
+                        <a href={txUrl(j.txHash)} target="_blank" rel="noreferrer">
                           View transaction
                         </a>
                       )}
@@ -543,11 +535,7 @@ export default function TestnetWorkspace() {
                     .map((event) => (
                       <p key={event.id}>
                         {event.name} · Block {event.block} ·{' '}
-                        <a
-                          href={`https://explorer.testnet.arc.io/tx/${event.txHash}`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
+                        <a href={txUrl(event.txHash)} target="_blank" rel="noreferrer">
                           View receipt
                         </a>
                       </p>

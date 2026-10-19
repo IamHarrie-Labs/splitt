@@ -6,6 +6,7 @@ import { createSiweMessage, parseSiweMessage } from 'viem/siwe';
 import { z } from 'zod';
 import { addressSchema } from '@splitt/core';
 import { MemoryAuthRepository, type AuthRepository } from './repository.js';
+import { NETWORK } from '../network.js';
 
 export type AuthOptions = {
   owner?: Address;
@@ -13,15 +14,18 @@ export type AuthOptions = {
   repository?: AuthRepository;
   now?: () => Date;
   currentOwner?: () => Promise<Address>;
+  /** Verifies through the chain so multisig (ERC-1271) owners can sign in; EOA-only when unset. */
+  verifyMessage?: (message: string, address: Address, signature: `0x${string}`) => Promise<boolean>;
 };
 declare module 'fastify' {
   interface FastifyRequest {
     splittWallet?: Address;
   }
 }
+// 65 bytes for an EOA; multisig (ERC-1271) signatures concatenate several, so allow up to 2 KB.
 export const signatureSchema = z
   .string()
-  .regex(/^0x[0-9a-fA-F]{130}$/, 'Expected an EOA wallet signature');
+  .regex(/^0x(?:[0-9a-fA-F]{2}){65,2048}$/, 'Expected a wallet signature');
 const hashToken = (token: string) => createHash('sha256').update(token).digest('hex');
 function failure(statusCode: number, message: string) {
   return Object.assign(new Error(message), { statusCode });
@@ -89,7 +93,7 @@ export async function registerAuth(
       const site = new URL(origin);
       const message = createSiweMessage({
         address: getAddress(address),
-        chainId: 5042002,
+        chainId: NETWORK.chainId,
         domain: site.host,
         uri: site.origin,
         scheme: site.protocol.slice(0, -1),
@@ -98,7 +102,7 @@ export async function registerAuth(
         issuedAt,
         expirationTime: expiresAt,
         statement: options?.allowAnyWallet
-          ? 'Sign in to your Splitt testnet workspace. This does not authorize payments.'
+          ? `Sign in to your Splitt workspace on ${NETWORK.name}. This does not authorize payments.`
           : 'Sign in to Splitt as workspace owner. This does not authorize payments.',
       });
       await repo.putChallenge({ nonce, wallet: address.toLowerCase(), message, expiresAt });
@@ -120,18 +124,24 @@ export async function registerAuth(
       if (
         parsed.domain !== new URL(origin).host ||
         parsed.uri !== new URL(origin).origin ||
-        parsed.chainId !== 5042002 ||
+        parsed.chainId !== NETWORK.chainId ||
         parsed.address?.toLowerCase() !== challenge.wallet ||
         parsed.nonce !== nonce
       )
         throw failure(401, 'Sign-in challenge belongs to a different workspace.');
       await checkOwner(challenge.wallet);
       if (
-        !(await verifyMessage({
-          address: challenge.wallet as Address,
-          message: challenge.message,
-          signature: signature as `0x${string}`,
-        }))
+        !(await (options.verifyMessage
+          ? options.verifyMessage(
+              challenge.message,
+              challenge.wallet as Address,
+              signature as `0x${string}`,
+            )
+          : verifyMessage({
+              address: challenge.wallet as Address,
+              message: challenge.message,
+              signature: signature as `0x${string}`,
+            })))
       )
         throw failure(401, 'Wallet signature does not match this sign-in challenge.');
       if (!(await repo.consume(nonce, now())))
