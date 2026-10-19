@@ -6,86 +6,189 @@
       "id": "hook",
       "label": "Illustrative example",
       "lines": [
-        { "id": "hook1", "text": "Your client just paid." },
-        { "id": "hook2", "text": "But only part of the invoice." }
+        {
+          "id": "hook1",
+          "text": "Your client just paid."
+        },
+        {
+          "id": "hook2",
+          "text": "But only part of the invoice."
+        }
       ]
     },
     {
       "id": "problem",
       "label": "Illustrative example",
       "lines": [
-        { "id": "p1", "text": "Twelve hundred of a two thousand dollar invoice just landed." },
-        { "id": "p2", "text": "Three hundred has to stay in reserve." },
-        { "id": "p3", "text": "Maya and Leo are both waiting to get paid." },
-        { "id": "p4", "text": "So who gets what?" }
+        {
+          "id": "p1",
+          "text": "Twelve hundred of a two thousand dollar invoice just landed."
+        },
+        {
+          "id": "p2",
+          "text": "Three hundred has to stay in reserve."
+        },
+        {
+          "id": "p3",
+          "text": "Maya and Leo are both waiting to get paid."
+        },
+        {
+          "id": "p4",
+          "text": "So who gets what?"
+        }
       ]
     },
     {
       "id": "title",
       "label": "",
       "lines": [
-        { "id": "t1", "text": "Meet Splitt.", "caption": "Meet Splitt." },
-        { "id": "t2", "text": "Payment plans with a reason behind every amount." }
+        {
+          "id": "t1",
+          "text": "Meet Splitt.",
+          "caption": "Meet Splitt."
+        },
+        {
+          "id": "t2",
+          "text": "Payment plans with a reason behind every amount."
+        }
       ]
     },
     {
       "id": "draft",
       "label": "Illustrative example",
       "lines": [
-        { "id": "d1", "text": "An AI agent reads the invoice, the terms and the cash, and drafts the split." },
-        { "id": "d2", "text": "Seven hundred to Maya. Two hundred to Leo, as his terms allow." },
-        { "id": "d3", "text": "Then a separate rule engine checks every line." },
-        { "id": "c1", "text": "Reserve.", "gap": 0.18 },
-        { "id": "c2", "text": "Eligibility.", "gap": 0.18 },
-        { "id": "c3", "text": "Caps.", "gap": 0.18 },
-        { "id": "c4", "text": "Evidence.", "gap": 0.18 },
-        { "id": "c5", "text": "Current state.", "gap": 0.18 }
+        {
+          "id": "d1",
+          "text": "An AI agent reads the invoice, the terms and the cash, and drafts the split."
+        },
+        {
+          "id": "d2",
+          "text": "Seven hundred to Maya. Two hundred to Leo, as his terms allow."
+        },
+        {
+          "id": "d3",
+          "text": "Then a separate rule engine checks every line."
+        },
+        {
+          "id": "c1",
+          "text": "Reserve.",
+          "gap": 0.18
+        },
+        {
+          "id": "c2",
+          "text": "Eligibility.",
+          "gap": 0.18
+        },
+        {
+          "id": "c3",
+          "text": "Caps.",
+          "gap": 0.18
+        },
+        {
+          "id": "c4",
+          "text": "Evidence.",
+          "gap": 0.18
+        },
+        {
+          "id": "c5",
+          "text": "Current state.",
+          "gap": 0.18
+        }
       ]
     },
     {
       "id": "sign",
       "label": "Illustrative example",
       "lines": [
-        { "id": "s1", "text": "Nothing moves until you sign." },
-        { "id": "s2", "text": "Your signature covers the exact batch. The vault, the payments, and the deadline." },
-        { "id": "s3", "text": "Circle executes it." },
-        { "id": "s4", "text": "Arc settles it." },
-        { "id": "s5", "text": "And Splitt reconciles it from the chain." }
+        {
+          "id": "s1",
+          "text": "Nothing moves until you sign."
+        },
+        {
+          "id": "s2",
+          "text": "Your signature covers the exact batch. The vault, the payments, and the deadline."
+        },
+        {
+          "id": "s3",
+          "text": "Circle executes it."
+        },
+        {
+          "id": "s4",
+          "text": "Arc settles it."
+        },
+        {
+          "id": "s5",
+          "text": "And Splitt reconciles it from the chain."
+        }
       ]
     },
     {
       "id": "remainder",
       "label": "Illustrative example",
       "lines": [
-        { "id": "r1", "text": "When the rest of the money arrives, Splitt plans again." },
-        { "id": "r2", "text": "Maya is already paid. Leo gets his final three hundred." },
-        { "id": "r3", "text": "And the old approval can never be used twice." }
+        {
+          "id": "r1",
+          "text": "When the rest of the money arrives, Splitt plans again."
+        },
+        {
+          "id": "r2",
+          "text": "Maya is already paid. Leo gets his final three hundred."
+        },
+        {
+          "id": "r3",
+          "text": "And the old approval can never be used twice."
+        }
       ]
     },
     {
       "id": "isolation",
       "label": "Illustrative example",
       "lines": [
-        { "id": "i1", "text": "Every project keeps its own cash." },
-        { "id": "i2", "text": "One client's money never pays another client's bills." }
+        {
+          "id": "i1",
+          "text": "Every project keeps its own cash."
+        },
+        {
+          "id": "i2",
+          "text": "One client's money never pays another client's bills."
+        }
       ]
     },
     {
       "id": "proof",
-      "label": "Real · Arc Testnet",
+      "label": "",
       "lines": [
-        { "id": "pr1", "text": "And it's live today, on Arc testnet." },
-        { "id": "pr2", "text": "Three test vaults. Four batches executed through Circle. Every transaction on chain." },
-        { "id": "pr3", "text": "No paying customers yet. That's next." }
+        {
+          "id": "pr1",
+          "text": "Built on Arc. Settled in USDC."
+        },
+        {
+          "id": "pr2",
+          "text": "Every batch is signed by you, executed through Circle, and verifiable on chain."
+        },
+        {
+          "id": "pr3",
+          "text": "And now, launching on Arc mainnet."
+        }
       ]
     },
     {
       "id": "end",
       "label": "",
       "lines": [
-        { "id": "e1", "text": "Splitt." },
-        { "id": "e2", "text": "Every amount has a reason." },
-        { "id": "e3", "text": "Try it at use splitt dot x y z.", "caption": "Try it at usesplitt.xyz" }
+        {
+          "id": "e1",
+          "text": "Splitt."
+        },
+        {
+          "id": "e2",
+          "text": "Every amount has a reason."
+        },
+        {
+          "id": "e3",
+          "text": "Try it at use splitt dot x y z.",
+          "caption": "Try it at usesplitt.xyz"
+        }
       ]
     }
   ]

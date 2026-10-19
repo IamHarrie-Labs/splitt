@@ -103,25 +103,25 @@ Every project keeps its own cash.
 One client's money never pays another client's bills.
 
 27
-00:01:12,533 --> 00:01:14,533
-And it's live today, on Arc testnet.
+00:01:12,533 --> 00:01:14,367
+Built on Arc. Settled in USDC.
 
 28
-00:01:14,833 --> 00:01:20,000
-Three test vaults. Four batches executed through Circle. Every transaction on chain.
+00:01:14,700 --> 00:01:19,367
+Every batch is signed by you, executed through Circle, and verifiable on chain.
 
 29
-00:01:20,333 --> 00:01:22,600
-No paying customers yet. That's next.
+00:01:19,700 --> 00:01:21,600
+And now, launching on Arc mainnet.
 
 30
-00:01:24,533 --> 00:01:25,100
+00:01:23,533 --> 00:01:24,100
 Splitt.
 
 31
-00:01:25,433 --> 00:01:26,800
+00:01:24,433 --> 00:01:25,800
 Every amount has a reason.
 
 32
-00:01:27,100 --> 00:01:29,233
+00:01:26,100 --> 00:01:28,233
 Try it at usesplitt.xyz

@@ -74,7 +74,7 @@ export function Hook() {
       <Shapes seed={1} colors={[c.volt, c.coral, c.violet]} count={9} opacity={0.5} />
       <Camera
         keys={[
-          [0, 1.08, 0, 0],
+          [0, 1.02, 0, 0],
           [q.at('hook2'), 1, 0, 0],
           [q.length, 1.06, 0, 0],
         ]}
@@ -171,7 +171,6 @@ export function Problem() {
   const filled = prog(f, q.at('p1') + 10, q.end('p1') - q.at('p1'), inOut) * 0.6;
   const lockP = pop(f, q.word('p2', 'reserve'), 160);
   const qMark = pop(f, q.at('p4'), 120);
-  const zoom = prog(f, q.end('p4') - 6, q.length - q.end('p4') + 6, Easing.in(Easing.cubic));
   const people = [
     { n: 'Maya', role: 'Designer', owed: 700, col: c.coral, at: q.word('p3', 'Maya') },
     { n: 'Leo', role: 'Developer', owed: 500, col: c.violet, at: q.word('p3', 'Leo') },
@@ -183,7 +182,7 @@ export function Problem() {
         keys={[
           [0, 1, 0, 0],
           [q.end('p4') - 6, 1, 0, 0],
-          [q.length, 7, -1700, 1400],
+          [q.length, 1.04, 0, 0],
         ]}
       >
         <svg width={1920} height={1080} style={{ position: 'absolute', inset: 0 }}>
@@ -311,7 +310,6 @@ export function Problem() {
           ?
         </Abs>
       </Camera>
-      <AbsoluteFill style={{ background: c.coral, opacity: zoom > 0.6 ? (zoom - 0.6) / 0.4 : 0 }} />
     </Bg>
   );
 }
@@ -364,7 +362,6 @@ export function Title() {
           width: 1920,
           display: 'flex',
           justifyContent: 'center',
-          transform: `scale(${1 + 0.03 * pulse(f)})`,
         }}
       >
         {[0, 1].map((half) => (
@@ -430,7 +427,7 @@ export function Draft() {
       <Shapes seed={4} colors={[c.violet, c.coral]} count={8} opacity={0.18} />
       <Camera
         keys={[
-          [0, 1.3, 0, 140],
+          [0, 1.08, 0, 60],
           [q.at('d2') - 10, 1.05, 0, 60],
           [q.at('d3'), 1, 0, 0],
           [q.length, 1.04, 0, -10],
@@ -592,7 +589,6 @@ export function Draft() {
                 alignItems: 'center',
                 gap: 30,
                 opacity: prog(f, q.at('d2') - 4 + i * 6, 12),
-                transform: `scale(${1 + 0.15 * Math.max(0, 1 - Math.abs(r.p - 1) * 8) * (r.p >= 1 ? Math.exp(-(f - q.word('d2', r.n) - 26) / 8) : 0)})`,
               }}
             >
               <Avatar letter={r.n[0]} color={r.col} size={140} />
@@ -638,7 +634,7 @@ export function Draft() {
                   fontWeight: 700,
                   fontSize: 34,
                   color: c.ink,
-                  transform: `scale(${lit ? mix(1.25, 1, s) : 1})`,
+                  transform: `scale(${lit ? mix(1.04, 1, s) : 1})`,
                 }}
               >
                 <svg width={46} height={46} viewBox="0 0 46 46">
@@ -676,7 +672,7 @@ export function Draft() {
             color: c.coral,
             ...display,
             fontSize: 54,
-            transform: `rotate(-7deg) scale(${mix(2.2, 1, stamp)})`,
+            transform: `rotate(-7deg) scale(${mix(1.3, 1, stamp)})`,
             opacity: f >= q.end('c5') + 8 ? 1 : 0,
             background: c.paper,
           }}
@@ -694,7 +690,7 @@ export function Sign() {
   const q = useCue();
   const phone = pop(f, q.at('s1'), 120);
   const rows = [
-    ['Vault', '0x724c…c6c6', 'vault'],
+    ['Vault', 'Northstar', 'vault'],
     ['Maya', '700 USDC', 'payments'],
     ['Leo', '200 USDC', 'payments'],
     ['Expires', 'in 30 min', 'deadline'],
@@ -714,7 +710,7 @@ export function Sign() {
       <Shapes seed={5} colors={[c.volt, c.white]} count={10} opacity={0.35} />
       <Camera
         keys={[
-          [0, 1.1, 0, 0],
+          [0, 1.03, 0, 0],
           [q.at('s2'), 1, 0, 0],
           [q.at('s3'), 1.04, -20, 0],
           [q.length, 1, 0, 0],
@@ -914,7 +910,7 @@ export function Remainder() {
             alignItems: 'center',
             justifyContent: 'center',
             color: c.ink,
-            transform: `scale(${f >= q.at('r1') + 18 ? mix(1.25, 1, bounce) : 1}) rotate(${Math.sin(f / 14) * 6}deg)`,
+            transform: `rotate(-4deg)`,
           }}
         >
           <div style={{ ...display, fontSize: 130 }}>+800</div>
@@ -1029,7 +1025,7 @@ export function Remainder() {
               background: c.paper,
               ...display,
               fontSize: 84,
-              transform: `rotate(12deg) scale(${stamped ? mix(2.6, 1, pop(f, stampAt, 300)) : 0})`,
+              transform: `rotate(12deg) scale(${stamped ? mix(1.3, 1, pop(f, stampAt, 300)) : 0})`,
             }}
           >
             USED
@@ -1155,25 +1151,31 @@ export function Isolation() {
   );
 }
 
-/* 08 · Proof: real Arc Testnet numbers and hashes, then the honest zero. */
+/* 08 · Proof: what every payout runs on, then the mainnet launch. */
 export function Proof() {
   const f = useF();
   const q = useCue();
-  const hashes = [
-    '0x938ea7d6370c06d25daf6c73493e5c43f304abf9938563b7bd934325edaebdc5',
-    '0x098fa70efda77e5f22396521bce7d5ccdeb3bbbaab8997e9ae8551a0ceb32881',
-    '0xde2ce4f47108ab118ef30b7dd835b7da7dae60ed7b83504ead5011acddd35c6d',
-    '0x39d42d99caea9eeb2e7ab39db2464139bb7e8a42639caf5902a19c0356bbba4f',
+  const tiles = [
+    {
+      t: 'Signed',
+      d: 'by you, in your own wallet or multisig',
+      w: 'signed',
+      bg: c.volt,
+      fg: c.ink,
+    },
+    { t: 'Executed', d: 'through Circle, batch by batch', w: 'executed', bg: c.coral, fg: c.white },
+    {
+      t: 'Verifiable',
+      d: 'on chain, every single payout',
+      w: 'verifiable',
+      bg: c.violet,
+      fg: c.white,
+    },
   ];
-  const stats = [
-    { n: 3, d: 0, l: 'test vaults', w: 'Three', bg: c.volt, fg: c.ink },
-    { n: 4, d: 0, l: 'batches via Circle', w: 'Four', bg: c.coral, fg: c.white },
-    { n: 2.4, d: 1, l: 'test USDC paid', w: 'Every', bg: c.violet, fg: c.white },
-  ];
-  const honest = pop(f, q.at('pr3'), 160);
+  const launch = prog(f, q.word('pr3', 'launching'), 22);
   return (
     <Bg color={c.ink}>
-      <div style={{ position: 'absolute', inset: 0, opacity: 0.16 }}>
+      <div style={{ position: 'absolute', inset: 0, opacity: 0.1 }}>
         {[0, 1, 2, 3, 4, 5].map((row) => (
           <div
             key={row}
@@ -1182,117 +1184,82 @@ export function Proof() {
               top: 60 + row * 170,
               left: 0,
               whiteSpace: 'nowrap',
-              fontFamily: font.head,
-              fontSize: 38,
+              ...display,
+              fontSize: 64,
               color: c.white,
-              transform: `translateX(${(((row % 2 ? 1 : -1) * f * 4) % 1800) - 900}px)`,
+              transform: `translateX(${(((row % 2 ? 1 : -1) * f * 2) % 1800) - 900}px)`,
             }}
           >
-            {(hashes[row % 4] + '   ').repeat(4)}
+            {'OWNER-SIGNED · RESERVE-PROTECTED · MULTISIG-READY · VERIFIED CONTRACT · '.repeat(3)}
           </div>
         ))}
       </div>
       <Camera
         keys={[
-          [0, 1.15, 0, 0],
-          [q.at('pr2'), 1, 0, 0],
-          [q.at('pr3'), 1, 0, 0],
-          [q.length, 1.05, 0, 0],
+          [0, 1.03, 0, 0],
+          [q.length, 1, 0, 0],
         ]}
       >
-        <Abs style={{ left: 120, top: 130, display: 'flex', alignItems: 'center', gap: 26 }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 14,
-              padding: '10px 26px',
-              borderRadius: 999,
-              background: c.volt,
-              color: c.ink,
-              ...display,
-              fontSize: 40,
-              transform: `scale(${pop(f, q.at('pr1'))})`,
-            }}
-          >
-            <i
-              style={{
-                width: 18,
-                height: 18,
-                borderRadius: 9,
-                background: c.coral,
-                opacity: 0.4 + 0.6 * Math.abs(Math.sin(f / 8)),
-              }}
-            />
-            LIVE
-          </div>
+        <Abs style={{ left: 120, top: 130, display: 'flex', gap: 30 }}>
           <Slam
-            text="on Arc testnet."
-            start={q.at('pr1') + 6}
-            stagger={5}
+            text="Built on Arc."
+            start={q.at('pr1')}
+            stagger={4}
             style={{ ...display, fontSize: 110, color: c.white }}
-            colors={{ 'testnet.': c.volt }}
+          />
+          <Slam
+            text="Settled in USDC."
+            start={q.word('pr1', 'Settled')}
+            stagger={4}
+            style={{ ...display, fontSize: 110, color: c.volt }}
           />
         </Abs>
-        <Abs style={{ left: 120, top: 300, width: 1680, display: 'flex', gap: 36 }}>
-          {stats.map((s) => {
-            const at = q.word('pr2', s.w);
-            const p = pop(f, at, 170);
+        <Abs style={{ left: 120, top: 320, width: 1680, display: 'flex', gap: 36 }}>
+          {tiles.map((t) => {
+            const at = q.word('pr2', t.w);
+            const p = prog(f, at, 20);
             return (
               <div
-                key={s.l}
+                key={t.t}
                 style={{
                   flex: 1,
-                  height: 340,
+                  height: 300,
                   borderRadius: 34,
-                  background: s.bg,
-                  color: s.fg,
-                  padding: '36px 44px',
-                  transform: `translateY(${(1 - p) * 500}px) rotate(${(1 - p) * 8}deg)`,
-                  opacity: f >= at ? 1 : 0,
+                  background: t.bg,
+                  color: t.fg,
+                  padding: '44px 44px',
+                  transform: `translateY(${(1 - p) * 80}px)`,
+                  opacity: p,
                 }}
               >
-                <div style={{ ...display, fontSize: 200 }}>
-                  <Count to={s.n} start={at} dur={20} decimals={s.d} />
-                </div>
-                <div style={{ fontFamily: font.body, fontSize: 36 }}>{s.l}</div>
+                <div style={{ ...display, fontSize: 108 }}>{t.t}</div>
+                <div style={{ fontFamily: font.body, fontSize: 32, marginTop: 24 }}>{t.d}</div>
               </div>
             );
           })}
         </Abs>
         <Abs
           style={{
-            left: 120,
+            left: 0,
             top: 690,
+            width: 1920 * launch,
+            height: 150,
+            background: c.volt,
+            overflow: 'hidden',
             display: 'flex',
             alignItems: 'center',
-            gap: 40,
-            transform: `scale(${honest})`,
-            transformOrigin: 'left center',
-            opacity: f >= q.at('pr3') ? 1 : 0,
           }}
         >
           <div
             style={{
-              padding: '22px 40px',
-              borderRadius: 24,
-              border: `6px solid ${c.white}`,
-              color: c.white,
               ...display,
-              fontSize: 70,
+              fontSize: 92,
+              color: c.ink,
+              paddingLeft: 120,
+              whiteSpace: 'nowrap',
             }}
           >
-            Paying customers: <span style={{ color: c.coral }}>0</span>
-          </div>
-          <div
-            style={{
-              ...display,
-              fontSize: 70,
-              color: c.volt,
-              opacity: prog(f, q.word('pr3', "That's"), 10),
-            }}
-          >
-            That’s next.
+            Now launching on Arc mainnet.
           </div>
         </Abs>
       </Camera>
@@ -1314,7 +1281,7 @@ export function End() {
             key={i}
             cx={960}
             cy={420}
-            r={260 + i * 90 + 14 * pulse(f)}
+            r={260 + i * 90}
             fill="none"
             stroke={c.ink}
             strokeWidth={10 - i * 3}
@@ -1362,7 +1329,7 @@ export function End() {
             color: c.volt,
             ...display,
             fontSize: 64,
-            transform: `scale(${pop(f, q.word('e3', 'usesplitt'), 200) * (1 + 0.04 * pulse(f))})`,
+            transform: `scale(${pop(f, q.word('e3', 'usesplitt'), 200)})`,
           }}
         >
           usesplitt.xyz

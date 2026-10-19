@@ -1,7 +1,7 @@
 {
  "fps": 30,
  "bpm": 120,
- "totalFrames": 2730,
+ "totalFrames": 2700,
  "sections": [
   {
    "id": "hook",
@@ -47,15 +47,15 @@
   },
   {
    "id": "proof",
-   "label": "Real \u00b7 Arc Testnet",
+   "label": "",
    "from": 2160,
-   "to": 2520
+   "to": 2490
   },
   {
    "id": "end",
    "label": "",
-   "from": 2520,
-   "to": 2730
+   "from": 2490,
+   "to": 2700
   }
  ],
  "lines": {
@@ -1095,223 +1095,223 @@
   "pr1": {
    "scene": "proof",
    "from": 2176,
-   "to": 2236,
-   "caption": "And it's live today, on Arc testnet.",
+   "to": 2231,
+   "caption": "Built on Arc. Settled in USDC.",
    "words": [
     {
-     "w": "And",
+     "w": "Built",
      "from": 2176,
-     "to": 2184
-    },
-    {
-     "w": "it's",
-     "from": 2184,
-     "to": 2192
-    },
-    {
-     "w": "live",
-     "from": 2192,
-     "to": 2201
-    },
-    {
-     "w": "today,",
-     "from": 2201,
-     "to": 2210
+     "to": 2187
     },
     {
      "w": "on",
-     "from": 2210,
+     "from": 2187,
+     "to": 2194
+    },
+    {
+     "w": "Arc.",
+     "from": 2194,
+     "to": 2202
+    },
+    {
+     "w": "Settled",
+     "from": 2202,
      "to": 2216
     },
     {
-     "w": "Arc",
+     "w": "in",
      "from": 2216,
-     "to": 2223
+     "to": 2222
     },
     {
-     "w": "testnet.",
-     "from": 2223,
-     "to": 2236
+     "w": "USDC.",
+     "from": 2222,
+     "to": 2231
     }
    ]
   },
   "pr2": {
    "scene": "proof",
-   "from": 2245,
-   "to": 2400,
-   "caption": "Three test vaults. Four batches executed through Circle. Every transaction on chain.",
+   "from": 2241,
+   "to": 2381,
+   "caption": "Every batch is signed by you, executed through Circle, and verifiable on chain.",
    "words": [
     {
-     "w": "Three",
-     "from": 2245,
-     "to": 2257
+     "w": "Every",
+     "from": 2241,
+     "to": 2252
     },
     {
-     "w": "test",
-     "from": 2257,
-     "to": 2267
+     "w": "batch",
+     "from": 2252,
+     "to": 2263
     },
     {
-     "w": "vaults.",
-     "from": 2267,
-     "to": 2280
+     "w": "is",
+     "from": 2263,
+     "to": 2269
     },
     {
-     "w": "Four",
-     "from": 2280,
-     "to": 2290
+     "w": "signed",
+     "from": 2269,
+     "to": 2282
     },
     {
-     "w": "batches",
-     "from": 2290,
-     "to": 2305
+     "w": "by",
+     "from": 2282,
+     "to": 2288
+    },
+    {
+     "w": "you,",
+     "from": 2288,
+     "to": 2296
     },
     {
      "w": "executed",
-     "from": 2305,
-     "to": 2321
+     "from": 2296,
+     "to": 2312
     },
     {
      "w": "through",
-     "from": 2321,
-     "to": 2336
+     "from": 2312,
+     "to": 2325
     },
     {
-     "w": "Circle.",
-     "from": 2336,
-     "to": 2349
+     "w": "Circle,",
+     "from": 2325,
+     "to": 2338
     },
     {
-     "w": "Every",
-     "from": 2349,
-     "to": 2361
+     "w": "and",
+     "from": 2338,
+     "to": 2346
     },
     {
-     "w": "transaction",
-     "from": 2361,
-     "to": 2381
+     "w": "verifiable",
+     "from": 2346,
+     "to": 2364
     },
     {
      "w": "on",
-     "from": 2381,
-     "to": 2388
+     "from": 2364,
+     "to": 2371
     },
     {
      "w": "chain.",
-     "from": 2388,
-     "to": 2400
+     "from": 2371,
+     "to": 2381
     }
    ]
   },
   "pr3": {
    "scene": "proof",
-   "from": 2410,
-   "to": 2478,
-   "caption": "No paying customers yet. That's next.",
+   "from": 2391,
+   "to": 2448,
+   "caption": "And now, launching on Arc mainnet.",
    "words": [
     {
-     "w": "No",
-     "from": 2410,
-     "to": 2416
+     "w": "And",
+     "from": 2391,
+     "to": 2398
     },
     {
-     "w": "paying",
-     "from": 2416,
-     "to": 2429
+     "w": "now,",
+     "from": 2398,
+     "to": 2406
     },
     {
-     "w": "customers",
-     "from": 2429,
-     "to": 2447
+     "w": "launching",
+     "from": 2406,
+     "to": 2421
     },
     {
-     "w": "yet.",
-     "from": 2447,
-     "to": 2455
+     "w": "on",
+     "from": 2421,
+     "to": 2428
     },
     {
-     "w": "That's",
-     "from": 2455,
-     "to": 2468
+     "w": "Arc",
+     "from": 2428,
+     "to": 2435
     },
     {
-     "w": "next.",
-     "from": 2468,
-     "to": 2478
+     "w": "mainnet.",
+     "from": 2435,
+     "to": 2448
     }
    ]
   },
   "e1": {
    "scene": "end",
-   "from": 2536,
-   "to": 2553,
+   "from": 2506,
+   "to": 2523,
    "caption": "Splitt.",
    "words": [
     {
      "w": "Splitt.",
-     "from": 2536,
-     "to": 2553
+     "from": 2506,
+     "to": 2523
     }
    ]
   },
   "e2": {
    "scene": "end",
-   "from": 2563,
-   "to": 2604,
+   "from": 2533,
+   "to": 2574,
    "caption": "Every amount has a reason.",
    "words": [
     {
      "w": "Every",
-     "from": 2563,
-     "to": 2572
+     "from": 2533,
+     "to": 2542
     },
     {
      "w": "amount",
-     "from": 2572,
-     "to": 2582
+     "from": 2542,
+     "to": 2552
     },
     {
      "w": "has",
-     "from": 2582,
-     "to": 2589
+     "from": 2552,
+     "to": 2559
     },
     {
      "w": "a",
-     "from": 2589,
-     "to": 2593
+     "from": 2559,
+     "to": 2563
     },
     {
      "w": "reason.",
-     "from": 2593,
-     "to": 2604
+     "from": 2563,
+     "to": 2574
     }
    ]
   },
   "e3": {
    "scene": "end",
-   "from": 2613,
-   "to": 2677,
+   "from": 2583,
+   "to": 2647,
    "caption": "Try it at usesplitt.xyz",
    "words": [
     {
      "w": "Try",
-     "from": 2613,
-     "to": 2625
+     "from": 2583,
+     "to": 2595
     },
     {
      "w": "it",
-     "from": 2625,
-     "to": 2635
+     "from": 2595,
+     "to": 2605
     },
     {
      "w": "at",
-     "from": 2635,
-     "to": 2644
+     "from": 2605,
+     "to": 2614
     },
     {
      "w": "usesplitt.xyz",
-     "from": 2644,
-     "to": 2677
+     "from": 2614,
+     "to": 2647
     }
    ]
   }

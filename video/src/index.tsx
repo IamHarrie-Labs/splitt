@@ -213,7 +213,7 @@ function Film() {
     ).then(() => continueRender(handle));
   }, [handle]);
   const s = timeline.sections.find((x) => frame >= x.from && frame < x.to);
-  const punch = s && !QUIET.has(s.id) ? 1 + 0.012 * pulse(frame, 0.3) : 1;
+  const punch = 1; // no beat-synced zoom
   return (
     <AbsoluteFill style={{ background: c.ink, fontFamily: font.body }}>
       <Audio src={staticFile('soundtrack.mp3')} />

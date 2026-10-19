@@ -24,14 +24,15 @@ export const font = {
 const clamp = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
 export const expo = Easing.bezier(0.16, 1, 0.3, 1);
 export const inOut = Easing.bezier(0.65, 0, 0.35, 1);
-export const backOut = Easing.out(Easing.back(2.2));
+// Settles without overshoot: motion arrives and stays still.
+export const backOut = Easing.out(Easing.cubic);
 
 /** 0→1 over `dur` frames from `start`, eased. */
 export const prog = (f: number, start: number, dur: number, easing = expo) =>
   interpolate(f, [start, start + dur], [0, 1], { ...clamp, easing });
 export const mix = (a: number, b: number, t: number) => a + (b - a) * t;
 export const pop = (f: number, start: number, stiffness = 180) =>
-  spring({ frame: f - start, fps: FPS, config: { damping: 11, stiffness, mass: 0.7 } });
+  spring({ frame: f - start, fps: FPS, config: { damping: 30, stiffness, mass: 0.9 } });
 
 type Section = (typeof timeline.sections)[number];
 const SceneCtx = createContext<Section>(timeline.sections[0]);
@@ -86,8 +87,8 @@ export function Slam({
             style={{
               display: 'inline-block',
               opacity: shown ? Math.min(1, p * 2) : 0,
-              transform: `scale(${mix(2.4, 1, p)}) rotate(${(1 - p) * (i % 2 ? 8 : -8)}deg)`,
-              filter: `blur(${Math.max(0, (1 - p) * 10)}px)`,
+              transform: `translateY(${(1 - p) * 40}px)`,
+              filter: `blur(${Math.max(0, (1 - p) * 6)}px)`,
               color: colors[word] ?? undefined,
               ...(serif.includes(word)
                 ? { fontFamily: font.serif, fontStyle: 'italic', fontWeight: 400 }
@@ -199,7 +200,7 @@ export function Camera({
 
 /** Decaying random shake after `at`. */
 export const shake = (f: number, at: number, amount = 18) => {
-  const k = f >= at ? Math.exp(-(f - at) * 0.25) : 0;
+  const k = 0; // shakes are off: the cut stays still
   return `translate(${Math.sin(f * 2.7) * amount * k}px, ${Math.cos(f * 3.1) * amount * k}px)`;
 };
 
