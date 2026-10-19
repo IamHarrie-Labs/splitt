@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-10-19T11:32:46.531Z",
+  "checkedAt": "2026-10-19T11:38:14.853Z",
   "secretScanPassed": true,
-  "fileCount": 272,
+  "fileCount": 274,
   "files": [
     ".dockerignore",
     ".env.example",
@@ -50,6 +50,8 @@
     "docs/mainnet-candidate.json",
     "docs/mainnet-launch-plan.md",
     "docs/mainnet-readiness.md",
+    "docs/media/splitt-demo-poster.jpg",
+    "docs/media/splitt-demo.mp4",
     "docs/model-evaluation.md",
     "docs/owner-auth-and-signing.md",
     "docs/owner-wallet.json",
